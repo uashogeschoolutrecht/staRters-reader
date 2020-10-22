@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 12 Importing data | staRters; An introductory workshop for analysis of data with R</title>
+  <meta name="description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 12 Importing data | staRters; An introductory workshop for analysis of data with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="github-repo" content="uashogeschoolutrecht/staRters" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 12 Importing data | staRters; An introductory workshop for analysis of data with R" />
+  
+  <meta name="twitter:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  
+
+<meta name="author" content="Marc A.T. Teunis, PhD" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="tidydata.html"/>
+<link rel="next" href="assumptions.html"/>
+<script src="libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.15/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<script src="libs/d3-5.7.0/d3.min.js"></script>
+<script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<link href="libs/ggiraphjs-0.3.0/ggiraphjs.min.css" rel="stylesheet" />
+<script src="libs/ggiraphjs-0.3.0/ggiraphjs.min.js"></script>
+<script src="libs/girafe-binding-0.7.8/girafe.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Analysis with R for staRters</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="chapter" data-level="2" data-path="why-r.html"><a href="why-r.html"><i class="fa fa-check"></i><b>2</b> Why use R?</a></li>
+<li class="chapter" data-level="3" data-path="gettingstarted.html"><a href="gettingstarted.html"><i class="fa fa-check"></i><b>3</b> Getting Started</a></li>
+<li class="chapter" data-level="4" data-path="edacase.html"><a href="edacase.html"><i class="fa fa-check"></i><b>4</b> Case Example</a></li>
+<li class="chapter" data-level="5" data-path="introrstudio.html"><a href="introrstudio.html"><i class="fa fa-check"></i><b>5</b> Introduction to RStudio</a></li>
+<li class="chapter" data-level="6" data-path="rmarkdown.html"><a href="rmarkdown.html"><i class="fa fa-check"></i><b>6</b> Literate Programming with RMarkdown</a></li>
+<li class="chapter" data-level="7" data-path="intror.html"><a href="intror.html"><i class="fa fa-check"></i><b>7</b> Introduction to R</a></li>
+<li class="chapter" data-level="8" data-path="recursivevectors.html"><a href="recursivevectors.html"><i class="fa fa-check"></i><b>8</b> Lists and dataframes</a></li>
+<li class="chapter" data-level="9" data-path="viz.html"><a href="viz.html"><i class="fa fa-check"></i><b>9</b> Visualize &amp; Explore Data</a></li>
+<li class="chapter" data-level="10" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>10</b> Data Wrangling</a></li>
+<li class="chapter" data-level="11" data-path="tidydata.html"><a href="tidydata.html"><i class="fa fa-check"></i><b>11</b> Tidy Data</a></li>
+<li class="chapter" data-level="12" data-path="importingdata.html"><a href="importingdata.html"><i class="fa fa-check"></i><b>12</b> Importing data</a></li>
+<li class="chapter" data-level="13" data-path="assumptions.html"><a href="assumptions.html"><i class="fa fa-check"></i><b>13</b> Assumptions and statistical models</a></li>
+<li class="chapter" data-level="14" data-path="sampling-bootstrapping.html"><a href="sampling-bootstrapping.html"><i class="fa fa-check"></i><b>14</b> Sampling, Probability distributions and bootstrapping</a></li>
+<li class="chapter" data-level="15" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>15</b> Resources</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/uashogeschoolutrecht/staRters" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">staRters; An introductory workshop for analysis of data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="importingdata" class="section level1" number="12">
+<h1><span class="header-section-number">Chapter 12</span> Importing data</h1>
+<div id="packages" class="section level2" number="12.1">
+<h2><span class="header-section-number">12.1</span> Packages</h2>
+<div class="sourceCode" id="cb728"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb728-1"><a href="importingdata.html#cb728-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb728-2"><a href="importingdata.html#cb728-2"></a><span class="kw">library</span>(haven)</span></code></pre></div>
+</div>
+<div id="dont-be-absolute" class="section level2" number="12.2">
+<h2><span class="header-section-number">12.2</span> Don’t be absolute!</h2>
+<ul>
+<li>You could point to a file with an absolute path:
+The file for the “allijn” dataset on my laptop is located at:</li>
+</ul>
+<div class="sourceCode" id="cb729"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb729-1"><a href="importingdata.html#cb729-1"></a><span class="st">&quot;C:/Users/mteunis/workspaces/staRters/data/allijn.tsv&quot;</span></span></code></pre></div>
+<pre><code>## [1] &quot;C:/Users/mteunis/workspaces/staRters/data/allijn.tsv&quot;</code></pre>
+<p>There is a very good chance that this folder does not exist on your machine.</p>
+<p>-<strong>Using absolute paths probably makes the code break almost every time</strong></p>
+<p>-<strong>Whatever you do, do not use the function <code>setwd()</code> to change the working directory</strong></p>
+</div>
+<div id="be-relative" class="section level2" number="12.3">
+<h2><span class="header-section-number">12.3</span> Be relative!!</h2>
+<p>There are a few things you should do to increase portability of your R projects:</p>
+<ul>
+<li>ALWAYS work in an RStudio Project.</li>
+<li>Also when you are playing (call your folder “play” or “sandbox” or something), than later move files to their intended locations!</li>
+<li><strong>ONLY</strong> use relative paths, they prevent code from breaking in the future</li>
+<li>Use the <code>{here}</code> package to create relative paths
+## File types</li>
+</ul>
+</div>
+<div id="file-types" class="section level2" number="12.4">
+<h2><span class="header-section-number">12.4</span> File types</h2>
+<p>There are many functions available in Base-R and in packages to read in very different file types. In this chapter we mainly use <code>{readr}</code>. Users of Excel should look in the “/extra” folder for a demo on using <code>{readxl}</code> to read Excel files into R.</p>
+<p>In general it is always better to use a non-proprietary format for data (csv, txt, tab-delimted, json etc.). When you use Excel. Just export the final dataset you want to analyse, share or post in repository to a cvs file.</p>
+<p>A good data file comes with a thouroughly documented <code>README.txt</code> file that explains how the data was obtained, who the owner is and what the variables mean, and what their respective units of measurment are.</p>
+<ul>
+<li>Proprietary: <code>xls</code>, <code>xlsx</code>, <code>sav</code> or (<code>{reaxl}</code>, <code>{xlsx}</code>, <code>{haven}</code>, <code>{foreign}</code>)</li>
+<li>text-based: <code>csv</code>, <code>txt</code>, <code>json</code> (<code>{readr}</code>, <code>{jsonlite}</code>)</li>
+<li>xml-based: <code>XML</code>, <code>mzXML</code> (<code>{XML}</code>, <code>{xml2}</code>, <code>{mzR}</code>)</li>
+<li>cdf-based (maps data: <code>NCDF</code> (<code>{ncdf4}</code>)</li>
+</ul>
+<p>The packages <code>{foreign}</code> and <code>{haven}</code> can also read files from SAS, Minitab, S-Plus, SPSS, Stata, Systat and EpiInfo software.</p>
+<div class="sourceCode" id="cb731"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb731-1"><a href="importingdata.html#cb731-1"></a><span class="co">## sav example for SPSS files (with {haven})</span></span>
+<span id="cb731-2"><a href="importingdata.html#cb731-2"></a>data_mtcars_spss &lt;-<span class="st"> </span><span class="kw">read_sav</span>(</span>
+<span id="cb731-3"><a href="importingdata.html#cb731-3"></a>  here<span class="op">::</span><span class="kw">here</span>(</span>
+<span id="cb731-4"><a href="importingdata.html#cb731-4"></a>    <span class="st">&quot;data&quot;</span>,</span>
+<span id="cb731-5"><a href="importingdata.html#cb731-5"></a>    <span class="st">&quot;mtcars.sav&quot;</span></span>
+<span id="cb731-6"><a href="importingdata.html#cb731-6"></a>  )</span>
+<span id="cb731-7"><a href="importingdata.html#cb731-7"></a>)</span></code></pre></div>
+<p>If you want to find a function or package for your specific file type, a search on Google usually does the trick: e.g. ‘Prism’ files can be read in using the information in this link: <a href="https://cran.r-project.org/web/packages/pzfx/vignettes/pzfx.html" class="uri">https://cran.r-project.org/web/packages/pzfx/vignettes/pzfx.html</a></p>
+<div id="exercise-1---construct-a-path-to-a-data-file" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 1 - Construct a path to a data file</strong></mark></h3>
+<p>To make the code as reproducible as possible</p>
+<ol style="list-style-type: decimal">
+<li>Construct a <code>file.path</code> to the data file you want to import</li>
+<li>Use this <code>file.path</code> as argumnent for the call in your import function. Construct the <code>file.path</code> relative to the current working directory</li>
+<li>use the function <code>here()</code> from the <code>{here}</code></li>
+</ol>
+<ol style="list-style-type: upper-alpha">
+<li><p>Construct a full path to the <code>DP_LIVE_06112019150508524.csv</code> file located in the <code>/data</code> folder, using the <code>here()</code> function.</p></li>
+<li><p>Read the <code>DP_LIVE_06112019150508524.csv</code> file into R using the <code>{readr}</code> package. Consult help(“readr”) for tips. Try to think about what type of file this can be. Open the file in the Viewer choose ‘View file’ in the Files pane of RStudio, click on the file.</p></li>
+</ol>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   LOCATION = col_character(),
+##   INDICATOR = col_character(),
+##   SUBJECT = col_character(),
+##   MEASURE = col_character(),
+##   FREQUENCY = col_character(),
+##   TIME = col_double(),
+##   Value = col_double(),
+##   `Flag Codes` = col_logical()
+## )</code></pre>
+<pre><code>## # A tibble: 3,110 x 8
+##    LOCATION INDICATOR SUBJECT MEASURE FREQUENCY  TIME Value `Flag Codes`
+##    &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;       
+##  1 AUS      TAXREV    TOT     PC_GDP  A          1965  20.6 NA          
+##  2 AUS      TAXREV    TOT     PC_GDP  A          1966  19.9 NA          
+##  3 AUS      TAXREV    TOT     PC_GDP  A          1967  20.4 NA          
+##  4 AUS      TAXREV    TOT     PC_GDP  A          1968  20.4 NA          
+##  5 AUS      TAXREV    TOT     PC_GDP  A          1969  20.7 NA          
+##  6 AUS      TAXREV    TOT     PC_GDP  A          1970  21.1 NA          
+##  7 AUS      TAXREV    TOT     PC_GDP  A          1971  21.9 NA          
+##  8 AUS      TAXREV    TOT     PC_GDP  A          1972  21.4 NA          
+##  9 AUS      TAXREV    TOT     PC_GDP  A          1973  22.5 NA          
+## 10 AUS      TAXREV    TOT     PC_GDP  A          1974  24.6 NA          
+## # ... with 3,100 more rows</code></pre>
+<p>— END EXERCISE —</p>
+</div>
+</div>
+<div id="getting-started-with-importing-files" class="section level2" number="12.5">
+<h2><span class="header-section-number">12.5</span> Getting started with importing files</h2>
+<p>Most of <code>{readr}</code> functions are concerned with turning flat files into data frames:</p>
+<ul>
+<li><code>read_csv()</code> reads comma delimited files,</li>
+<li><code>read_csv2()</code> reads semicolon
+separated files (common in countries where “<code>,</code>” is used as the decimal place),</li>
+<li><code>read_tsv()</code> reads tab delimited files, and</li>
+<li><code>read_delim()</code> reads in files with any delimiter.</li>
+<li><code>read_fwf()</code> reads fixed width files. You can specify fields either by their
+widths with <code>fwf_widths()</code> or their position with <code>fwf_positions()</code>.</li>
+<li><code>read_table()</code> reads a common variation of fixed width files where columns are separated by white space.</li>
+</ul>
+</div>
+<div id="csv-as-the-golden-standard" class="section level2" number="12.6">
+<h2><span class="header-section-number">12.6</span> CSV as the golden standard</h2>
+<ul>
+<li>Convert Excel files to CSV files</li>
+<li>Use CSV as much as possible</li>
+<li>The delimiter in CSV can be different: “,” or “;”</li>
+<li><code>read_csv</code> works with “,”</li>
+<li><code>read_csv2</code> works with “;”</li>
+</ul>
+</div>
+<div id="general-syntax" class="section level2" number="12.7">
+<h2><span class="header-section-number">12.7</span> General syntax</h2>
+<p>The first argument to <code>read_csv()</code> is the most important: it’s the path to the file to read.</p>
+<pre><code>path_to_file &lt;- here::here(&quot;subfolder&quot;, &quot;datafile&quot;)
+read_...(file = path_to_file, ...)
+
+## ... = aditional options
+</code></pre>
+<div id="exercise-2---parser-message-in-readr" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 2 - parser message in <code>{readr}</code></strong></mark></h3>
+<ol style="list-style-type: upper-alpha">
+<li>Read the file “heights.csv” in the “/data” folder into R, using the <code>{readr}</code> package.
+If all goes well you will see the following message:</li>
+</ol>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   earn = col_double(),
+##   height = col_double(),
+##   sex = col_character(),
+##   ed = col_double(),
+##   age = col_double(),
+##   race = col_character()
+## )</code></pre>
+<p><strong>Parser message</strong>
+When you run <code>read_csv()</code> it prints out a column specification that gives the name and type of each column. That’s an important part of readr, which we’ll come back to in [parsing a file].</p>
+<ol start="2" style="list-style-type: upper-alpha">
+<li>Experiment with readr
+You can also supply an inline csv file. This is useful for experimenting with readr and for creating reproducible examples to share with others:
+Run the code below, discuss with your neighbour what you think happened and why this works.</li>
+</ol>
+<div class="sourceCode" id="cb736"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb736-1"><a href="importingdata.html#cb736-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;a,b,c</span></span>
+<span id="cb736-2"><a href="importingdata.html#cb736-2"></a><span class="st">1,2,3</span></span>
+<span id="cb736-3"><a href="importingdata.html#cb736-3"></a><span class="st">4,5,6&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##       a     b     c
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+<div class="sourceCode" id="cb738"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb738-1"><a href="importingdata.html#cb738-1"></a><span class="co"># each new line results in a new row of observations</span></span></code></pre></div>
+<p>— END EXERCISE —</p>
+</div>
+</div>
+<div id="changing-default-behaviour" class="section level2" number="12.8">
+<h2><span class="header-section-number">12.8</span> Changing default behaviour</h2>
+<p>In both cases <code>read_csv()</code> uses the first line of the data for the column names, which is a very common convention. There are two cases where you might want to tweak this behaviour:</p>
+</div>
+<div id="skipping-lines-usually-at-the-top-of-the-file" class="section level2" number="12.9">
+<h2><span class="header-section-number">12.9</span> Skipping lines (usually at the top of the file)</h2>
+<p>Sometimes there are a few lines of metadata at the top of the file. You can
+use <code>skip = n</code> to skip the first <code>n</code> lines; or use <code>comment = "$$"</code> to drop
+all lines that start with (e.g.) <code>$$</code>.</p>
+<div class="sourceCode" id="cb739"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb739-1"><a href="importingdata.html#cb739-1"></a><span class="co">## no options</span></span>
+<span id="cb739-2"><a href="importingdata.html#cb739-2"></a><span class="kw">read_csv</span>(<span class="st">&quot;The first line of metadata</span></span>
+<span id="cb739-3"><a href="importingdata.html#cb739-3"></a><span class="st">The second line of metadata</span></span>
+<span id="cb739-4"><a href="importingdata.html#cb739-4"></a><span class="st">x,y,z</span></span>
+<span id="cb739-5"><a href="importingdata.html#cb739-5"></a><span class="st">1,2,3</span></span>
+<span id="cb739-6"><a href="importingdata.html#cb739-6"></a><span class="st">4,6,8&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: 3 parsing failures.
+## row col  expected    actual         file
+##   2  -- 1 columns 3 columns literal data
+##   3  -- 1 columns 3 columns literal data
+##   4  -- 1 columns 3 columns literal data</code></pre>
+<pre><code>## # A tibble: 4 x 1
+##   `The first line of metadata`
+##   &lt;chr&gt;                       
+## 1 The second line of metadata 
+## 2 x                           
+## 3 1                           
+## 4 4</code></pre>
+<div class="sourceCode" id="cb742"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb742-1"><a href="importingdata.html#cb742-1"></a><span class="co">## skip lines</span></span>
+<span id="cb742-2"><a href="importingdata.html#cb742-2"></a><span class="kw">read_csv</span>(<span class="st">&quot;The first line of metadata</span></span>
+<span id="cb742-3"><a href="importingdata.html#cb742-3"></a><span class="st">The second line of metadata</span></span>
+<span id="cb742-4"><a href="importingdata.html#cb742-4"></a><span class="st">x,y,z</span></span>
+<span id="cb742-5"><a href="importingdata.html#cb742-5"></a><span class="st">1,2,3</span></span>
+<span id="cb742-6"><a href="importingdata.html#cb742-6"></a><span class="st">4,6,8&quot;</span>, <span class="dt">skip =</span> <span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##       x     y     z
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2     3
+## 2     4     6     8</code></pre>
+<div class="sourceCode" id="cb744"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb744-1"><a href="importingdata.html#cb744-1"></a><span class="co">## define comment</span></span>
+<span id="cb744-2"><a href="importingdata.html#cb744-2"></a><span class="kw">read_csv</span>(<span class="st">&quot;#The first line of metadata</span></span>
+<span id="cb744-3"><a href="importingdata.html#cb744-3"></a><span class="st">#The second line of metadata</span></span>
+<span id="cb744-4"><a href="importingdata.html#cb744-4"></a><span class="st">x,y,z</span></span>
+<span id="cb744-5"><a href="importingdata.html#cb744-5"></a><span class="st">1,2,3</span></span>
+<span id="cb744-6"><a href="importingdata.html#cb744-6"></a><span class="st">4,6,8&quot;</span>, <span class="dt">comment =</span> <span class="st">&quot;#&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##       x     y     z
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2     3
+## 2     4     6     8</code></pre>
+<div id="exercise-3---comments-and-skipping-lines" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 3 - comments and skipping lines</strong></mark></h3>
+<ol style="list-style-type: upper-alpha">
+<li><p>Parse the “allijn.tsv” file in the “/data”. This file has comments at the top of the file in the first 22 lines. Each comment is indicated by either a double pound sign “##”. Open the file first to confirm this.</p></li>
+<li><p>Can you come up with a way that would prevent opening this file first in RStudio in the viewer and still learn how the first few lines of the file look.</p></li>
+</ol>
+<p>**TIP: The solution to the above challenge requires you to think about a Linux Terminal command. You can exacute Terminal command from inside R with the <code>system()</code> function.</p>
+<div class="sourceCode" id="cb746"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb746-1"><a href="importingdata.html#cb746-1"></a><span class="kw">system</span>(<span class="st">&quot;head -25 data/allijn.tsv&quot;</span>)</span></code></pre></div>
+<p>— END EXERCISE —</p>
+</div>
+</div>
+<div id="no-headers-column-names" class="section level2" number="12.10">
+<h2><span class="header-section-number">12.10</span> No headers / column names</h2>
+<p>The data might not have column names. You can use <code>col_names = FALSE</code> to
+tell <code>read_csv()</code> not to treat the first row as headings, and instead
+label them sequentially from <code>X1</code> to <code>Xn</code>:</p>
+<div class="sourceCode" id="cb747"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb747-1"><a href="importingdata.html#cb747-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;1,2,3 </span><span class="ch">\n</span><span class="st"> 4,5,6&quot;</span>, <span class="dt">col_names =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##      X1    X2    X3
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+<p>(<code>"\n"</code> is a convenient shortcut for adding a new line)</p>
+</div>
+<div id="setting-column-names-for-readr" class="section level2" number="12.11">
+<h2><span class="header-section-number">12.11</span> Setting column names for <code>readr</code></h2>
+<p>Alternatively you can pass <code>col_names</code> a character vector which will be
+used as the column names:</p>
+<div class="sourceCode" id="cb749"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb749-1"><a href="importingdata.html#cb749-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;1,2,3</span><span class="ch">\n</span><span class="st">4,5,6&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;var_1&quot;</span>, <span class="st">&quot;var_2&quot;</span>, <span class="st">&quot;var_3&quot;</span>))</span></code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##   var_1 var_2 var_3
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+<div id="exercise-4---missing-values" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 4 - Missing values</strong></mark></h3>
+<p>Another option that commonly needs tweaking is <code>na</code>: this specifies the value (or values) that are used to represent missing values in your file:</p>
+<div class="sourceCode" id="cb751"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb751-1"><a href="importingdata.html#cb751-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;a,b,c </span><span class="ch">\n</span><span class="st"> 1,2,.&quot;</span>, <span class="dt">na =</span> <span class="st">&quot;.&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 3
+##       a     b c    
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;
+## 1     1     2 NA</code></pre>
+<ol style="list-style-type: upper-alpha">
+<li>Read the file “John.csv” in the “/data/diet” folder.
+Try fixing the different annotations for missing values used in this file by setting the <code>na = c(...)</code> option in your readr function call.</li>
+</ol>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   `Patient Name` = col_character(),
+##   Age = col_double(),
+##   Weight = col_character(),
+##   Day = col_double()
+## )</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   `Patient Name` = col_character(),
+##   Age = col_double(),
+##   Weight = col_double(),
+##   Day = col_double()
+## )</code></pre>
+<ol start="2" style="list-style-type: upper-alpha">
+<li><p>What happens to the type of the variables when you do not set the <code>na</code> option?</p></li>
+<li><p>The folder “./data/diet” contains a number of csv files. How would you go about if you want to join all these files in one big dataframe? First write pseudocode, than write the full code.</p></li>
+</ol>
+<p><strong>TIPS</strong></p>
+<ul>
+<li>use the function <code>list.files()</code>, set the option <code>full.names = TRUE</code> and <code>pattern = "\\.csv"</code></li>
+<li>use the function <code>map_df()</code> to loop over the list of file paths, in conjuction with <code>read_csv()</code></li>
+<li>you will need to set <code>na = c("?", "not recorded", "missing", "", " ")</code></li>
+<li>think about also setting the parser for your calls to read_csv</li>
+<li>build a pipe (using <code>%&gt;%</code>) that does the full processing of all steps and outputs the combined dataframe</li>
+</ul>
+<p>– <strong>END EXERCISE</strong> –</p>
+</div>
+</div>
+<div id="examples-to-learn-more" class="section level2" number="12.12">
+<h2><span class="header-section-number">12.12</span> Examples to learn more</h2>
+<p>You can also easily adapt what you’ve learned to read tab separated files with</p>
+<ul>
+<li><code>read_tsv()</code> and</li>
+<li>fixed width files with <code>read_fwf()</code></li>
+<li>you can even have more control over which delimiter was used (to seperate the columns in the file) with <code>read_delim()</code></li>
+</ul>
+<div id="exercise-5---delimiters" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 5 - delimiters</strong></mark></h3>
+<ol style="list-style-type: upper-alpha">
+<li><p>Parse the file “gender.txt” in the “/data” folder. Remember that a quick inspection in the Linux terminal is a good idea before trying to read any file into R.</p></li>
+<li><p>Which function of readr did you use? Why?</p></li>
+</ol>
+<p>— <strong>END EXERCISE</strong> —</p>
+</div>
+</div>
+<div id="challenging-variable-types" class="section level2" number="12.13">
+<h2><span class="header-section-number">12.13</span> Challenging variable types</h2>
+<p>To read in more challenging files, you’ll need to learn more about how readr parses each column, turning them into R vectors. This is an advanced operation and will be addressed during exercises, when we need it</p>
+<ol style="list-style-type: decimal">
+<li><p><code>parse_logical()</code> and <code>parse_integer()</code> parse logicals and integers
+respectively. There’s basically nothing that can go wrong with these
+parsers so I won’t describe them here further.</p></li>
+<li><p><code>parse_double()</code> is a strict numeric parser, and <code>parse_number()</code>
+is a flexible numeric parser. These are more complicated than you might
+expect because different parts of the world write numbers in different
+ways.</p></li>
+<li><p><code>parse_character()</code> seems so simple that it shouldn’t be necessary. But
+one complication makes it quite important: character encodings.</p></li>
+<li><p><code>parse_factor()</code> create factors, the data structure that R uses to represent
+categorical variables with fixed and known values.</p></li>
+<li><p><code>parse_datetime()</code>, <code>parse_date()</code>, and <code>parse_time()</code> allow you to
+parse various date &amp; time specifications. These are the most complicated
+because there are so many different ways of writing dates.</p></li>
+</ol>
+<p>We will adress only the most important parsers</p>
+</div>
+<div id="numbers" class="section level2" number="12.14">
+<h2><span class="header-section-number">12.14</span> Numbers</h2>
+<p>It seems like it should be straightforward to parse a number, but three problems make it tricky:</p>
+<ul>
+<li>People write numbers differently in different parts of the world. For example, some countries use <code>.</code> as a decimal placeholder, others use <code>,</code>.</li>
+<li>Numbers are often surrounded by other characters that provide some context, like “$8,-” or “99.9%”.</li>
+<li>Numbers often contain “grouping” characters to make them easier to read, like “1,000,000”, and these grouping characters vary around the world.</li>
+</ul>
+</div>
+<div id="overiding-the-default-decimal_mark" class="section level2" number="12.15">
+<h2><span class="header-section-number">12.15</span> Overiding the default <code>decimal_mark</code></h2>
+<p>You can override the default value of <code>.</code> (dot) by creating a new locale and setting the <code>decimal_mark</code> argument:</p>
+<p><strong>Remember, R is US centric, so by default it regards the <code>.</code> as a decimal</strong></p>
+<div class="sourceCode" id="cb755"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb755-1"><a href="importingdata.html#cb755-1"></a><span class="kw">parse_double</span>(<span class="st">&quot;8.78&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] 8.78</code></pre>
+<div class="sourceCode" id="cb757"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb757-1"><a href="importingdata.html#cb757-1"></a><span class="kw">parse_double</span>(<span class="st">&quot;8,78&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">decimal_mark =</span> <span class="st">&quot;,&quot;</span>))</span></code></pre></div>
+<pre><code>## [1] 8.78</code></pre>
+<div class="sourceCode" id="cb759"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb759-1"><a href="importingdata.html#cb759-1"></a><span class="co"># in Some countries &quot;,&quot; is used as a decimal place holder</span></span></code></pre></div>
+</div>
+<div id="numbers-parsing" class="section level2" number="12.16">
+<h2><span class="header-section-number">12.16</span> Numbers parsing</h2>
+<p><code>parse_number()</code> addresses the second problem: it ignores non-numeric characters before and after the number. This is particularly useful for currencies and percentages, but also works to extract numbers embedded in text.</p>
+<p>It can be especially helpful if you are trying to parse an Excel or Excel-derived file, because Excel users often apply some additional formatting to the contents of a workbook.</p>
+<div class="sourceCode" id="cb760"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb760-1"><a href="importingdata.html#cb760-1"></a><span class="kw">parse_number</span>(<span class="st">&quot;$8,-&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] 8</code></pre>
+<div class="sourceCode" id="cb762"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb762-1"><a href="importingdata.html#cb762-1"></a><span class="kw">parse_number</span>(<span class="st">&quot;99.9%&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] 99.9</code></pre>
+</div>
+<div id="grouping-marks" class="section level2" number="12.17">
+<h2><span class="header-section-number">12.17</span> Grouping marks</h2>
+<p>The final problem is addressed by the combination of <code>parse_number()</code> and the locale as <code>parse_number()</code> will ignore the “grouping mark”:</p>
+<div id="exercise-6---grouping-marks" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 6 - grouping marks</strong></mark></h3>
+<ol style="list-style-type: upper-alpha">
+<li><p>Review the documentation for <code>locale()</code></p></li>
+<li><p>Try parsing the following strings as an appropriate number:</p></li>
+</ol>
+<ol style="list-style-type: decimal">
+<li>“$123,456,789”</li>
+<li>“$123.456.789”</li>
+<li>“123’456’’789” (used for example in time annotations or GPS coordinates)</li>
+</ol>
+<p>— <strong>END EXERCISE</strong> —</p>
+</div>
+</div>
+<div id="parsing-factors" class="section level2" number="12.18">
+<h2><span class="header-section-number">12.18</span> Parsing factors</h2>
+<p>R uses factors to represent categorical variables that have a known set of possible values. Give <code>parse_factor()</code> a vector of known <code>levels</code> to generate a warning whenever an unexpected value is present:</p>
+<div class="sourceCode" id="cb764"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb764-1"><a href="importingdata.html#cb764-1"></a>autobots &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Optimus Prime&quot;</span>, <span class="st">&quot;Perceptor&quot;</span>, <span class="st">&quot;Arcee&quot;</span>)</span>
+<span id="cb764-2"><a href="importingdata.html#cb764-2"></a><span class="kw">parse_factor</span>(<span class="kw">c</span>(</span>
+<span id="cb764-3"><a href="importingdata.html#cb764-3"></a>  <span class="st">&quot;Optimus Prime&quot;</span>, <span class="st">&quot;Perceptor&quot;</span>, <span class="st">&quot;Arcee&quot;</span>, <span class="st">&quot;Soundwave&quot;</span>, <span class="st">&quot;Starscream&quot;</span> </span>
+<span id="cb764-4"><a href="importingdata.html#cb764-4"></a>), <span class="dt">levels =</span> autobots)</span></code></pre></div>
+<pre><code>## Warning: 2 parsing failures.
+## row col           expected     actual
+##   4  -- value in level set Soundwave 
+##   5  -- value in level set Starscream</code></pre>
+<pre><code>## [1] Optimus Prime Perceptor     Arcee         &lt;NA&gt;          &lt;NA&gt;         
+## attr(,&quot;problems&quot;)
+## # A tibble: 2 x 4
+##     row   col expected           actual    
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;     
+## 1     4    NA value in level set Soundwave 
+## 2     5    NA value in level set Starscream
+## Levels: Optimus Prime Perceptor Arcee</code></pre>
+<p>But if you have many problematic entries, it’s often easier to leave as character vectors and then use the tools you’ll learn about in [strings] and [factors] to clean them up.</p>
+</div>
+<div id="dates-date-times-and-times" class="section level2" number="12.19">
+<h2><span class="header-section-number">12.19</span> Dates, date-times, and times</h2>
+<p>We already saw dates and date-times in vectors <a href="#lab1bintror"><strong>??</strong></a></p>
+</div>
+<div id="datetime" class="section level2" number="12.20">
+<h2><span class="header-section-number">12.20</span> Datetime</h2>
+<ul>
+<li><code>parse_datetime()</code> expects an ISO8601 date-time. ISO8601 is an international standard in which the components of a date are organised from biggest to smallest:</li>
+</ul>
+<p>year, month, day, hour, minute, second.</p>
+<div class="sourceCode" id="cb767"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb767-1"><a href="importingdata.html#cb767-1"></a><span class="co">## 7 November 1973 at 10 minutes and zero seconds past eight in the evening </span></span>
+<span id="cb767-2"><a href="importingdata.html#cb767-2"></a><span class="kw">parse_datetime</span>(<span class="st">&quot;1973-11-07T2010&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;1973-11-07 20:10:00 UTC&quot;</code></pre>
+<div class="sourceCode" id="cb769"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb769-1"><a href="importingdata.html#cb769-1"></a><span class="co"># If time is omitted, it will be set to midnight</span></span>
+<span id="cb769-2"><a href="importingdata.html#cb769-2"></a><span class="kw">parse_datetime</span>(<span class="st">&quot;19731107&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;1973-11-07 UTC&quot;</code></pre>
+<p>This is the most important date/time standard, and if you work with
+dates and times frequently, I recommend reading
+<a href="https://en.wikipedia.org/wiki/ISO_8601" class="uri">https://en.wikipedia.org/wiki/ISO_8601</a></p>
+</div>
+<div id="date" class="section level2" number="12.21">
+<h2><span class="header-section-number">12.21</span> Date</h2>
+<ul>
+<li><code>parse_date()</code> expects a four digit year, a <code>-</code> or <code>/</code>, the month, a <code>-</code> or <code>/</code>, then the day:</li>
+</ul>
+<div class="sourceCode" id="cb771"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb771-1"><a href="importingdata.html#cb771-1"></a><span class="kw">parse_date</span>(<span class="st">&quot;2010-10-01&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2010-10-01&quot;</code></pre>
+</div>
+<div id="time" class="section level2" number="12.22">
+<h2><span class="header-section-number">12.22</span> Time</h2>
+<ul>
+<li><code>parse_time()</code> expects the hour, <code>:</code>, minutes, optionally <code>:</code> and seconds, and an optional am/pm specifier:</li>
+</ul>
+<div class="sourceCode" id="cb773"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb773-1"><a href="importingdata.html#cb773-1"></a><span class="kw">library</span>(hms)</span>
+<span id="cb773-2"><a href="importingdata.html#cb773-2"></a><span class="kw">parse_time</span>(<span class="st">&quot;01:10 am&quot;</span>)</span></code></pre></div>
+<pre><code>## 01:10:00</code></pre>
+<div class="sourceCode" id="cb775"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb775-1"><a href="importingdata.html#cb775-1"></a><span class="kw">parse_time</span>(<span class="st">&quot;20:10:01&quot;</span>)</span></code></pre></div>
+<pre><code>## 20:10:01</code></pre>
+</div>
+<div id="build-your-own-time-format" class="section level2" number="12.23">
+<h2><span class="header-section-number">12.23</span> Build your own time format</h2>
+<p>The best way to figure out the correct format is to create a few examples in a character vector, and test with one of the parsing functions. For example:</p>
+<div class="sourceCode" id="cb777"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb777-1"><a href="importingdata.html#cb777-1"></a><span class="kw">parse_date</span>(<span class="st">&quot;01/02/15&quot;</span>, <span class="st">&quot;%m/%d/%y&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2015-01-02&quot;</code></pre>
+<div class="sourceCode" id="cb779"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb779-1"><a href="importingdata.html#cb779-1"></a><span class="kw">parse_date</span>(<span class="st">&quot;01/02/15&quot;</span>, <span class="st">&quot;%d/%m/%y&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2015-02-01&quot;</code></pre>
+<div class="sourceCode" id="cb781"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb781-1"><a href="importingdata.html#cb781-1"></a><span class="kw">parse_date</span>(<span class="st">&quot;01/02/15&quot;</span>, <span class="st">&quot;%y/%m/%d&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;2001-02-15&quot;</code></pre>
+<div id="exercise-7---parsing-a-file" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 7 - Parsing a file</strong></mark></h3>
+<p>To parse a file succesfully, you can define the column type in the call to readr</p>
+<ol style="list-style-type: upper-alpha">
+<li>Parse the file “vl5_dummy.csv”
+Be sure to:</li>
+</ol>
+<ul>
+<li>parse factors in the data as factors (<code>Group</code> and <code>Class</code> variable)</li>
+<li>use the <code>cols()</code> function together with the <code>col_types =</code> argument in your call</li>
+<li>to appropriately parse the Date variable (the format is “year’month’day”)</li>
+</ul>
+<p>— <strong>END EXERCISE</strong> —</p>
+</div>
+</div>
+<div id="parsing-dates-is-hard" class="section level2" number="12.24">
+<h2><span class="header-section-number">12.24</span> Parsing dates is hard</h2>
+<p>People are (always) inconsistent in data-entry ;-)
+Here I demonstrate what a regular expression can do to fix this. There is a inappropriate trailing <code>'</code> in the fifth observation of this data. We need to remove it</p>
+<div class="sourceCode" id="cb783"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb783-1"><a href="importingdata.html#cb783-1"></a><span class="co">## the dollar sign ($) signifies the end of a string</span></span>
+<span id="cb783-2"><a href="importingdata.html#cb783-2"></a><span class="kw">str_view</span>(<span class="dt">pattern =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&#39;$&quot;</span>, <span class="dt">string =</span> <span class="st">&quot;14&#39;05&#39;17&#39;&quot;</span>)</span></code></pre></div>
+<div id="htmlwidget-009e07fc7e17b87e97ba" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-009e07fc7e17b87e97ba">{"x":{"html":"<ul>\n  <li>14'05'17<span class='match'>'<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div class="sourceCode" id="cb784"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb784-1"><a href="importingdata.html#cb784-1"></a><span class="co"># correcting the row 5 faulty date entry</span></span>
+<span id="cb784-2"><a href="importingdata.html#cb784-2"></a>data_class &lt;-<span class="st"> </span>data_class <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb784-3"><a href="importingdata.html#cb784-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Date_new =</span> </span>
+<span id="cb784-4"><a href="importingdata.html#cb784-4"></a>    <span class="kw">str_replace_all</span>(</span>
+<span id="cb784-5"><a href="importingdata.html#cb784-5"></a>      <span class="dt">pattern =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&#39;$&quot;</span>, </span>
+<span id="cb784-6"><a href="importingdata.html#cb784-6"></a>      <span class="dt">replacement =</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb784-7"><a href="importingdata.html#cb784-7"></a>      <span class="dt">string =</span> Date</span>
+<span id="cb784-8"><a href="importingdata.html#cb784-8"></a>      )</span>
+<span id="cb784-9"><a href="importingdata.html#cb784-9"></a>)</span>
+<span id="cb784-10"><a href="importingdata.html#cb784-10"></a>data_class</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 7
+##   Group Surname StudentID Class Score Date      Date_new
+##   &lt;fct&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;   
+## 1 1     vip          7789 vl5a     20 17&#39;10&#39;07  17&#39;10&#39;07
+## 2 1     oeps         5567 vl5a     60 18&#39;10&#39;07  18&#39;10&#39;07
+## 3 1     swer         1111 vl5a      5 12&#39;02&#39;04  12&#39;02&#39;04
+## 4 2     hee          7786 vl5b     10 13&#39;12&#39;31  13&#39;12&#39;31
+## 5 2     soof         1112 vl5b     30 14&#39;05&#39;17&#39; 14&#39;05&#39;17
+## 6 2     lien         1253 vl5b     45 12&#39;09&#39;12  12&#39;09&#39;12</code></pre>
+</div>
+<div id="other-types-of-data" class="section level2" number="12.25">
+<h2><span class="header-section-number">12.25</span> Other types of data</h2>
+<p>To get other types of data into R, we recommend starting with the tidyverse packages listed below. They’re certainly not perfect, but they are a good place to start. For rectangular data:</p>
+<ul>
+<li><p>{haven} reads SPSS, Stata, and SAS files.</p></li>
+<li><p>{readxl} reads excel files (both <code>.xls</code> and <code>.xlsx</code>).</p></li>
+<li><p>{DBI}, along with a database specific backend (e.g. <strong>RMySQL</strong>, <strong>RSQLite</strong>, <strong>RPostgreSQL</strong> etc) allows you to run SQL queries against a database and return a data frame.</p></li>
+</ul>
+<p>For hierarchical data: use <strong>jsonlite</strong> (by Jeroen Ooms) for json, and <strong>xml2</strong> for XML. Jenny Bryan has some excellent worked examples at <a href="https://jennybc.github.io/purrr-tutorial/examples.html" class="uri">https://jennybc.github.io/purrr-tutorial/examples.html</a>.</p>
+<p>For other file types, try the <a href="https://cran.r-project.org/doc/manuals/r-release/R-data.html">R data import/export manual</a> and the <a href="https://github.com/leeper/rio"><strong>rio</strong></a> package.</p>
+<div id="exercise-8" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 8</strong></mark></h3>
+<p>8A) What function-call would you use to read a file where fields were separated with<br />
+“|”?</p>
+<p>8B) Apart from <code>file</code>, <code>skip</code>, and <code>comment</code>, what other arguments do
+<code>readr::read_csv()</code> and <code>readr::read_tsv()</code> have in common?</p>
+<p>8C) What are the most important arguments to <code>read_fwf()</code>?</p>
+<div class="sourceCode" id="cb786"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb786-1"><a href="importingdata.html#cb786-1"></a><span class="co">#?readr::read_fwf</span></span></code></pre></div>
+<p>8D) Sometimes strings in a CSV file contain commas. To prevent them from causing problems they need to be surrounded by a quoting character, like <code>"</code> or <code>'</code>. By convention, <code>read_csv()</code> assumes that the quoting character will be <code>"</code>, and if you want to change it you’ll need to
+use <code>read_delim()</code> instead. What arguments do you need to specify to read the following text into a data frame?</p>
+<div class="sourceCode" id="cb787"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb787-1"><a href="importingdata.html#cb787-1"></a>x &lt;-<span class="st"> &quot;x,y</span><span class="ch">\n</span><span class="st">1,&#39;a,b&#39;&quot;</span></span></code></pre></div>
+<p>8E) Identify what is wrong with each of the following inline CSV files. What happens when you run the code?
+Write a code chunk that corrects the code:</p>
+<p>CSV 1</p>
+<div class="sourceCode" id="cb788"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb788-1"><a href="importingdata.html#cb788-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;a,b</span><span class="ch">\n</span><span class="st">1,2,3</span><span class="ch">\n</span><span class="st">4,5,6&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: 2 parsing failures.
+## row col  expected    actual         file
+##   1  -- 2 columns 3 columns literal data
+##   2  -- 2 columns 3 columns literal data</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##       a     b
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2
+## 2     4     5</code></pre>
+<p>CSV 2</p>
+<div class="sourceCode" id="cb791"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb791-1"><a href="importingdata.html#cb791-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;a,b,c</span><span class="ch">\n</span><span class="st">1,2</span><span class="ch">\n</span><span class="st">1,2,3,4&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: 2 parsing failures.
+## row col  expected    actual         file
+##   1  -- 3 columns 2 columns literal data
+##   2  -- 3 columns 4 columns literal data</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##       a     b     c
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     2    NA
+## 2     1     2     3</code></pre>
+<p>CSV 3</p>
+<div class="sourceCode" id="cb794"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb794-1"><a href="importingdata.html#cb794-1"></a><span class="kw">read_csv</span>(<span class="st">&quot;a,b</span><span class="ch">\n\&quot;</span><span class="st">1&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: 2 parsing failures.
+## row col                     expected    actual         file
+##   1  a  closing quote at end of file           literal data
+##   1  -- 2 columns                    1 columns literal data</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##       a b    
+##   &lt;dbl&gt; &lt;chr&gt;
+## 1     1 &lt;NA&gt;</code></pre>
+</div>
+<div id="exercise-9-data-types" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 9 Data types</strong></mark></h3>
+<p>MS Excel is still a frequently used file format: <code>*.xls</code> or the “newer” format <code>*.xlsx</code></p>
+<p>9A) List three reasons why you should avoid MS Excel formats for your data</p>
+<p>9B) Which functions and packages in R (you are allowed to google) can you use to read <code>xls</code> or <code>xlsx</code> files?</p>
+<p>9C) What does <code>CSV</code> mean?</p>
+<p>9D) What type of delimiters (to seperate columns) can be used in datafiles? List at least 3.</p>
+</div>
+</div>
+<div id="exercise-10-loading-datafiles" class="section level2 unnumbered" number="">
+<h2><mark><strong>EXERCISE 10 Loading datafiles</strong></mark></h2>
+<p>For this exercise we are going to load and inspect a number of files</p>
+</div>
+<div id="loading-microsoft-office-excel-files." class="section level2" number="12.26">
+<h2><span class="header-section-number">12.26</span> Loading Microsoft Office Excel files.</h2>
+<p>10A) Loading an Excel file</p>
+<p>In the <code>"./data"</code> folder of your project you wille find several example datafiles that we are going to work on during the exercises.</p>
+<p>The first set we are going to work on is a rather simple example</p>
+<p>“./data/Animals.xls”.</p>
+<p>It is an Miscrosoft Excel file containing brain and body weight of a number of animals: <a href="http://mste.illinois.edu/malcz/DATA/BIOLOGY/Animals.html" class="uri">http://mste.illinois.edu/malcz/DATA/BIOLOGY/Animals.html</a></p>
+<p>DESCRIPTION:
+Average brain and body weights for 27 species of land animals.</p>
+<p>VARIABLES:</p>
+<ul>
+<li>body: body weight in kg</li>
+<li>brain: brain weight in g</li>
+</ul>
+<p>SIZE:</p>
+<ul>
+<li>Observations = 27;</li>
+<li>Variables = 2</li>
+</ul>
+<p>SOURCE:
+Rousseeuw, P.J. &amp; Leroy, A.M. (1987) Robust Regression and Outlier Detection. Wiley, p. 57.</p>
+<p>Write a code chunk that loads the file <code>"./data/Animals.xls"</code> into R.
+You may use any function you like, but you are not allowed to transform the data in any way. Name the file <code>animals</code> as a datatable/dataframe/tibble in R</p>
+<p><strong>TIPs</strong></p>
+<ul>
+<li>You can use the <code>readr::readxl</code> function to solve this question.</li>
+<li>Rember to use <code>library</code> to load the required package(s)</li>
+<li>The first row that contains data is the “Mountain Beaver” observation</li>
+<li>Remember that in some functions you can also set <code>header = FALSE</code></li>
+<li>The variables in this dataset need to be <code>animal</code>, <code>body_weigth</code> and <code>brain_weigth</code> and IN THAT ORDER!. These are the so-called <code>names</code> of the dataframe and can be set or checked using the function <code>names()</code></li>
+<li>Remember <code>dplyr::select</code>, <code>dplyr::filter()</code>, <code>dplyr::group_by</code>, <code>dplyr::summarize()</code></li>
+</ul>
+<div class="sourceCode" id="cb797"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb797-1"><a href="importingdata.html#cb797-1"></a><span class="co"># tidyverse solution</span></span>
+<span id="cb797-2"><a href="importingdata.html#cb797-2"></a><span class="co"># readxl::readxl solution</span></span>
+<span id="cb797-3"><a href="importingdata.html#cb797-3"></a><span class="kw">library</span>(readxl)</span>
+<span id="cb797-4"><a href="importingdata.html#cb797-4"></a>path_to_file &lt;-<span class="st"> </span>here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;Animals.xls&quot;</span>)</span>
+<span id="cb797-5"><a href="importingdata.html#cb797-5"></a>animals_readxl &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_excel</span>(<span class="dt">path =</span> path_to_file, <span class="dt">sheet =</span> <span class="dv">1</span>,</span>
+<span id="cb797-6"><a href="importingdata.html#cb797-6"></a>                              <span class="dt">skip =</span> <span class="dv">1</span>, <span class="dt">trim_ws =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<pre><code>## New names:
+## * `` -&gt; ...1
+## * Weight -&gt; Weight...2
+## * Weight -&gt; Weight...3</code></pre>
+<div class="sourceCode" id="cb799"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb799-1"><a href="importingdata.html#cb799-1"></a>animals_readxl &lt;-<span class="st"> </span><span class="kw">na.omit</span>(animals_readxl)</span>
+<span id="cb799-2"><a href="importingdata.html#cb799-2"></a>animals_readxl &lt;-<span class="st"> </span>animals_readxl[<span class="op">-</span><span class="dv">1</span>,] </span>
+<span id="cb799-3"><a href="importingdata.html#cb799-3"></a></span>
+<span id="cb799-4"><a href="importingdata.html#cb799-4"></a></span>
+<span id="cb799-5"><a href="importingdata.html#cb799-5"></a></span>
+<span id="cb799-6"><a href="importingdata.html#cb799-6"></a><span class="co">#?readxl</span></span>
+<span id="cb799-7"><a href="importingdata.html#cb799-7"></a><span class="co">## something went wrong, we need to skip a line </span></span>
+<span id="cb799-8"><a href="importingdata.html#cb799-8"></a><span class="co">## the names are not correct, change if neccessary, see 2C</span></span></code></pre></div>
+<p>10B) Variable names.
+The <code>names</code> of a dataframe can be found or set with <code>names(dataframe)</code>. Try setting the names for the <code>animal</code> dataframe to <code>animal</code>, <code>body_weigth</code> and <code>brain_weigth</code> and IN THAT ORDER.</p>
+<p>10C) Subsetting.
+The <code>animals</code> data can be subsetted and explored by using the subsetting functions from <code>dplyr</code>.</p>
+<ul>
+<li>Which animal has a body weight of 6654.000 kg and a brain weight of 5712.0 g?</li>
+<li>Write a few lines of code that extract this information from the dataframe.</li>
+</ul>
+<p>10D) Filtering.
+Which animal has the smallest brain weight?
+Write code that confirms this finding</p>
+<p><strong>TIPs</strong></p>
+<ul>
+<li>Use <code>dplyr::filter()</code> and <code>%&gt;%</code> to find the answer.</li>
+<li>You can also use <code>min(vector, na.rm = TRUE)</code> to find the answer.</li>
+<li>Try to write a few lines of code that answer this question with the correct output in the <code>Console</code></li>
+</ul>
+<p>10E) Plots;
+Create a plot that shows the realtionship between <code>body_weigth</code> and <code>brain_weight</code>. Create a dot plot, that shows this relationship.</p>
+<p><strong>TIPs</strong></p>
+<ul>
+<li>Remember <code>ggplot2</code> from the “Visualizations” class</li>
+<li>Remember <code>geom_point()</code></li>
+<li>Remember <code>geom_smooth()</code></li>
+<li>Remember using <code>%&gt;%</code> in conjunction with <code>ggplot()</code> and the <code>dplyr</code> verbs</li>
+</ul>
+<p>10F) Removing oulier.
+On the basis of the plot above, construct a new plot that eliminates the data point for the animal “Brachiosaurus”. What can you conclude from the relationship between body weigth and brain weigth, from this new plot?</p>
+<p>From the plot, what can you conclude about the relationship. Are there any outliers?</p>
+<p>10G) Data Transformation.
+Plot the relationship of the full dataset (including “Brachiosaurus”), between body weight and brain weight.
+Transform the body_weight variable to a log10 scale</p>
+<p>10H) What can you conclude from the 3G plot?
+What happens to the relation between body_weigt and brain_weight if you excluse all dinosaurs (“Brachiosaurus”, “Diplodocus” and “Triceratops”) from the dataset?
+<strong>Write a short conclusion on this plot.</strong></p>
+<div id="exercise-11-storms-dataset" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 11 STORMS DATASET</strong></mark></h3>
+<p>11A) Many times data files are compressed. To uncompress a file it depends on the type of archive which function to use. Here we will try to extract the file from “.bz2” archive. This file is in “/data/storm_data_csv.bz2”. You will need the package <code>{R.utils}</code> and the function from that package <code>bunzip2()</code>. Set the <code>remove</code> option to FALSE to keep the original archive. This file is big, so it can take a while to load it.
+Information on this data can be viewed in the data dictionary “./data/supporting/data_dictionary_storm_data.csv.bz2.txt”
+The zipped data is in “./data/strom_data.csv.bz2”</p>
+<p><strong>TIPS</strong>
+- You should know that many times when a files is compressed it is big. How would you inspect the file to know what the delimeter is of the file, without reading the full file into R? Maybe use the Linux Terminal?
+- There will be some parsing error, you can ignore those for this exercise</p>
+<p>11B) Inspect the storm data. What types of variables are included. Think of a way to get started with a first interesting observation in a visualization.</p>
+<p>11C) Preprocessing the data
+This dataset is rather large (almost a million datapoints). For the sake of speed we will clean up the data in the chunk below. Go over the different steps and discribe in your own words what each step does</p>
+<div class="sourceCode" id="cb800"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb800-1"><a href="importingdata.html#cb800-1"></a>types &lt;-<span class="st"> </span><span class="kw">unique</span>(storm<span class="op">$</span>EVTYPE) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb800-2"><a href="importingdata.html#cb800-2"></a><span class="st">  </span><span class="kw">enframe</span>()</span>
+<span id="cb800-3"><a href="importingdata.html#cb800-3"></a></span>
+<span id="cb800-4"><a href="importingdata.html#cb800-4"></a><span class="co">## step 1.</span></span>
+<span id="cb800-5"><a href="importingdata.html#cb800-5"></a><span class="kw">names</span>(storm) &lt;-<span class="st"> </span><span class="kw">names</span>(storm) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb800-6"><a href="importingdata.html#cb800-6"></a><span class="st">  </span><span class="kw">tolower</span>() </span>
+<span id="cb800-7"><a href="importingdata.html#cb800-7"></a><span class="kw">names</span>(storm)</span></code></pre></div>
+<pre><code>##  [1] &quot;state__&quot;    &quot;bgn_date&quot;   &quot;bgn_time&quot;   &quot;time_zone&quot;  &quot;county&quot;    
+##  [6] &quot;countyname&quot; &quot;state&quot;      &quot;evtype&quot;     &quot;bgn_range&quot;  &quot;bgn_azi&quot;   
+## [11] &quot;bgn_locati&quot; &quot;end_date&quot;   &quot;end_time&quot;   &quot;county_end&quot; &quot;countyendn&quot;
+## [16] &quot;end_range&quot;  &quot;end_azi&quot;    &quot;end_locati&quot; &quot;length&quot;     &quot;width&quot;     
+## [21] &quot;f&quot;          &quot;mag&quot;        &quot;fatalities&quot; &quot;injuries&quot;   &quot;propdmg&quot;   
+## [26] &quot;propdmgexp&quot; &quot;cropdmg&quot;    &quot;cropdmgexp&quot; &quot;wfo&quot;        &quot;stateoffic&quot;
+## [31] &quot;zonenames&quot;  &quot;latitude&quot;   &quot;longitude&quot;  &quot;latitude_e&quot; &quot;longitude_&quot;
+## [36] &quot;remarks&quot;    &quot;refnum&quot;</code></pre>
+<div class="sourceCode" id="cb802"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb802-1"><a href="importingdata.html#cb802-1"></a><span class="co">## step 2.</span></span>
+<span id="cb802-2"><a href="importingdata.html#cb802-2"></a>storm <span class="op">%&gt;%</span></span>
+<span id="cb802-3"><a href="importingdata.html#cb802-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">evtype =</span> <span class="kw">str_trim</span>(evtype),                                             </span>
+<span id="cb802-4"><a href="importingdata.html#cb802-4"></a>         <span class="dt">year =</span> <span class="kw">format</span>(<span class="kw">strptime</span>(bgn_date,</span>
+<span id="cb802-5"><a href="importingdata.html#cb802-5"></a>         <span class="dt">format=</span><span class="st">&quot;%m/%d/%Y %T&quot;</span>), <span class="dt">format=</span><span class="st">&quot;%Y&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb802-6"><a href="importingdata.html#cb802-6"></a><span class="st">  </span><span class="kw">select</span>(</span>
+<span id="cb802-7"><a href="importingdata.html#cb802-7"></a>    state__,</span>
+<span id="cb802-8"><a href="importingdata.html#cb802-8"></a>    bgn_date,</span>
+<span id="cb802-9"><a href="importingdata.html#cb802-9"></a>    bgn_time,</span>
+<span id="cb802-10"><a href="importingdata.html#cb802-10"></a>    state,</span>
+<span id="cb802-11"><a href="importingdata.html#cb802-11"></a>    year,</span>
+<span id="cb802-12"><a href="importingdata.html#cb802-12"></a>    evtype,</span>
+<span id="cb802-13"><a href="importingdata.html#cb802-13"></a>    f,</span>
+<span id="cb802-14"><a href="importingdata.html#cb802-14"></a>    fatalities,</span>
+<span id="cb802-15"><a href="importingdata.html#cb802-15"></a>    injuries, </span>
+<span id="cb802-16"><a href="importingdata.html#cb802-16"></a>    mag,</span>
+<span id="cb802-17"><a href="importingdata.html#cb802-17"></a>    propdmg,</span>
+<span id="cb802-18"><a href="importingdata.html#cb802-18"></a>    propdmgexp,</span>
+<span id="cb802-19"><a href="importingdata.html#cb802-19"></a>    cropdmg,</span>
+<span id="cb802-20"><a href="importingdata.html#cb802-20"></a>    cropdmgexp) -&gt;<span class="st"> </span>storm_cleaned</span></code></pre></div>
+<p>11D) Try to answer these question from the storms data:</p>
+<ol style="list-style-type: decimal">
+<li>Which weather events were most harmful to the population health</li>
+<li>Which weather events had the greatest economic consequences.</li>
+</ol>
+<p><em>Harm to population health is measured in terms of injuries and fatalities, while economic consequences are measured in terms of dollar amounts.</em></p>
+<p><strong>TIPs</strong></p>
+<ul>
+<li>Remember ggplot’s <code>aes(group = ...)</code> and/or <code>aes(color = ...</code> and <code>facet_wrap()</code></li>
+<li>This dataset is quite big, try some summarizing before plotting first</li>
+</ul>
+<p>11E) Which state has the most Tornados?</p>
+<p>11F) Which state has the most injuries</p>
+<p>11G) In which year was the worst Tornado with the most casualties
+Check if you graph is a close representation of the information in this <a href="https://en.wikipedia.org/wiki/Tornado_records">wiki</a></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tidydata.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="assumptions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/uashogeschoolutrecht/staRters/edit/master/ch10-importingdata.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["exploratory_data_analysis.pdf", "exploratory_data_analysis.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

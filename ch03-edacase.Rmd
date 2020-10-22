@@ -1,0 +1,366 @@
+# Case Example {#edacase}
+
+This Chapter illustrates a case example for EDA with real-life data. It takes you through some of the steps of the EDA checklist and illustrates the Problem-Plan-Data-Analysis-Conclusion, shortly 'PPDAC' cycle of EDA. More details on EDA will be discussed in Chapter \@ref(lab5eda)
+
+## Packages needed for the analysis below
+```{r, warning=FALSE, error=FALSE, message=FALSE}
+library(tidyverse)
+library(DiagrammeR)
+library(magrittr)
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+library(captioner)
+
+```
+
+## The curious case of the Frederick Shipman murders
+
+[From Wikipedia](https://en.wikipedia.org/wiki/Harold_Shipman) 
+
+"Harold Frederick Shipman (14 January 1946 – 13 January 2004) was an English general practitioner and is one of the most prolific serial killers in history. On 31 January 2000, a jury found Shipman guilty of the murder of 15 patients under his care. He was sentenced to life imprisonment with the recommendation that he never be released.
+
+The Shipman Inquiry, a two-year-long investigation of all deaths certified by Shipman, which was chaired by Dame Janet Smith, examined Shipman's crimes. _The inquiry identified 215 victims and estimated his total victim count at 250, about 80% of whom were elderly women. His youngest confirmed victim was a 41-year-old man,[4] although "significant suspicion" arose that he had killed patients as young as four_." 
+
+"Thanks to David Spiegelhalter for pointing me to this nice example for my teaching. I am hoping that you will allow me to 'borrow' it from you" [@spiegelhalter2019]
+
+Some of the R-code chunks below were reproduced from the Github repository accompanying [@spiegelhalter2019]
+
+## The PPDAC cycle 
+The PPDAC Cycle [@spiegelhalter2019; @mackay2000] is a conceptualization for the iterative EDA process where you: 
+
+ 1. Start with a **PROBLEM** (or question)
+ 1. You devise a **PLAN** to solve the problem (or answer the question)
+ 1. You collect **DATA** to execute the plan (or perform an experiment)
+ 1. You **ANALYZE** the data
+ 1. Finally, you draw a **CONCLUSION** from the analysis
+ 1. You probably start the cycle again, with a different or slightly different question
+
+```{r, echo = FALSE, fig.cap="The PPDAC cycle of Exploratory Data Analysis in a diagram. Please note that sometimes shortcuts are possible and even feasible. [@spiegelhalter2019, @mackay2000]"}
+
+DiagrammeR::grViz("
+digraph rmarkdown {
+  Problem -> Plan
+  Plan -> Data
+  Data -> Analysis
+  Analysis -> Conclusion 
+  Conclusion -> Problem
+}
+")
+```
+
+## The PPDAC Cycle Starts with a relevant _PROBLEM_.
+
+(ref:shipquestion) The _PROBLEM_ in the case at hand could be: "Did the author of the Wikipedia article above get the facts straight? For example: Is it true that the victims are maninly elderly? Is the statement about the majority of the gender of the victims being female correct? Is the amount of victims right?"
+
+(ref:shipquestion)
+
+## Let's try to come up with a _PLAN_
+
+We already defined our _PROBLEM_, now we need a _PLAN_. When creating a plan it is good to think about what type of information we would need to solve our problem. Think about information in terms of variables in a dataset. In R, we usually work with tabular data in which variables are the columns of our dataset and rows are the observations.
+
+**DISCUSS WITH YOUR NEIGHBOUR**
+If we design a datatable that would provide data with which we could answer the problem, which information would we need?
+
+The data would need to include at least:
+
+ - A list with 'suspected' victims
+ - The age at deadt of each victim
+ - The gender of the victim
+
+With information on these three variables we would be able to solve at least:
+ 
+ 1. How many victims Shipman is suspected of having murdered?
+ 1. What is the gender distribution among victims?
+ 1. What is the age distribution is among victims? 
+ 
+These three subquestions solve our main question: (ref:shipquestion)
+ 
+## Let's look at the available _DATA_
+
+Now that we defined the problem and we have come up with a plan to solve it, we need _DATA_. When acquiring data you carefully need to take into consideration the quality of it. In this case we rely on the integrity of the author of "The art of Statistics" David Speigelhalter. But it is always good to take a look at the original source of the date and in many cases it is preferrable to do the acquisition of the data directly from the (original) source if possible. In later chapters you will learn techniques like webscraping and accessing databases directly from R to achieve this. 
+
+[Here is a link to the original source](https://webarchive.nationalarchives.gov.uk/20090808221518/http://www.the-shipman-inquiry.org.uk/fr_casesbyyear.asp?year=74&from=r)
+
+## Load the Shipman murders data 
+Dataset derived from: https://github.com/dspiegel29/ArtofStatistics [@spiegelhalter2019]
+
+To load the data into R you can run the following command. The datafile is in csv format: 
+
+(ref:csvformat) CSV-format is a non proprietary standard format where columns are seperated by either a `,` (comma) or a `;` (semi-colon). Which is used depends on the region of the World and whether the decimal seperator in that region is a `,` or a `.`. When reading a CSV in R, alway make sure you define the appropriate seperator.
+
+(ref:csvformat)
+
+When loading the data the `data.frame` is stored in the Global Environment of your R-session as `shipman_murders`. You can access this variable by typing its name in the `Console` or inspecting it in the RStudio interactive viewer under the `Environment` tab. 
+
+Run the code below to read the data into R.
+```{r}
+shipman_murders <- read_csv(
+  here::here(
+    "data", 
+    "00-1-shipman-confirmed-victims-x.csv"
+    )
+  )
+```
+
+**EXERCISE 1** Study the code above and discuss the following questions with your neighbour.
+
+A) Without looking in the csv file: What type of seperator does the file data: "00-1-shipman-confirmed-victims-x.csv" have? How would you be able to discover this?
+_There are multiple options._
+
+**TIPS** 
+ 
+ - Try running `help("read_csv")` and read over the manual for this function.
+ - There is also a Linux Terminal solution, do you know which?
+
+B) Can you discover what information is stored in this data by running the command `names(shipman_murders)` in the R Console?
+
+C) How many murdered people are included in the data?
+
+## Analyzing the data
+When obtaining the data it is good to review the EDA checklist to see what could be explored.
+
+When perfoming EDA consider:
+
+ 1. What question(s) are you trying to solve (or prove wrong)?
+ 1. Which information do you need and can you come up with a plan to answer the question(s)
+ 1. What kind of data do you have and how do you treat different types?
+ 1. What’s missing from the data and how do you deal with it?
+ 1. Where are the outliers and why should you care about them?
+ 1. How can you add, change or remove features to get more out of your data?
+ 1. Do you need additional data from other sources to relate to the dataset under scrutany?
+ 1. Are underlying statistical assumptions met / how is data distribution looking?
+ 1. What (exploratory) models apply or fit well to the data?
+ 1. What is the undelying (experimental) design?
+ 1. Is there multi-colinearity?
+
+If we review the list above we can already check a number of items from the list that we have taken care of. Let's take a look at the data first
+
+```{r}
+DT::datatable(shipman_murders)
+```
+
+_If you are viewing this book in a browser you should see an interactive table. Take 5 minutes to study the data and 2 additional minutes to discuss what you see with one of your fellow course participants._
+
+Try accessing the variable called `shipman_murders` by typing it's name in the Console. If all goes well this is what you see:
+
+```{r, echo=FALSE}
+shipman_murders
+```
+
+The data consists of 10 columns (called `variables` in R lingo) and 215 rows (or sometimes called `observations`, `cases`,`incidences` or in this case `subjects`)
+
+## How many people did Shipman kill?
+
+Now that we have the data loaded into R, let's see if we can answer the first of our subquestions.
+
+We could just guess from the table that the `Name` variable identifies the victim and considerig that we have 215 observations, can we conclude that there are 215 people in this list? That would indeed lead us to conclude that the number of 215 victims mentioned on the Wiki page is correct. Can you think of one or more important conditions for the data that need to be met in order for this to be the correct conclusion? 
+
+One important condition could be that there are no duplicated names in the dataset. If we want to confirm there are not, we could take a look at all 215 records and try to remember if we see duplicated names. If we look at this list often enough, this would problably work, but takes quite some time and is error prone.
+
+Now that we have the data in R, why not use The Power of R to shed light on this issue.
+
+## Detecting duplicated names:
+
+The following code:
+
+ 1. Turns all capitals in the variable names into lower case (I will explain in chapter \@ref(lab5eda)) why this is good idea
+ 1. Turns all names in the now `name` variable into lowercase. (can you think why this is a good idea)
+ 1. Removes spaces from all names (assume somebody made a typo)
+ 1. Removes all leading and trailing white spaces from the names
+ 1. Tries to find duplicates in the subject names
+ 
+```{r}
+names(shipman_murders) <- names(shipman_murders) %>%
+  tolower()
+
+shipman_murders <- shipman_murders %>%
+  mutate(name = tolower(name),
+         name = str_replace_all(string = name, pattern = " ", replacement = ""),
+         names = trimws(name))
+
+## show first five names
+shipman_murders$name[1:5]
+
+## now look at duplicates
+duplicated(shipman_murders$name) %>% which(arr.ind = TRUE) %>% length()
+
+```
+
+Let's conclude from the above, that indeed there are 215 unique names in the dataset and that no duplicates exist. So we can answer the first question on how many people Shipman killed with `215`. This number was mentioned on the Wiki as well. 
+_Can you think of an additional check for duplicated names before we move on?_
+
+There are still a number of assumptions that underly this statement and when doing data-analysis it is good practice to clearly and very explicitly state these assumptions. 
+We will first look at the other 2 questions remaining. At the end of this chapter, I will summarize some explicit assumptions to the conclusion of the complete analysis and maybe you can add more.
+
+## Lets investigate what the gender distribution was of the victims and what their ages were
+
+We can do this in several ways: 
+
+ - By just counting the number of males and females
+ - By plotting a bar graph with the number of females and males
+ - By looking at the age distribution by gender
+
+## Inspecting the variables `gender` and `age`
+Below we show the first 5 entries for both variables
+```{r}
+shipman_murders$gender[1:5]
+shipman_murders$age[1:5]
+```
+
+The `gender` variable is a so-called dummy or one-hot encoded variable. Mind that 0 stands for "female" and 1 stand for "male". 
+
+We can recode the variable by doing:
+```{r}
+fct_recode(as_factor(shipman_murders$gender), 
+           male = "1",
+           female = "0"
+           )
+
+## Writing this in a dplyr pipe:
+shipman_murders <- shipman_murders %>%
+  mutate(
+    gender_recoded = fct_recode(as_factor(gender), 
+           male = "1",
+           female = "0"
+           )
+
+  )
+
+## check recoded factor
+shipman_murders$gender_recoded[1:5]
+
+```
+
+## Counting males and females 
+Now that we recoded the variable to something more meaningful, we can answer the questions, first with a simple table
+```{r}
+names(shipman_murders)
+gender_table <- shipman_murders %>%
+  group_by(gender_recoded) %>%
+  select(gender_recoded) %>%
+  tally()
+
+knitr::kable(gender_table)
+ 
+```
+ 
+From the little table above we can concluded that Shipman indeed murdered more females than males, about `r round(178/37, digits = 0)` times as many  
+
+## Now let's look at a bar graph representing this table
+```{r}
+shipman_murders %>%
+  group_by(gender_recoded) %>%
+  select(gender_recoded) %>%
+  tally %>%
+  ggplot(aes(x = reorder(gender_recoded, n), y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  ylab("Number of victims") +
+  theme_bw()
+
+```
+
+## Let's investigate the age distributions
+Firstly, only those of the females and secondly all victims. The dashed blue line indicates the median age, the solid blue line indicates the mean. The graph shows a frequency distribution. 
+
+```{r}
+shipman_murders
+
+age_descriptors <- shipman_murders %>%
+  group_by(gender_recoded) %>%
+  dplyr::select(age, gender_recoded) %>%
+  summarise(mean_age = mean(age),
+            median_age = median(age),
+            sd_age = sd(age))
+
+age_descriptors
+  
+shipman_murders %>%
+  dplyr::filter(gender_recoded == "female") %>%
+  ggplot(aes(x = age)) +
+#  geom_freqpoly(colour = "darkred", size = 1.5) +
+  geom_histogram(alpha = 0.5, fill = "black", colour = "darkgreen") +
+  geom_vline(aes(xintercept = age_descriptors$median_age[1]), 
+             linetype = "dashed", 
+             colour = "red", 
+             size = 1) +
+  geom_vline(aes(xintercept = age_descriptors$mean_age[1]), 
+             linetype = "solid", 
+             colour = "red", 
+             size = 1) +
+  theme_bw() +
+  ggtitle("Age distributions in females, \n dashed line is the median, solid line the mean age")
+```
+
+## Distribution for both genders
+Here we include the males into the distribution analysis. We use a frequency distribution represented by a line in stead of a histogram for easier comparison. Red vertical lines are mean (solid) and median (dashed) for the females, blue vertical lines for the males.
+```{r}
+shipman_murders %>%
+#  dplyr::filter(gender_recoded == "female") %>%
+  ggplot(aes(x = age, y = ..scaled..)) +
+#  geom_freqpoly(colour = "darkred", size = 1.5) +
+  geom_density(aes(colour = gender_recoded)) +
+  geom_vline(aes(xintercept = age_descriptors$median_age[1]), 
+             linetype = "dashed", 
+             colour = "red", 
+             size = 1) +
+  geom_vline(aes(xintercept = age_descriptors$mean_age[1]), 
+             linetype = "solid", 
+             colour = "red", 
+             size = 1) +
+  geom_vline(aes(xintercept = age_descriptors$median_age[2]), 
+             linetype = "dashed", 
+             colour = "blue", 
+             size = 1) +
+  geom_vline(aes(xintercept = age_descriptors$mean_age[2]), 
+             linetype = "solid", 
+             colour = "blue", 
+             size = 1) +
+  theme_bw()
+
+```
+
+## Boxplots
+Another, more condensed and maybe clearer represnetation of the data in the figure above is a box plot showing both genders:
+
+```{r}
+shipman_murders %>%
+  ggplot(aes(y = age, x = gender_recoded)) +
+  geom_boxplot(aes(group = gender_recoded, colour = gender_recoded)) +
+  xlab(NULL) +
+  theme_bw()
+  
+  
+```
+
+## Date of death
+One question that might come to mind is when did Shipman murder all those people and is there a relationship between the age of the victim, the gender and the date on which they died. The last figure of this case example can also be found in [@spiegelhalter2019] and is the culminative graph that sums it all.
+
+Below is a reproduction of figure 0.1 from [@spiegelhalter2019], based on the code for this graph on the accompanying github repo to the book, mentioned above.
+
+```{r}
+plot <- shipman_murders %>%
+ggplot(aes(
+  x = fractionaldeathyear,
+  y = age,
+  colour = reorder(gender2, gender)
+  )) +      
+  geom_point(size = 2) +
+  labs(x = "Year", y = "Age of victim") +
+  scale_x_continuous(breaks = seq(1975, 1995, 5),
+    limits = c(1974, 1998)) +
+  scale_y_continuous(breaks = seq(40, 90, 10), limits = c(39, 95)) +
+  scale_size_continuous(name = "Size", guide = FALSE) +
+  scale_colour_brewer(palette = "Set1")  + 
+  theme_bw() +
+  theme(
+    legend.position = c(0.125, 1.12),
+    legend.background = element_rect(colour = "black"),
+    legend.title = element_blank()
+  ) 
+
+  ggMarginal(plot, type="histogram")
+```
+
+Can you spot something peculiar in the histogram for the `Year` variable?

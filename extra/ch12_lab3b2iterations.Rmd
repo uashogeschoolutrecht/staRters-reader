@@ -1,0 +1,343 @@
+# Lab 3B2; Iterations {#lab3b2iterations}
+
+## This material was taken and adapted from "R for Data Science" by  Garret Grolemund & Hadley Wickham
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 5, fig.height = 3)
+```
+
+```{r, root_1, include=FALSE}
+## defines the root of the project for later use
+require("rprojroot") || utils::install.packages("rprojroot")
+library(rprojroot)
+root <- find_root_file(criterion = is_rstudio_project)
+
+
+
+
+
+```
+
+## Prequisites
+```{r}
+library(tidyverse)
+```
+
+## Classical loops
+The times that I need to write loops in R are infrequent. Usually you can bypass the need to use a loop by using functionals. This is explained in the next chapter.
+Howver, sometimes you do need them and it is good to know about them because people coming from other programming languages tend to write many loops in R when they first start writing R code. So it is import to recognize them.
+
+## Why write a loop?
+If we want to compute the mean and sd of every column of dataframe `df` below, we could do:  
+```{r}
+df <- tribble(
+  ~a, ~b, ~c,
+  1,  4,  5,
+  3,  5,  7,
+  4,  9,  8 
+)
+df
+
+mean(df$a)
+mean(df$b)
+mean(df$c)
+
+```
+
+We saw in `Functions` that is is a good rule that if you copy and paste the same code more than twice, there is probably a better way to achieve something. And there is!
+
+## Using a classical `for()`-loop
+The process of writing a loop is:
+
+ - Create an emty vector that for storing the result of the loop
+ - If you know the length of this so-called storage-vector, define it
+ - write the sequence, using `for()`
+ - write the body of the loop, where you use the storage vector and the input to do the calculations for each element in the sequence
+ - check the outcome
+
+**TIPS**
+
+ - To understand how `for()` loops work you need to know how to use `[]` and `[[]]`. Revie the `Vectors` chapter is need be.
+ - Remember, data frame are just special types of lists, you can refer to the i<sup>th</sup> column in a data frame by using [[i]]
+
+```{r}
+means <- numeric(length = 3)
+
+for(i in seq_along(df)){
+  means[[i]] <- mean(df[[i]]) 
+}
+
+means
+```
+
+Because, using functionals is usually easier to understand and write, we will leave it a this lonely loop for now.
+
+## The map functions
+
+The pattern of looping over a vector, doing something to each element and saving the results is so common that the purrr package provides a family of functions to do it for you. There is one function for each type of output:
+
+* `map()`     makes a list.
+* `map_lgl()` makes a logical vector.
+* `map_int()` makes an integer vector.
+* `map_dbl()` makes a double vector.
+* `map_chr()` makes a character vector.
+* `map_df()`
+
+Each function takes a vector as input, applies a function to each piece, and then returns a new vector that's the same length (and has the same names) as the input. The type of the vector is determined by the suffix to the map function. 
+
+The biggest advantage of using functions like `map()` is clarity: they make your code easier to write and to read.
+
+We can use these functions to perform the same computations as the last for loop. Those summary functions returned doubles, so we need to use `map_dbl()`:
+
+
+```{r}
+df <- tibble(a = c(1:9, -999), 
+             b = c(1:5, -999, -999, 8:10),
+             c = LETTERS[1:10])
+df
+```
+
+
+```{r}
+map_dbl(df, mean)
+map_dbl(df, median)
+map_dbl(df, sd)
+```
+
+**Why do we get a warning?**
+
+Compared to using a for loop, focus is on the operation being performed (i.e. `mean()`, `median()`, `sd()`). 
+
+You can rewrite the above, using the pipe.
+
+```{r}
+df %>% map_dbl(mean)
+df %>% map_dbl(median)
+df %>% map_dbl(sd)
+```
+
+There are a few differences between `map_*()` and `col_summary()`:
+
+*   All purrr functions are implemented in C. This makes them a little faster
+    at the expense of readability.
+    
+*   The second argument, `.f`, the function to apply, can be a formula, a 
+    character vector, or an integer vector. You'll learn about those handy 
+    shortcuts in the next section.
+    
+*   `map_*()` uses ... ([dot dot dot]) to pass along additional arguments 
+    to `.f` each time it's called:
+
+    ```{r}
+    map_dbl(df, mean, trim = 0.5)
+    ```
+
+*   The map functions also preserve names:
+
+    ```{r}
+    z <- list(x = 1:3, y = 4:5)
+    map_int(z, length)
+    ```
+
+### Shortcuts
+
+There are a few shortcuts that you can use with `.f` in order to save a little typing. Imagine you want to fit a linear model to each group in a dataset. The following toy example splits the up the `mtcars` dataset in to three pieces (one for each value of cylinder) and fits the same linear model to each piece:  
+
+```{r}
+models <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(function(df) lm(mpg ~ wt, data = df))
+```
+
+The syntax for creating an anonymous function in R is quite verbose so purrr provides a convenient shortcut: a one-sided formula.
+
+```{r}
+models <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(~lm(mpg ~ wt, data = .))
+```
+
+
+When you're looking at many models, you might want to extract a summary statistic like the $R^2$. To do that we need to first run `summary()` and then extract the component called `r.squared`. We could do that using the shorthand for anonymous functions:
+
+```{r}
+models %>% 
+  map(summary) %>% 
+  map_dbl(~.$r.squared)
+```
+
+But extracting named components is a common operation, so purrr provides an even shorter shortcut: you can use a string.
+
+```{r}
+models %>% 
+  map(summary) %>% 
+  map_dbl("r.squared")
+```
+
+You can also use an integer to select elements by position: 
+
+
+## Mapping over multiple arguments
+
+So far we've mapped along a single input. But often you have multiple related inputs that you need iterate along in parallel. That's the job of the `map2()` and `pmap()` functions. For example, imagine you want to simulate some random normals with different means. You know how to do that with `map()`:
+
+```{r}
+mu <- list(5, 10, -3)
+
+mu %>% 
+  map(rnorm, n = 5) %>% 
+  str()
+
+
+```
+
+```{r}
+
+## now we also add a list for the standard deviations for each distribution
+
+sigma <- list(0.4, 2, 0.1)
+
+rnorm(100000) %>% hist
+rnorm(100, mean = 2, sd = 0.1)
+
+## map2 - can be used in a case where the function you want to loop needs two arguments
+distros <- map2(mu, sigma, rnorm, n = 1000) %>% enframe() 
+```
+
+
+## Plotting the distributions
+Here we use a self written function to turn the vector with 1000 normals in each row of `distros` is a dataframe, than plot those subsequentially
+```{r}
+plot_distro <- function(distro){
+  
+  distro %>%
+    enframe() %>%
+    ggplot(aes(x = value)) +
+    geom_histogram()
+  
+  
+} 
+
+map(
+  distros$value,
+  plot_distro
+)
+
+
+## in a panel
+
+map(
+  distros$value,
+  plot_distro
+) %>%
+  cowplot::plot_grid(plotlist = .)
+```
+
+`map2()` generates this series of function calls:
+
+Note that the arguments that vary for each call come _before_ the function; arguments that are the same for every call come _after_.
+
+You could also imagine `map3()`, `map4()`, `map5()`, `map6()` etc, but that would get tedious quickly. Instead, purrr provides `pmap()` which takes a list of arguments. You might use that if you wanted to vary the mean, standard deviation, and number of samples:
+
+```{r}
+n <- list(1, 3, 5)
+args1 <- list(n, mu, sigma)
+args1 %>%
+  pmap(rnorm) %>% 
+  str()
+```
+
+If you don't name the elements of list, `pmap()` will use positional matching when calling the function. That's a little fragile, and makes the code harder to read, so it's better to name the arguments:
+
+```{r, eval = FALSE}
+args2 <- list(mean = mu, sd = sigma, n = n)
+args2 %>% 
+  pmap(rnorm) %>% 
+  str()
+```
+
+Since the arguments are all the same length, it makes sense to store them in a data frame:
+
+```{r}
+
+params <- tribble(
+  ~mean, ~sd, ~n,
+    5,     1,  1,
+   10,     5,  3,
+   -3,    10,  5
+)
+params %>% 
+  pmap(rnorm)
+```
+
+As soon as your code gets complicated, I think a data frame is a good approach because it ensures that each column has a name and is the same length as all the other columns.
+
+
+## Walk {#walk}
+
+Walk is an alternative to map that you use when you want to call a function for its side effects, rather than for its return value. You typically do this because you want to render output to the screen or save files to disk - the important thing is the action, not the return value. Here's a very simple example:
+
+```{r}
+x <- list(1, "a", 3)
+
+x %>% 
+  walk(print)
+```
+
+`walk()` is generally not that useful compared to `walk2()` or `pwalk()`. For example, if you had a list of plots and a vector of file names, you could use `pwalk()` to save each file to the corresponding location on disk:
+
+```{r, eval = FALSE}
+library(ggplot2)
+plots <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(~ggplot(., aes(mpg, wt)) + geom_point())
+paths <- stringr::str_c(names(plots), ".pdf")
+
+pwalk(list(paths, plots), ggsave, path = tempdir())
+```
+
+`walk()`, `walk2()` and `pwalk()` all invisibly return `.x`, the first argument. This makes them suitable for use in the middle of pipelines. 
+
+## Other patterns of for loops
+
+Purrr provides a number of other functions that abstract over other types of for loops. You'll use them less frequently than the map functions, but they're useful to know about. The goal here is to briefly illustrate each function, so hopefully it will come to mind if you see a similar problem in the future. Then you can go look up the documentation for more details.
+
+
+### Reduce and accumulate
+
+Sometimes you have a complex list that you want to reduce to a simple list by repeatedly applying a function that reduces a pair to a singleton. This is useful if you want to apply a two-table dplyr verb to multiple tables. For example, you might have a list of data frames, and you want to reduce to a single data frame by joining the elements together:
+
+```{r}
+dfs <- list(
+  age = tibble(name = "John", age = 30),
+  sex = tibble(name = c("John", "Mary"), sex = c("M", "F")),
+  trt = tibble(name = "Mary", treatment = "A")
+)
+
+dfs %>% reduce(full_join)
+```
+
+Or maybe you have a list of vectors, and want to find the intersection:
+
+```{r}
+vs <- list(
+  c(1, 3, 5, 6, 10),
+  c(1, 2, 3, 7, 8, 10),
+  c(1, 2, 3, 4, 8, 9, 10)
+)
+
+vs %>% reduce(intersect)
+```
+
+The reduce function takes a "binary" function (i.e. a function with two primary inputs), and applies it repeatedly to a list until there is only a single element left.
+
+Accumulate is similar but it keeps all the interim results. You could use it to implement a cumulative sum:
+
+```{r}
+x <- sample(10)
+x
+x %>% accumulate(`+`)
+```
+
+

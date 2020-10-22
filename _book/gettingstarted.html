@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Getting Started | staRters; An introductory workshop for analysis of data with R</title>
+  <meta name="description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Getting Started | staRters; An introductory workshop for analysis of data with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="github-repo" content="uashogeschoolutrecht/staRters" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Getting Started | staRters; An introductory workshop for analysis of data with R" />
+  
+  <meta name="twitter:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  
+
+<meta name="author" content="Marc A.T. Teunis, PhD" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="why-r.html"/>
+<link rel="next" href="edacase.html"/>
+<script src="libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.15/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<script src="libs/d3-5.7.0/d3.min.js"></script>
+<script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<link href="libs/ggiraphjs-0.3.0/ggiraphjs.min.css" rel="stylesheet" />
+<script src="libs/ggiraphjs-0.3.0/ggiraphjs.min.js"></script>
+<script src="libs/girafe-binding-0.7.8/girafe.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Analysis with R for staRters</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="chapter" data-level="2" data-path="why-r.html"><a href="why-r.html"><i class="fa fa-check"></i><b>2</b> Why use R?</a></li>
+<li class="chapter" data-level="3" data-path="gettingstarted.html"><a href="gettingstarted.html"><i class="fa fa-check"></i><b>3</b> Getting Started</a></li>
+<li class="chapter" data-level="4" data-path="edacase.html"><a href="edacase.html"><i class="fa fa-check"></i><b>4</b> Case Example</a></li>
+<li class="chapter" data-level="5" data-path="introrstudio.html"><a href="introrstudio.html"><i class="fa fa-check"></i><b>5</b> Introduction to RStudio</a></li>
+<li class="chapter" data-level="6" data-path="rmarkdown.html"><a href="rmarkdown.html"><i class="fa fa-check"></i><b>6</b> Literate Programming with RMarkdown</a></li>
+<li class="chapter" data-level="7" data-path="intror.html"><a href="intror.html"><i class="fa fa-check"></i><b>7</b> Introduction to R</a></li>
+<li class="chapter" data-level="8" data-path="recursivevectors.html"><a href="recursivevectors.html"><i class="fa fa-check"></i><b>8</b> Lists and dataframes</a></li>
+<li class="chapter" data-level="9" data-path="viz.html"><a href="viz.html"><i class="fa fa-check"></i><b>9</b> Visualize &amp; Explore Data</a></li>
+<li class="chapter" data-level="10" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>10</b> Data Wrangling</a></li>
+<li class="chapter" data-level="11" data-path="tidydata.html"><a href="tidydata.html"><i class="fa fa-check"></i><b>11</b> Tidy Data</a></li>
+<li class="chapter" data-level="12" data-path="importingdata.html"><a href="importingdata.html"><i class="fa fa-check"></i><b>12</b> Importing data</a></li>
+<li class="chapter" data-level="13" data-path="assumptions.html"><a href="assumptions.html"><i class="fa fa-check"></i><b>13</b> Assumptions and statistical models</a></li>
+<li class="chapter" data-level="14" data-path="sampling-bootstrapping.html"><a href="sampling-bootstrapping.html"><i class="fa fa-check"></i><b>14</b> Sampling, Probability distributions and bootstrapping</a></li>
+<li class="chapter" data-level="15" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>15</b> Resources</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/uashogeschoolutrecht/staRters" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">staRters; An introductory workshop for analysis of data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="gettingstarted" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Getting Started</h1>
+<div id="packages" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Packages</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="gettingstarted.html#cb24-1"></a><span class="kw">library</span>(tidyverse)</span></code></pre></div>
+</div>
+<div id="preface" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Preface</h2>
+<p>This is an R-Markdown document. It is an example of literate programming and it illustrates how we can combine code, text and output. It addresses the issue “Write code for humans, not for computers” very nicely.</p>
+<p>Code can be recognized by a code chunck:</p>
+<p><em>start code chunk</em></p>
+<p><code>```{r}</code></p>
+<p><code>library(tidyverse)</code></p>
+<p><code>average &lt;- rnorm(1000) %&gt;%</code></p>
+<p><code>enframe()</code></p>
+<p><code>average %&gt;%</code></p>
+<p><code>ggplot(aes(x = value)) +</code></p>
+<p><code>geom_histogram()</code></p>
+<p><code>```</code></p>
+<p><em>end code chunk</em></p>
+<p>To run the code chunks: set the cursor between the start <code>```{r}</code> and the end
+<code>```</code> of the chunk and press Ctrl, Shift, Enter, or choose “Run” in the top-right lint.</p>
+</div>
+<div id="to-start-a-new-script" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> To start a new script</h2>
+<p>you can look under File -&gt; New File -&gt; RMarkdown or R Script. You will see a lot of other options as well. In this course we will not address these.</p>
+</div>
+<div id="r-rstudio" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> R &amp; RStudio</h2>
+<p>Throughout this course you will be working with the open source programs R and RStudio. RStudio is an integrated development environment (IDE) that allows you to use R in an interactive (and graphical) way, write your scripts/code and manage your workspace. R and Rstudio are already pre-installed on the course laptops, but for home use can be downloaded for free from <a href="http://www.r-project.org" class="uri">http://www.r-project.org</a> and <a href="http://www.rstudio.com" class="uri">http://www.rstudio.com</a>.</p>
+</div>
+<div id="github-account-and-setting-github-credentials-in-rstudio" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Github account and setting github credentials in RStudio</h2>
+<ul>
+<li>Install the package <code>{gitr}</code> (M. Teunis, 2019) using the following code:</li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="gettingstarted.html#cb25-1"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;uashogeschoolutrecht/gitr&quot;</span>) </span>
+<span id="cb25-2"><a href="gettingstarted.html#cb25-2"></a><span class="co">## use this to set your user name and email (you can make a dummy name, </span></span>
+<span id="cb25-3"><a href="gettingstarted.html#cb25-3"></a><span class="co">## you do not need a github account)</span></span>
+<span id="cb25-4"><a href="gettingstarted.html#cb25-4"></a>gitr<span class="op">::</span><span class="kw">set_git_user</span>(<span class="dt">username =</span> <span class="st">&quot;some_username&quot;</span>, <span class="dt">email =</span> <span class="st">&quot;some_email_address&quot;</span>)</span></code></pre></div>
+</div>
+<div id="getting-the-materials-for-the-course-r-scripts" class="section level2" number="3.6">
+<h2><span class="header-section-number">3.6</span> Getting the materials for the course (R scripts):</h2>
+<ol style="list-style-type: decimal">
+<li>Go the following url: <a href="https://github.com/uashogeschoolutrecht/staRters" class="uri">https://github.com/uashogeschoolutrecht/staRters</a></li>
+<li>Copy the url address to the clipboard</li>
+<li>Start a new RStudio Project <code>File</code> -&gt; <code>New Project</code></li>
+<li>Select <code>Version Control</code> -&gt; <code>Git</code></li>
+<li>Paste the url in the <code>Repository URL</code> field</li>
+<li>click <code>Create Project</code> and let the clone finish</li>
+</ol>
+<p><strong>YOU NOW HAVE THE FILES TO START THE FIRST LESSON</strong></p>
+<p>The accompanying Bookdown Webpages to this course can be found at:</p>
+<p><a href="https://bookdown.org/maddocent/starters/" class="uri">https://bookdown.org/maddocent/starters/</a></p>
+</div>
+<div id="cloud-server-for-rstudio" class="section level2" number="3.7">
+<h2><span class="header-section-number">3.7</span> Cloud server for RStudio</h2>
+<p>During the course, we will be using a preinstalled version of the RStudio-IDE (integrated development environment). This IDE version runs on a remote UBUNTU
+18.04 Linux server and has most of the packages that are needed to follow the
+course already installed. You can login at the communicated server address and
+with the credentials supplied at the beginning of the course. The advantage of
+cloud servers is that you do not need to install the software on their
+own laptops.</p>
+<p>The address for the server is: <a href="https://datascience.hu.nl/rstudio/staRters" class="uri">https://datascience.hu.nl/rstudio/staRters</a></p>
+<p>To see what the current working directory (wd) is, you can execute the command</p>
+<p><code>getwd()</code></p>
+<p>in the Console window. Try it now!</p>
+<p>If all went well the latter half of the working directory will state “/exploratory_data”</p>
+</div>
+<div id="relative-paths" class="section level2" number="3.8">
+<h2><span class="header-section-number">3.8</span> Relative paths</h2>
+<p>The <code>getwd()</code> command gets information on the current wd. Some examples taken
+from the internet or classical users of R will tell you to use <code>setwd()</code> to change the working directory. However, please ignore this advice and always work from an RStudio Project in which you can use relative path. The <code>{here}</code> package can help
+you write clear code to achiev this. See for more details: <a href="https://github.com/jennybc/here_here"><code>{here}</code></a></p>
+</div>
+<div id="creating-a-new-r-script" class="section level2" number="3.9">
+<h2><span class="header-section-number">3.9</span> Creating a new R script</h2>
+<p>For most analyses/projects, it is best to start by creating an R script file that will contain all the steps taken to get to a certain result. Initially this might
+be more like a scrapbook to note down what exactly you did.</p>
+<p>Later you can then separate this more cleanly in a workflow (steps taken and/or functions executed) and separate files for function definitions, or even package definitions.</p>
+<p>During this course, we will create special R scripts called RMarkdown (<code>.Rmd</code>) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a workflow and document your steps.</p>
+<p>Common R scripts contains all functions that can to be reused between different exercises (for instance a file named “functions.R”).</p>
+</div>
+<div id="setting-up-package-repositories" class="section level2" number="3.10">
+<h2><span class="header-section-number">3.10</span> Setting up package repositories</h2>
+<p>Default RStudio has only enabled the CRAN repository, but there are other useful repositories that contain nice R packages.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="gettingstarted.html#cb26-1"></a><span class="kw">setRepositories</span>(<span class="dt">graphics=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="installing-a-package-from-a-repository" class="section level2" number="3.11">
+<h2><span class="header-section-number">3.11</span> Installing a package from a repository</h2>
+<p>As an example package (we will be using this later on), we are going to install the “beanplot” package which allows you to easily create so called beanplots. Details of what you can do with them and how to use them, will be provided later during the course. To install the package, go to the Packages window and click on the “install” icon. This will show a popup window where you can type in the name of the package. Type in beanplot and press the “Ok” button. This will download and install the beanplot package.</p>
+</div>
+<div id="do-everything-programmatically" class="section level2" number="3.12">
+<h2><span class="header-section-number">3.12</span> Do everything programmatically</h2>
+<p>The alternative and BETTER WAY is to programmatically install packages:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="gettingstarted.html#cb27-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;beanplot&quot;</span>)</span></code></pre></div>
+<p>To load this library into your workspace, type in library(“beanplot”) in the Console (or even better, in the R script editor window and then press the “Run” button which will execute the code on that particular line in the R script / or choose <code>Cntrl</code>
+and <code>Enter</code> simultaneously).
+You can now use the functions defined within this package, for instance to plot a beanplot of (not so useful) random values</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="gettingstarted.html#cb28-1"></a><span class="kw">library</span>(beanplot)</span>
+<span id="cb28-2"><a href="gettingstarted.html#cb28-2"></a><span class="kw">beanplot</span>(<span class="kw">runif</span>(<span class="dv">100</span>))</span></code></pre></div>
+<p><img src="ch02-gettingstarted_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="getting-help" class="section level2" number="3.13">
+<h2><span class="header-section-number">3.13</span> Getting help</h2>
+<p>Knowing how to get help, might be one of the most important skills when learning a new programming language. In R, there are various ways to get help.</p>
+<p>A good start, is the overview documentation provided within R. You can get to this by executing help.start() in the Console window. This will show the help documentation in the Help window within Rstudio. There are a number of good manuals provided within this documentation, particularly useful are the “An Introduction to R” and “The R language definition” manuals. Have a quick look at both.</p>
+<p>Besides basic documentation, you also can get package specific documentation. The overview of the different packages and corresponding documentation can be found by clicking on the “Packages” link (You can also get here by going to the Packages window directly). How many packages are user specific?
+Lookup the documentation for the function sqrt(), what does it do?
+Run the examples for the function sqrt(). What does this do?</p>
+</div>
+<div id="a-good-resource-to-start" class="section level2" number="3.14">
+<h2><span class="header-section-number">3.14</span> A good resource to start</h2>
+<p>To learn about what resources you can use to learn R and the applications that R can be used for: see chapter <a href="resources.html#resources">15</a></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="why-r.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="edacase.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/uashogeschoolutrecht/staRters/edit/master/ch02-gettingstarted.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["exploratory_data_analysis.pdf", "exploratory_data_analysis.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

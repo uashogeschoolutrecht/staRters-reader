@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>staRters; An introductory workshop for analysis of data with R</title>
+  <meta name="description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="staRters; An introductory workshop for analysis of data with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="github-repo" content="uashogeschoolutrecht/staRters" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="staRters; An introductory workshop for analysis of data with R" />
+  
+  <meta name="twitter:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  
+
+<meta name="author" content="Marc A.T. Teunis, PhD" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="why-r.html"/>
+<script src="libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.15/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<script src="libs/d3-5.7.0/d3.min.js"></script>
+<script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<link href="libs/ggiraphjs-0.3.0/ggiraphjs.min.css" rel="stylesheet" />
+<script src="libs/ggiraphjs-0.3.0/ggiraphjs.min.js"></script>
+<script src="libs/girafe-binding-0.7.8/girafe.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Analysis with R for staRters</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="chapter" data-level="2" data-path="why-r.html"><a href="why-r.html"><i class="fa fa-check"></i><b>2</b> Why use R?</a></li>
+<li class="chapter" data-level="3" data-path="gettingstarted.html"><a href="gettingstarted.html"><i class="fa fa-check"></i><b>3</b> Getting Started</a></li>
+<li class="chapter" data-level="4" data-path="edacase.html"><a href="edacase.html"><i class="fa fa-check"></i><b>4</b> Case Example</a></li>
+<li class="chapter" data-level="5" data-path="introrstudio.html"><a href="introrstudio.html"><i class="fa fa-check"></i><b>5</b> Introduction to RStudio</a></li>
+<li class="chapter" data-level="6" data-path="rmarkdown.html"><a href="rmarkdown.html"><i class="fa fa-check"></i><b>6</b> Literate Programming with RMarkdown</a></li>
+<li class="chapter" data-level="7" data-path="intror.html"><a href="intror.html"><i class="fa fa-check"></i><b>7</b> Introduction to R</a></li>
+<li class="chapter" data-level="8" data-path="recursivevectors.html"><a href="recursivevectors.html"><i class="fa fa-check"></i><b>8</b> Lists and dataframes</a></li>
+<li class="chapter" data-level="9" data-path="viz.html"><a href="viz.html"><i class="fa fa-check"></i><b>9</b> Visualize &amp; Explore Data</a></li>
+<li class="chapter" data-level="10" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>10</b> Data Wrangling</a></li>
+<li class="chapter" data-level="11" data-path="tidydata.html"><a href="tidydata.html"><i class="fa fa-check"></i><b>11</b> Tidy Data</a></li>
+<li class="chapter" data-level="12" data-path="importingdata.html"><a href="importingdata.html"><i class="fa fa-check"></i><b>12</b> Importing data</a></li>
+<li class="chapter" data-level="13" data-path="assumptions.html"><a href="assumptions.html"><i class="fa fa-check"></i><b>13</b> Assumptions and statistical models</a></li>
+<li class="chapter" data-level="14" data-path="sampling-bootstrapping.html"><a href="sampling-bootstrapping.html"><i class="fa fa-check"></i><b>14</b> Sampling, Probability distributions and bootstrapping</a></li>
+<li class="chapter" data-level="15" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>15</b> Resources</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/uashogeschoolutrecht/staRters" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">staRters; An introductory workshop for analysis of data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">staRters; An introductory workshop for analysis of data with R</h1>
+<p class="author"><em>Marc A.T. Teunis, PhD</em></p>
+<p class="date"><em>2020-10-21 20:50:36</em></p>
+</div>
+<div id="prerequisites" class="section level1" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Prerequisites</h1>
+<div id="purpose-of-this-website" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Purpose of this website</h2>
+<p>This website is the accompanying website to the Introductory Workshop on using R called ‘staRters’ during the HU <em>ontwikkelfestival</em>, 2-4 November, 2020.</p>
+<p>The material consists of introductory and supplemental ("./extra) materials to get acquainted with using R for data - analysis and statistics. The course content and further structure of the course are explained in the table of contents.</p>
+<p>All methods described in this website and used in the course relate to the Language and Environment for Statistical Computing called <a href="https://cran.r-project.org/"><strong>R</strong></a> <span class="citation">(R Core Team <a href="#ref-R-base" role="doc-biblioref">2019</a>)</span>. To work more efficiently with R we will be using the most commonly used Integrated Development Environment for R: <a href="https://www.rstudio.com"><strong>RStudio</strong></a> <span class="citation">(RStudio Team <a href="#ref-R-rstudio" role="doc-biblioref">2019</a>)</span>. Initially, you will be working on a pre-installed version of RStudio on a server for which you will receive login credentials.</p>
+</div>
+<div id="r-packages" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> R Packages</h2>
+<p>There are many so-called ‘packages’ to add on to the base-R installation and for this course we use many of them. The code below retrieves the current amount of packages published on the Comprehensive R Archiving Network, which is a main resource for R-packages.</p>
+<p>Usually R-packages can be installed by running this command</p>
+<pre><code>install.packages(&quot;package_name&quot;)</code></pre>
+<p>By using a web scraping approach we can extract the statistics on published packages from the CRAN website. Below, I sho a plot created from this scraped data and a small piece of R-code that retrieves the absolute number of R-packages available on the day that this website was last updated.</p>
+<p>The number of packages has increased enormously over the past 5 years. The graph below shows the progress in the number of packages available from CRAN.</p>
+<p>The function that creates the graph is loaded with the <code>source()</code> function.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1"></a><span class="kw">source</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;code&quot;</span>, <span class="st">&quot;r_packages_graph.R&quot;</span>))</span>
+<span id="cb2-2"><a href="index.html#cb2-2"></a><span class="co">## assigning a plot object </span></span>
+<span id="cb2-3"><a href="index.html#cb2-3"></a>pkgs_plot &lt;-<span class="st"> </span><span class="kw">plot_packages</span>()</span>
+<span id="cb2-4"><a href="index.html#cb2-4"></a><span class="co">## saving plot to disk plot</span></span>
+<span id="cb2-5"><a href="index.html#cb2-5"></a><span class="kw">ggsave</span>(<span class="dt">filename =</span> here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;images&quot;</span>, <span class="st">&quot;rpackages_trend.svg&quot;</span>), </span>
+<span id="cb2-6"><a href="index.html#cb2-6"></a>       <span class="dt">plot =</span> pkgs_plot,</span>
+<span id="cb2-7"><a href="index.html#cb2-7"></a>       <span class="dt">width =</span> <span class="dv">5</span>, <span class="dt">height =</span> <span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1"></a><span class="co">## include plot in document</span></span>
+<span id="cb3-2"><a href="index.html#cb3-2"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;images&quot;</span>, <span class="st">&quot;rpackages_trend.svg&quot;</span>))</span></code></pre></div>
+<p><img src="images/rpackages_trend.svg" /><!-- --></p>
+<p>How many R-packages are available from CRAN on the date that this website was last updated: 2020-10-21</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1"></a><span class="kw">library</span>(rvest)</span>
+<span id="cb4-2"><a href="index.html#cb4-2"></a></span>
+<span id="cb4-3"><a href="index.html#cb4-3"></a>pkgs &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://cran.r-project.org/web/packages/available_packages_by_name.html&quot;</span>)</span>
+<span id="cb4-4"><a href="index.html#cb4-4"></a>mylines &lt;-<span class="st"> </span>pkgs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-5"><a href="index.html#cb4-5"></a><span class="st">    </span><span class="kw">html_nodes</span>(<span class="st">&quot;tr&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb4-6"><a href="index.html#cb4-6"></a><span class="st">    </span><span class="kw">xml_text</span>()</span>
+<span id="cb4-7"><a href="index.html#cb4-7"></a></span>
+<span id="cb4-8"><a href="index.html#cb4-8"></a>nb_pkgs &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">which</span>(<span class="kw">sapply</span>(mylines, nchar)<span class="op">&gt;</span><span class="dv">5</span>))</span>
+<span id="cb4-9"><a href="index.html#cb4-9"></a></span>
+<span id="cb4-10"><a href="index.html#cb4-10"></a><span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&quot;There are&quot;</span>, nb_pkgs, <span class="st">&quot;packages available in CRAN as of&quot;</span>, <span class="kw">Sys.Date</span>()))</span></code></pre></div>
+<pre><code>## [1] &quot;There are 16445 packages available in CRAN as of 2020-10-21&quot;</code></pre>
+<p>Other important resources than CRAN for R-packages are:</p>
+<ul>
+<li><a href="https://www.bioconductor.org/">BIOCONDUCTOR</a>.</li>
+<li><a href="https://github.com">Github</a></li>
+<li><a href="https://bitbucket.org/">Bitbucket</a></li>
+<li><a href="https://ropensci.org/packages/">ROpenSci</a></li>
+</ul>
+<p>A full list of packages that are needed for this course is available in file “./DEPENDECIES.txt”</p>
+</div>
+<div id="getting-the-materials" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Getting the materials</h2>
+<p>To compile this website locally, you can clone the website repository from</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1"></a>urls &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(</span>
+<span id="cb6-2"><a href="index.html#cb6-2"></a>  here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;urls&quot;</span>)</span>
+<span id="cb6-3"><a href="index.html#cb6-3"></a>)</span>
+<span id="cb6-4"><a href="index.html#cb6-4"></a></span>
+<span id="cb6-5"><a href="index.html#cb6-5"></a>urls[<span class="dv">1</span>,<span class="dv">1</span>]</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##   url                                             
+##   &lt;chr&gt;                                           
+## 1 https://github.com/uashogeschoolutrecht/staRters</code></pre>
+<p>You will need to install the <code>{bookdown}</code> package. Run <code>bookdown::render(".")</code> from inside the cloned repo. This repository can also be used to access the course materials directly in RStudio during the workshops.</p>
+</div>
+<div id="getting-r-and-rstudio" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Getting R and RStudio</h2>
+<p>During the course we will be working on a Cloud Computing Environment which provides webaccess to R and RStudio via a Virtual Machine. This machine runs a server edition of RStudio and has the latest R version and all the required packages available. In order to access the server you will need credentials, which you will recieve before the course starts. This is a convenient way to use R in a course and during the course we will only be using this environment. This is to ensure reproducibility and prevents a lot of trouble shooting from your side and the teacher’s side.</p>
+<p>If you want to use R and RStudio locally on your laptop (the teacher will not support this during the course), this is where you can download the software from:</p>
+<p><a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a></p>
+<p><a href="https://cran.r-project.org/">R</a></p>
+</div>
+<div id="the-bookdown-package" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> The <code>{bookdown}</code> package</h2>
+<p>This website was created using the <code>{bookdown}</code> <span class="citation">(Xie <a href="#ref-R-bookdown" role="doc-biblioref">2019</a>)</span> package written by Yihui Xie. The package can be downloaded from CRAN. For more information see the <a href="https://bookdown.org/yihui/bookdown/">documentation</a>.</p>
+<p>The <code>{bookdown}</code> package can be installed from CRAN or Github:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="index.html#cb8-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;bookdown&quot;</span>)</span>
+<span id="cb8-2"><a href="index.html#cb8-2"></a><span class="co"># or the development version</span></span>
+<span id="cb8-3"><a href="index.html#cb8-3"></a><span class="co"># devtools::install_github(&quot;rstudio/bookdown&quot;)</span></span></code></pre></div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-R-base">
+<p>R Core Team. 2019. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.</p>
+</div>
+<div id="ref-R-rstudio">
+<p>RStudio Team. 2019. <em>RStudio: Integrated Development Environment for R</em>. Boston, MA: RStudio, Inc. <a href="http://www.rstudio.com/">http://www.rstudio.com/</a>.</p>
+</div>
+<div id="ref-R-bookdown">
+<p>Xie, Yihui. 2019. <em>Bookdown: Authoring Books and Technical Documents with R Markdown</em>. <a href="https://CRAN.R-project.org/package=bookdown">https://CRAN.R-project.org/package=bookdown</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="why-r.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/uashogeschoolutrecht/staRters/edit/master/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["exploratory_data_analysis.pdf", "exploratory_data_analysis.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

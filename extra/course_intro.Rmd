@@ -1,0 +1,112 @@
+---
+title: "Course intro"
+subtitle: "Data anlaysis with R for staRters"
+author: "Marc A.T. Teunis, Ph.D."
+date: "`r Sys.time()`"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Slides
+
+_"These are the only slides we will see in this course"_
+
+```{r, echo=FALSE}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "rstudio_interface.png"
+  )
+)
+```
+
+
+## Course aim
+
+ - To get to learn the possibilities of R for data analysis
+ - To learn why scripting is essential for reproducible science
+ - To get involved in the HU Data Science community
+ - To get inspired
+ 
+```{r}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "Rlogo.png"
+  )
+)
+```
+ 
+ 
+## Disclaimer
+ 
+ _"Ten minutes of R a day, keeps Excel away (or SPSS for that matter)"_
+ 
+ - There is (much) more ground than we can cover in 3 days
+ - There are more materials that I have included than we will be able to tackle
+ - Learning R is about commitment and putting in 'the hours'
+ - I can point you in the right direction, the rest is up to you
+ - Learning how to program is not the same as learning another software tool
+ - R is not _another_ software tool
+ - If you learn how to program, you (and science) will benefit from it later, so look at it as an investment
+ 
+## Learning how to program {.smaller .build}
+
+ - Google everything, I do too
+ - Has a steep learning curve
+ - Try a hard stop for using 'other' tools
+ - Don't try to be perfect on the first go, these things take time
+ - Reiterate and revisit your code, do not rewrite everything
+ - "Do one thing at a time" - "Do not repeat yourself"
+ - Be aware that there is no turning back...
+ - Once you commit, you will never be the same...
+ 
+```{r, echo=FALSE}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "stairs_ungol.jpg"
+  )
+)
+```
+ 
+ 
+## Etiquettes
+ 
+  - We are with a large group
+  - Please raise your hand if you want to speak out
+  - Please use the chat for questions
+  - If you want to bail out, do so quitely
+  - If you don't agree, please speak up
+  
+## Course flow
+
+ - Demo -> Break -> Assignments, repeat (about 1.5 hours per cycle)
+ - Assignments, Three rooms: _Quiet_, _Conversation_, _Questions_
+ - When working on assignments you can choose a room. I will hop into the questions room 
+ - You can hop in and out different rooms, but be quiet in the _Quiet_ room
+ - Please come back in time to the _Plenary Room_ for the plenary demo sessions 
+ 
+## Contents
+
+ 1. Intro, syntax, objects
+ 2. Visualization, tidy data
+ 3. Wrangling, importing data, statistics
+  
+## Let's get to it!
+
+```{r, echo=FALSE, dpi=60}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "Obama-Yes-We-Can.jpg"
+    
+  )
+)
+```
+

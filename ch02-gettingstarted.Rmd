@@ -1,0 +1,148 @@
+# Getting Started {#gettingstarted}
+
+## Packages
+```{r, message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Preface
+
+This is an R-Markdown document. It is an example of literate programming and it illustrates how we can combine code, text and output. It addresses the issue "Write code for humans, not for computers" very nicely.
+
+Code can be recognized by a code chunck:
+
+_start code chunk_
+
+` ```{r} `
+
+`library(tidyverse)`
+
+`average <- rnorm(1000) %>%` 
+
+  `enframe()`
+
+`average %>%`
+
+  `ggplot(aes(x = value)) +`
+
+  `geom_histogram()`
+
+` ``` `
+
+_end code chunk_
+
+To run the code chunks: set the cursor between the start ` ```{r} ` and the end 
+` ``` ` of the chunk and press Ctrl, Shift, Enter, or choose "Run" in the top-right lint.
+
+## To start a new script 
+you can look under File -> New File -> RMarkdown or R Script. You will see a lot of other options as well. In this course we will not address these.
+
+## R & RStudio
+Throughout this course you will be working with the open source programs R and RStudio. RStudio is an integrated development environment (IDE) that allows you to use R in an interactive (and graphical) way, write your scripts/code and manage your workspace. R and Rstudio are already pre-installed on the course laptops, but for home use can be downloaded for free from http://www.r-project.org and http://www.rstudio.com.
+
+## Github account and setting github credentials in RStudio
+
+ - Install the package `{gitr}` (M. Teunis, 2019) using the following code:
+ 
+```{r, eval = FALSE} 
+devtools::install_github("uashogeschoolutrecht/gitr") 
+## use this to set your user name and email (you can make a dummy name, 
+## you do not need a github account)
+gitr::set_git_user(username = "some_username", email = "some_email_address")
+```
+
+## Getting the materials for the course (R scripts):
+```{r, include=FALSE}
+urls <- read_csv(
+        here::here(
+                "urls"
+        )
+)
+
+urls[3,1] %>% as.character() 
+```
+
+ 1. Go the following url: `r urls[3,1]`
+ 2. Copy the url address to the clipboard
+ 3. Start a new RStudio Project `File` -> `New Project`
+ 4. Select `Version Control` -> `Git` 
+ 5. Paste the url in the `Repository URL` field
+ 6. click `Create Project` and let the clone finish
+ 
+**YOU NOW HAVE THE FILES TO START THE FIRST LESSON** 
+
+The accompanying Bookdown Webpages to this course can be found at:
+
+`r urls[2,1]`
+
+## Cloud server for RStudio
+During the course, we will be using a preinstalled version of the RStudio-IDE (integrated development environment). This IDE version runs on a remote UBUNTU 
+18.04 Linux server and has most of the packages that are needed to follow the 
+course already installed. You can login at the communicated server address and 
+with the credentials supplied at the beginning of the course. The advantage of 
+cloud servers is that you do not need to install the software on their 
+own laptops. 
+
+The address for the server is: `r urls[4,1]`
+
+To see what the current working directory (wd) is, you can execute the command
+
+`getwd()` 
+
+in the Console window. Try it now!
+
+If all went well the latter half of the working directory will state "/exploratory_data"
+
+## Relative paths
+The `getwd()` command gets information on the current wd. Some examples taken 
+from the internet or classical users of R will tell you to use `setwd()` to change the working directory. However, please ignore this advice and always work from an RStudio Project in which you can use relative path. The `{here}` package can help 
+you write clear code to achiev this. See for more details: [`{here}`](https://github.com/jennybc/here_here)
+
+## Creating a new R script
+For most analyses/projects, it is best to start by creating an R script file that will contain all the steps taken to get to a certain result. Initially this might 
+be more like a scrapbook to note down what exactly you did. 
+
+Later you can then separate this more cleanly in a workflow (steps taken and/or functions executed) and separate files for function definitions, or even package definitions. 
+
+During this course, we will create special R scripts called RMarkdown (`.Rmd`) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a workflow and document your steps. 
+
+Common R scripts contains all functions that can to be reused between different exercises (for instance a file named "functions.R"). 
+
+## Setting up package repositories
+Default RStudio has only enabled the CRAN repository, but there are other useful repositories that contain nice R packages. 
+
+```{r, eval = FALSE, echo=TRUE, results='asis'}
+setRepositories(graphics=TRUE)
+```
+
+## Installing a package from a repository
+As an example package (we will be using this later on), we are going to install the "beanplot" package which allows you to easily create so called beanplots. Details of what you can do with them and how to use them, will be provided later during the course. To install the package, go to the Packages window and click on the "install" icon. This will show a popup window where you can type in the name of the package. Type in beanplot and press the "Ok" button. This will download and install the beanplot package.
+
+## Do everything programmatically
+The alternative and BETTER WAY is to programmatically install packages:
+
+```{r, eval=FALSE, echo=TRUE}
+install.packages("beanplot")
+```
+
+To load this library into your workspace, type in library("beanplot") in the Console (or even better, in the R script editor window and then press the "Run" button which will execute the code on that particular line in the R script / or choose `Cntrl` 
+and `Enter` simultaneously).
+You can now use the functions defined within this package, for instance to plot a beanplot of (not so useful) random values
+
+```{r, echo=TRUE, fig.show='asis', results='asis'}
+library(beanplot)
+beanplot(runif(100))
+``` 
+
+## Getting help
+Knowing how to get help, might be one of the most important skills when learning a new programming language. In R, there are various ways to get help. 
+
+A good start, is the overview documentation provided within R. You can get to this by executing help.start() in the Console window. This will show the help documentation in the Help window within Rstudio. There are a number of good manuals provided within this documentation, particularly useful are the "An Introduction to R" and "The R language definition" manuals. Have a quick look at both.
+
+Besides basic documentation, you also can get package specific documentation. The overview of the different packages and corresponding documentation can be found by clicking on the "Packages" link (You can also get here by going to the Packages window directly). How many packages are user specific?
+Lookup the documentation for the function sqrt(), what does it do?
+Run the examples for the function sqrt(). What does this do?
+
+## A good resource to start
+
+To learn about what resources you can use to learn R and the applications that R can be used for: see chapter \@ref(resources)

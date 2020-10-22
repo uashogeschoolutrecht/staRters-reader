@@ -1,0 +1,12 @@
+Package: staRters
+Title: Ontwikkelfestival HU - 2nd November 2020, Utrecht 
+Version: 0.1.0
+Authors@R: person("Marc", "Teunis", email = "marc.teunis@hu.nl", role = c("aut", "cre"))
+Description: This package contains all materials (Rmd, R scripts, images, data etc.
+    used during the 2 November SURFsara Research Bootcamp R Track (Track 3).
+Depends: R (>= 3.5.1)
+License: CC-BY/NC 4.0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+VignetteBuilder: knitr

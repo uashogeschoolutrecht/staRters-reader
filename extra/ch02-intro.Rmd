@@ -1,0 +1,113 @@
+# Introduction {#intro}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 6, fig.height = 4)
+```
+
+## Exploratory Data Analysis
+
+(ref:eda) The process of Exploratory Data Analysis (EDA) is not a formal strict process. It involves interative cycles of `loading`, `cleaning`, `wrangling`, `visualizing`, `communicating` data and patterns in the data. The process of EDA is directed towards gaining insight in the data in basically any way you can. It can involve a number of statical approaches that are sometimes collectively called IDA (Initial Data Analysis), which is the the description and check if undelying assumptions for any formal statitical modelling are met. Usually the formal statistical inference is out of scope of the EDA process, although we will see examples in which statical modelling can help us perform EDA better. Because it is a not-so-strict iterative process there is no formal manual on which steps to peform in the EDA process. You could consider doing EDA more as being in a certain state-of-mind. To help you overcome this rather abstract way of looking at this process, several authors have created a check list to aid performing EDA in a more structured way. Here I will go over such a check list, but bare in minf that is only an aid and no formal manual: __When doing EDA you should always keep an open mind to deviate from the checklist, skip a check-box or add one yourself.__
+
+(ref:eda)
+
+
+## EDA checklist 
+
+"If a checklist is good enough for pilots to use before and after every flight, it’s good enough for data scientists to use with every dataset." A quote from Daniel Bourke on [Towards Data Science](https://towardsdatascience.com/a-gentle-introduction-to-exploratory-data-analysis-f11d843b8184)
+
+When perfoming EDA consider:
+
+ 1. What question(s) are you trying to solve (or prove wrong)?
+ 1. Which information do you need and can you come up with a plan to answer the question(s)
+ 1. What kind of data do you have and how do you treat different types?
+ 1. What’s missing from the data and how do you deal with it?
+ 1. Where are the outliers and why should you care about them?
+ 1. How can you add, change or remove features to get more out of your data?
+ 1. Do you need additional data from other sources to relate to the dataset under scrutiny?
+ 1. Are underlying statistical assumptions met / how is data distribution looking?
+ 1. What (exploratory) models apply or fit well to the data?
+ 1. What is the underlying (experimental) design?
+ 1. Is there multi-colinearity?
+
+I will go over each item in more detail in Chapter \@ref(lab5eda). If you want to get on with a first example to have some practice go directly to Chapter \@ref(edacase). If you have nog programming experience with R, I recommend going over Chapter \@ref(lab1aintrorstudio) and \@ref(lab1bintror) first, before you start with the case example in Chapter \@ref(edacase).
+
+## The `{tidyverse}` packages
+
+The `{tidyverse}` [@tidyverse] is a suite of packages that together form a nice collection of tools to perform different tasks and analyses in R. A complete documentation website to the `{tidyverse}` is maintained [here](https://www.tidyverse.org/)
+
+Many of these packages have multiple contributors but one name cannot be left unmentioned in a paragraph about the tidyverse and that is the name of Dr. Hadley Wickham, Chief Scientist at RStudio, and an Adjunct Professor of Statistics at the University of Auckland, Stanford University, and Rice University. Hadley is one of the dirving forces behind innovation in the R-community when in comes to writing more robust, more reproduciible and more `human-readable` computercode. 
+
+The `{tidyverse}` is meant as a collection of helpful tools for doing data science with R, but it is not meant as a stand-alone suite to be used in isolation. Connecting tidyverse to other packages is encouraged and also feasible and most of the times even necessary to get the job done.
+
+To review some of the tidyverse principles and programming examples in this course the participant is encouraged to read the very comprehensive and complete book written by Garret Grolemund and Hadley wickham called "R for Data Science". This book is freely available as a bookdown website at https://r4ds.had.co.nz/
+
+To download the materials and if you want to recompile it from source: https://github.com/hadley/r4ds. The book is also available in print version, would you prefer that.
+
+loading the tidyverse can be achieved by running this code:
+```{r}
+## if not installed already: install.packages("tidyverse")
+library(tidyverse)
+```
+
+## Inference and Modelling
+This course will not be a statistics course!! So you can relax a bit more now. BUT: we will need som statistical principles and insights to succesfully exploit the complete EDA process. EDA is all about providing insignt into data, you most of the time know very little about on beforehand. Statistics can be very helpfull to find and assess patterns in a more formal way. During this course we will be avoiding in-depth explanations about statitical models and we will use a little formulas as possible. Most of the time, we focus on exploring assumptions that are a prequisite for perfoming statistics. 
+
+Sometimes, we will also looks at more complex examples like for example regressions, regression tree methods like Random Forest or Boosting and Analysis of Variance methods. This is mainly meant as demonstrations how to build upon EDA with modelling and to illustrate how model performace and inferential results can be obtained and read.
+
+## R: A Language and Environment for Statistical Computing 
+The following section was taken from the Wikipage on R at: https://en.wikipedia.org/wiki/R_(programming_language). 
+
+If you are using R and want to refer it in your reference list you can get the full citation like:
+```{r}
+citation()
+```
+Users of LaTeX can also use the BibTex entry to create a reference list.
+
+### History of R
+
+R is an implementation of the S programming language combined with lexical scoping semantics, inspired by Scheme. S was created by John Chambers in 1976, while at Bell Labs. There are some important differences, but much of the code written for S runs unaltered.
+
+R was created by Ross Ihaka and Robert Gentleman[17] at the University of    Auckland, New Zealand, and is currently developed by the R Development Core  Team (of which Chambers is a member).[18] R is named partly after the first  names of the first two R authors and partly as a play on the name of S.[19]  The project was conceived in 1992, with an initial version released in 1995  and a stable beta version in 2000.
+
+### Statistical features
+
+R and its libraries implement a wide variety of statistical and graphical   techniques, including linear and nonlinear modelling, classical statistical  tests, time-series analysis, classification, clustering, and others. R is  easily extensible through functions and extensions, and the R community is  noted for its active contributions in terms of packages. Many of R's standard functions are written in R itself, which makes it easy for users to follow the algorithmic choices made. For computationally intensive tasks, C, C++, and Fortran code can be linked and called at run time. Advanced users can write C, C++,[23] Java,[24] .NET[25] or Python code to manipulate R objects directly.[26] R is highly extensible through the use of user-submitted packages for specific functions or specific areas of study. Due to its S heritage, R has stronger object-oriented programming facilities than most statistical computing languages. Extending R is also eased by its lexical scoping rules.[27]
+
+Another strength of R is static graphics, which can produce publication-quality graphs, including mathematical symbols. Dynamic and interactive graphics are available through additional packages.[28]
+
+R has Rmd, its own LaTeX-like documentation format, which is used to supply  comprehensive documentation, both online in a number of formats and in hard copy.[29] 
+
+For more details on R itself review the Wiki page or look at: https://cran.r-project.org/
+
+## Getting help in R
+As mentioned above R is known for its elaborate documentation. One of the biggest reasons to prefer R above other data science languages like e.g. Python or Perl is that documentation in R is obligatory for each package (hosted on CRAN or BIOCONDUCTOR). This makes finding useful functions and packages and using them in the right context more easy. Let's look at an example:
+
+Consider that you would like to read a csv file into R. Here we will use the standard base-R function `read.csv()` to illustration how the help function works.
+
+To get information on a function type `help("function-or-package-name")` or
+`?function-or-package-name` in the Console
+
+```{r, eval=FALSE}
+help()
+```
+
+
+## Resources for learning
+There are many resources for learning R and doing Data Science with R. One was already mentioned and that is the R for Data Science Book [@r4ds].
+
+A non-exhaustive list is provided in \@ref(resources) and is meant to head you in the right direction. Finding the proper learning reasource that will solve you specific 'Analytics' issue is up to you and part of the fun. Google is defenitively a good mentor to guide you through this process! 
+
+### **EXERCISE** {-}
+Using the function `installed.packages()` and running the code below. Try to figure out how many packages are installed on the RSudio server instance that you have logged onto.
+
+Copy-paste the code below into your R Console and run the code
+
+```{r, results='hide'}
+library(tidyverse)
+pkgs <- installed.packages() %>%
+  as_tibble() 
+pkgs
+```
+
+

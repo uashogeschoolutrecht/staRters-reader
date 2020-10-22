@@ -1,0 +1,720 @@
+# Lab 3B: Functional Programming {#lab3bfunctions}
+
+## Packages
+```{r}
+library(tidyverse)
+```
+
+```{r, include=FALSE}
+## load helper functions
+source(here::here("R", "functions.R"))
+```
+
+
+
+
+## A case example
+
+**DISCUSS WITH YOUR NEIGHBOUR**
+
+ 1. What does the following piece of code do?
+ 1. Can you find the 'mistakes' that were made in this code?
+ 1. How would you avoid these mistakes?
+
+
+```{r, eval=FALSE}
+df$var_a[df$var_a ==  999] <- NA
+df$var_a[df$var_b ==  999] <- NA
+df$var_b[df$var_b == -999] <- NA
+df$var_h[df$var_h == -999] <- NA
+df$var_i[df$var_j == -989] <- NA
+df$var_j[df$var_j == -999] <- NA
+df$var_o[df$var_n == -988] <- "NA"
+## there are at least 5 errors in this code
+```
+Reference: Example (adapted from): Hadley Wickham, "Expressing yourself_ with R" Lecture  - https://richmedia.lse.ac.uk/methodologyinstitute/20170814_ExpressYourselfUsingR.mp4
+
+When working with R you can:
+
+ - Solve each problem separately (and spend a lot of time debugging and copying pasting)
+ - Write small pieces of code (`functions`) that are generalisible to future problems
+
+Let's create some example data and put it in a special data `object` called a data-frame (or a tibble below). A tibble is just a data-frame that prints nicely to the Console. We call the data-frame `df`. The `<-` means that we are `assigning` the tibble on the right to the `variable` on the left.
+Always use the `<-` (left-arrow assignment sign) to assign values to a variable. Do not use the `=` sign for this (you will encounter R code that uses the `=` nonetheless. It works but not always).
+
+```{r}
+df <- tibble(a = c(1:9, -999), 
+             b = c(1:5, -999, -999, 8:10),
+             c = LETTERS[1:10])
+df
+```
+
+Writing a function that replaces 
+`a designated number or string` for `NA` (the R-way of indicating a missing value)
+
+```{r}
+
+## dummies
+x <- c(999, 7767, 999, -999)
+x
+
+#function_name <- function(<args>){
+#
+#    <body><mutats args>
+#   return(<result>)
+#}
+
+
+## define function
+
+replace_indicator_for_na <- function(x, key){
+  
+  x[x == key] <- NA
+ # string <- "done!"
+  return(x)
+
+  
+}
+
+## test function
+replace_indicator_for_na(x = x, key = -999)
+
+
+```
+
+Apply this function to one column of our data-frame `df`
+```{r}
+
+df_modified <- df %>%
+  mutate(a = replace_indicator_for_na(x = a, key = -999),
+         b = replace_indicator_for_na(x = b, key = -999))
+
+
+typeof(df)
+
+lapply(
+  df,
+  FUN = replace_indicator_for_na, key = -999
+) %>% as_tibble()
+
+sapply(
+  df,
+  FUN = replace_indicator_for_na, key = -999
+)
+
+data_files <- here::here("data", "diet")
+
+files <- list.files(
+  data_files,
+  pattern = ".csv",
+  full.names = TRUE)
+
+andy <- read_csv(files[1])
+
+data_diet <- map(
+   .x = files,
+   .f = read_csv, 
+   col_types = cols(
+  `Patient Name` = col_character(),
+  Age = col_double(),
+  Weight = col_character(),
+  Day = col_double())
+ ) %>% dplyr::bind_rows() %>%
+  janitor::clean_names() %>%
+  mutate(weight = replace_indicator_for_na(weight, key = c("?", "missing", "not")))
+
+
+
+```
+
+Apply our function to our whole `df`
+```{r}
+## or using the pipe %>%
+df_new_pipe <- df %>%
+  purrr::modify_if(is.numeric, replace_indicator_for_na, key = "-999") 
+df_new_pipe
+```
+
+Good functions
+
+ * Do one thing good
+ * Have no 'side-effects'
+ * `class(input) = class(output)` (to make the function 'pipe-able')
+
+## EXERCISES {-}
+
+__Write an Rmd file, containing code chunks (if applicable) and answer all the questions below__
+
+## General function model
+
+A function in R takes the general form of:
+
+_`So it takes a function to create a function in R and the R-function it takes is called 'function()'`_
+
+```
+some_descriptive_function_name <- function(function_arguments, ...){
+
+ if(some_condition_on_the_argument(s)){ 
+   message("some message telling that some condition does 
+   meet, concerning the argument")
+ } else {
+   warning/stop("condition does not meet criteria for agument")
+ }
+ 
+  * some operations on the function arguments
+  * some more calculations, 
+  * maybe reshaping the object or looping or transforming
+
+  return(whatever_the_function_returns)
+
+}
+```
+
+## Writing functions is difficult
+Note that writing functions is difficult. It has a steep learning curve and it is an essential part of working with R. Spend time on this and you will reward yourself for it in the future if you want to work with (other) programming languages.
+
+## Do not repeat yourself.
+Remember! If you find yourself typing the same thing more than two times in R: write a function!!`
+
+### **EXERCISE 1 Write a function that can calculate the "mean()" of a numeric (vector).** {-}
+ 
+ - You are not allowed to use the build-in function `mean()`
+ - You may use the preexisting function `sum()` 
+ - The function has to provide a `stop()` if the argument is non-numeric and a message if the argument is numeric.
+ - Test the function with the two vectors below
+ - Name your function: "`calculate_mean()`"
+
+```{r}
+set.seed(1234)
+test_numeric <- rnorm(100)
+test_non_numeric <- c("Wolf", "Deer", "Coyote", "Tiger")
+```
+
+**MODEL**
+```{r, eval=FALSE, echo=TRUE}
+
+calculate_mean <- function(numeric_vector){
+  
+  # step 1: test if argument is numeric, `stop()` if not
+
+    # model for step 1
+  if(is.numeric(numeric_vector)){
+    message("write a clear message what the function is doing with the input here")
+  } else {
+    stop("write the error stop message here")
+  }
+
+  # step 2: calculate the sum of 'numeric_vector'
+  # step 3: determine the length of 'numeric_vector'
+  # step 4: divide sum by length 
+  # step 5: return result of the function with `return(result)`
+
+}
+``` 
+
+```{r, include=FALSE, eval=FALSE}  
+
+# ANSWER
+calculate_mean <- function(numeric_vector){
+ 
+# step 1: 
+  if(is.numeric(numeric_vector)){
+ 
+     message("input vector is numeric. Calculating mean over argument")
+  
+   } else {
+    stop("input vector is not numeric, cannot determine mean over non-numeric arguments, quitting.")
+  
+    }
+  
+# step 2:
+  sum <- sum(numeric_vector)
+  
+# step 3:
+  length <- length(numeric_vector)
+  
+# step 4: 
+  mean <- sum/length
+  
+  return(mean)  
+
+}
+ set.seed(1234)
+test_numeric <- rnorm(100)
+test_non_numeric <- c("Wolf", "Deer", "Coyote", "Tiger") 
+calculate_mean(test_numeric)  
+calculate_mean(test_non_numeric)
+```
+
+
+Extending a function with additional options
+
+1B) Build onto the function created at 1A: The function has to return the mean and has to state whether the input is an integer, a numeric  or a logical vector. 
+
+And if the input is character, it has to stop and display an error message
+
+ - Tip, use multiple `if()` statements and an `else()` to accomplish this
+ - Maybe use `if()` and `else if()`?
+ - Use the following format
+ - Note: you can calculate the mean of a logical vector: Each TRUE in the vector will be automatically converted to a 1, each FALSE will be converted to a 0.
+ - Use the following vectors to test your extended function
+ - Call your function `calculate_mean_extended()`
+
+```
+vector_1 <- c(1:4)
+vector_2 <- c("Tiger", "Wolf", "Zebra")
+vector_3 <- c(1.3, 1.6, 4.6, 7.8)
+vector_4 <- as.logical(c(0,1,1,1,1,1,0,0,0,0,0,1,0))
+vector_5 <- c(TRUE, FALSE, FALSE, TRUE, TRUE)
+``` 
+
+**`if()` MODEL**
+```
+if(is.numeric(vector)){ 
+message("argument is numeric, calculating mean")
+}
+
+The if statment will be evaluated, if the statement is TRUE, the message will be displayed  
+```
+
+```{r, eval=FALSE, include=FALSE}  
+calculate_mean_extended <- function(vector) {
+ 
+# step 1: 
+  
+  if(is.numeric(vector)){ 
+     message("Argument is numeric, calculating mean")
+  }
+  
+  if(is.integer(vector)){
+     message("Argument is an integer, calculating mean")
+  }
+  
+  if(is.logical(vector)){
+     message("Argument is a logical. Converting 'FALSE' to 0 and 'TRUE' to 1, calculating average of zeros and ones. A value of >0.5 will mean that there are more TRUEs than FALSEs in the vector. A value of <0.5 will mean that there are more FALSEs than TRUEs")
+  }
+  
+  if(is.character(vector)){ 
+    stop("argument is a character (vector). Cannot calculate mean over a vector of elements of type 'character'", call. = FALSE)
+  }
+  
+# step 2:
+  sum <- sum(vector)
+  
+# step 3:
+  length <- length(vector)
+  
+# step 4: 
+  mean <- sum/length
+  
+  return(mean)  
+}
+  
+
+vector_1 <- c(1:4)
+vector_2 <- c("Tiger", "Wolf", "Zebra")
+vector_3 <- c(1.3, 1.6, 4.6, 7.8)
+vector_4 <- as.logical(c(0,1,1,1,1,1,0,0,0,0,0,1,0))
+vector_5 <- c(TRUE, FALSE, FALSE, TRUE, TRUE)
+  
+is.numeric(vector_1)
+is.integer(vector_1)  
+is.character(vector_3)
+
+calculate_mean_extended(vector_1)
+calculate_mean_extended(vector_2)
+calculate_mean_extended(vector_3)
+calculate_mean_extended(vector_4)
+calculate_mean_extended(vector_5)
+  
+```
+
+### **EXERCISE 2 Functions with multiple vector arguments** {-}
+
+2A) Create a function that will return the (vectorized) sum of 2 integers.
+
+ * Add a warning for integers that do not have the same length, the function does not need to stop at this.
+
+```{r, include=FALSE, eval=FALSE}
+sum_integers <- function(integer_1, integer_2){
+
+  if(length(integer_1) == length(integer_2)){
+  } else {
+  message("integer arguments are not of the same length, recycling the shortest integer to calculate sum")   
+  }
+  
+  sum_integers <- integer_1 + integer_2
+  return(sum_integers) 
+
+}  
+
+# equal length
+sum_integers(integer_1 = c(1L:5L), integer_2 = c(11L:15L))
+# onequal lenght
+sum_integers(integer_1 = c(1L:5L), integer_2 = c(10L:35L))
+# check function with existing function `sum()`
+sum(integer_1 = c(1L:5L), integer_2 = c(10L:35L))
+```
+
+2B) Create a function that will return TRUE if a given integer is inside a vector.
+
+ * Use is `integer()`
+ * Use `lapply()` look up the help on this function with `?lapply`
+ * Write a `stopifnot()` if the argument is a character vector  
+ 
+```{r}
+
+is_integer_present <- function(vector, integer){
+
+  stopifnot(!is.character(vector))
+  
+  integer_present <- vector == integer
+  true_false <- any(integer_present)
+
+  return(true_false)
+  }
+
+is_integer_present(vector = c(1:40), integer = 39)
+```
+
+## Function with data.frame input
+3) Create a function (called: `print_colnames_and_types()`)that given a data frame, will print to screen the name of the columns and the class of data (in each column) it contains (e.g. Variable1 is Numeric).
+
+ - Remember `typof()`, it can be used to get the type/class of a vector
+ - The function `names()` returns the names of a vector, list or data-frame
+ - Use `lapply()` and `typeof()` to tackle multiple columns 
+ - You can use `unlist()` to unlist the result of `lapply()`
+ - Use `tibble()` to generate the final result
+ - Do you need a warning or an error message to check the class of the input?
+ 
+```{r, eval=FALSE, include = FALSE}
+library(tidyverse)
+
+print_colnames_and_types <- function(df){
+  
+  if(!is.data.frame(df)){
+    stop("input must be of class 'data.frame'")
+  } else {
+  
+  names_vars <- names(df)
+  types_vars <- unlist(lapply(df, typeof))
+  }
+  
+  result <- tibble(names_vars, types_vars)
+  return(result)
+}
+
+# create tibble to check function
+first_var = as.numeric(1:10) 
+second_var = letters[1:10]
+third_var = as.logical(1:10)
+test_df <- tibble(first_var, second_var, third_var)
+
+is.list(test_df)
+is.data.frame(test_df)
+print_colnames_and_types(test_df)
+
+# create list to check function error message
+a = as.numeric(1:10)
+b = as.numeric(11:20)
+d = as.numeric(21:30)
+list <- list(a, b, d)
+typeof(list)
+print_colnames_and_types(list)
+
+# create matrix to check function error message
+matrix <- as.matrix(cbind(a, b, d))
+print_colnames_and_types(matrix)
+names(matrix)
+is.matrix(matrix)
+```
+
+### **EXERCISE 4 Understanding what functions do** {-}
+
+4) Read the source code for each of the following three functions, puzzle out what they do, discuss with your neighbor and then brainstorm better names.
+    
+```{r}
+f1 <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}
+
+f2 <- function(x) {
+  if (length(x) <= 1) return(NULL)
+  x[-length(x)]
+}
+
+f3 <- function(x, y) {
+  rep(y, length.out = length(x))
+}
+```
+
+### **EXERCISE 5 Conditional functions** {-}
+
+Write a greeting function that says "good morning", "good afternoon",
+or "good evening", depending on the time of day. (Hint: use a time
+argument that defaults to `lubridate::now()`. That will make it 
+easier to test your function.)
+
+ - Look at `?lubridate::now()` 
+ - Use `lubridate::now(tzone = "UTC-2:00")` to get the current local time
+ - Use `if()` and `else()`
+ - First write working code and than put the code in a function
+ - Call your function `greetings()`
+ - If you use `libridate::now()` you will get the date and the time of day. How could you split the vector in two? Maybe use `stringr::str_split`? Look at the help for `str_split()`.
+
+```{r, eval=FALSE, include=FALSE}
+greetings <- function(){
+
+now <- lubridate::now("UTC-2:00")
+now <- unlist(stringr::str_split(now, pattern = " "))
+now <- now[2]
+
+if(now <= "12:00:00" & now >= "05:00:00"){cat("Good Morning!")}
+if(now > "12:00:00" & now <= "18:00:00"){cat("Good Afternoon!")}
+if(now > "18:00:00" & now <= "23:00:00"){cat("Good Evening!")}
+if(now > "23:00:00" & now < "05:00:00"){cat("Good Night!")}
+}
+
+greetings()
+```
+
+### **BONUS EXERCISE 6** {-}
+
+More conditional calculations
+
+Implement a `fizzbuzz` function. It takes a single number as input. If the number is divisible by three, it returns "fizz". If it's divisible by five it returns "buzz". If it's divisible by three and five, it returns "fizzbuzz". Otherwise, it returns the number. Make sure you first write working code before you create the function.
+
+Below is a hint of code that could help you to a solution
+
+```{r}
+x <- 1:50
+ case_when(
+   x %% 35 == 0 ~ "fizz buzz",
+   x %% 5 == 0 ~ "fizz",
+   x %% 7 == 0 ~ "buzz",
+   TRUE ~ as.character(x)
+)
+```
+
+
+ -- END EXERCISES --
+
+## Function documentation
+
+Let's consider this function:
+
+```
+rotate_axis_labels <- function(axis, angle, hjust, ...){
+  
+  if(axis == "x" | axis == "X"){
+  theme <- theme(axis.text.x = element_text(angle = angle, hjust = 1), ...)
+    }
+  if(axis == "y" | axis == "Y"){
+  theme <- theme(axis.text.y = element_text(angle = angle, hjust = 1), ...)
+    }
+  return(theme)
+}
+```
+
+**DISCUSS WITH YOUR NEIGHBOUR**
+
+ - What do you think this function does??
+What should be the data type of the arguments `axis`, `angle` and `h_just` and `v_just`?
+What does the `...` do?
+
+## Try out
+The code below illustrates what this function does. Running the following chunk adds the function to the Global Environment. 
+```{r}
+
+rotate_axis_labels <- function(axis = NULL, 
+                               angle = NULL, 
+                               h_just = 1,
+                               v_just = 1,
+                               ...){
+  
+  if(axis == "x" | axis == "X"){
+  theme <- theme(axis.text.x = element_text(angle = angle, 
+                                            hjust = h_just,
+                                            vjust = v_just,
+                                            ...))
+    }
+  if(axis == "y" | axis == "Y"){
+  theme <- theme(axis.text.y = element_text(angle = angle, 
+                                            hjust = h_just,
+                                            vjust = v_just,
+                                            ...))
+    }
+  return(theme)
+}
+
+## you will see the function rotate_axis_labels under "Functions"
+```
+
+Example plot from gapminder data
+Notice the scrunched op x-axis labels
+```{r}
+gapminder::gapminder %>%
+  dplyr::filter(continent == "Europe", year == 1972) %>%
+  ggplot(aes(x = country,
+             y = lifeExp)) +
+  geom_point()
+  
+```
+
+The official ggplot2 solution to rotate the labels is
+```
+p + theme(axis.text.x = element_text(angle = 90))
+```
+I cannot remember this, and many people struggle with this logic, so I wrote my own function (the one above called `rotate_axis_labels()`). It has an argument for which axis the rotation must be applied to (`axis`), an argument for the `angle` to rotate. The arguments `h_just` and `v_just` control the horizontal and vertical displacement of the labels respectively. Finally, the `...` means that you can pass any additional arguments to the ggplot2 function `element_text()`, these will be parsed from the function call to the `element_text()` call through `...`
+
+See the function at work:
+```{r}
+## use default label offset
+
+gapminder::gapminder %>%
+  dplyr::filter(continent == "Europe", year == 1972) %>%
+  ggplot(aes(x = country,
+             y = lifeExp)) +
+  geom_point() +
+  rotate_axis_labels(axis = "X", 
+                     angle = 60)
+
+
+## adapt label offset and use ... to change colour and font face to bold
+
+plot_gapminder_le_vs_country <- function(continent, year){
+
+gapminder::gapminder %>%
+  dplyr::filter(continent == continent, year == year) %>%
+  ggplot(aes(x = country,
+             y = lifeExp)) +
+  geom_point() +
+  rotate_axis_labels(axis = "X", 
+                     angle = 90,
+                     h_just = 1, 
+                     v_just = 0.11, colour = "red", size = 9, face = "bold")
+
+}
+
+plot_gapminder_le_vs_country(continent = "Africa", year = 1972)
+plot_gapminder_le_vs_country(continent = "Europe", year = 1972)
+
+
+
+
+
+
+```
+Note that I demonstrate the use of `...` in the code above, with:
+
+```
+colour = "red", size = 11, face = "bold"
+
+```
+How does this work? See also `?ggplot2::element_text` for more info.
+
+## Documenting a function
+Now that we have an idea on what this function does and what the data type of the arguments that go inside the function call should be we can start writing the documentation for our 'self-written' function.
+Documenting a function is extremely important for reproducibility and robustness of you code. If you don't know what goes in a function, you will have difficulty operating the function and obtaining the correct output.
+The R-package system and the Comprehensive R-Archiving Network, as well as BIOCONDUCTOR, as such a great success because of their rigorous check on documentation for packages that are submitted there. So writing functions, and their documentation could be you first step to writing a package and publishing it so that other people might enjoy your innovations.
+
+### Identifying what elements are in the documentation for a function
+Let's examine the output for the well documented function `mean` from the `base` package
+
+```{r}
+library(dplyr)
+source(
+  here::here(
+  "code",
+  "render_help_to_console.R"))
+help_console(mean)
+
+```
+
+So how would we adapt this documentation to our `rotate_axis_labels()` function?
+
+The elements of the documentation are standardized and each function can be annotated with so-called Roxygen comments (`'#`). These comments can be used to indicate specific fields for documentation and are automatically translated to R-documentation files (`.Rd`) if you are using them in a package-development workflow. 
+To help you in adopting the process of writing R-packages yourself, it is good practice to write Roxygen-documentation for each function you write. Normally you would store each function in it's own `.R` file. For tracebility reasons, it is a good idea to give this file the same name as the name of the function it contains. Mind that this file must only contain the function and it's documentation, nothing else. So testing etc. is performed outside this `.R` file.
+
+Below you see an example of the function definition + documentation for our `rotate_axis_labels()` function. I have included this function in an R-package called `{toolboxr}`. The structure of this package and how to to build your own R package will be discussed in chapter \@ref(lab7bcommunicatereproduce)
+
+```
+#' @title Rotate the x or y axis labels of a ggplot graph
+#' 
+#' @param axis A character string `x`, `X`, `Y` or `y` indicating 
+#' for which axis in the plot the labels need to be rotated 
+#' @param angle A single nummeric value indicating the angle 
+#' of ration. Posive value rotate the label counterclockwise, 
+#' negative values provide a clockwise rotation (which is not recommended)  
+#' @param ... Any addiontional paramters passed to `element_text`. 
+#' See `?element_text` for more options
+#' 
+#' @return An theme element (see ?ggplot::theme for more details)
+#' 
+#' @examples 
+#' library(ggplot2)
+#' library(tidyverse)
+#' 
+#' ## default settings
+#' data(package = "datasets", dataset ="mtcars")
+#' mtcars %>% 
+#' mutate(brand = rownames(.)) %>%
+#'  ggplot(aes(x = reorder(as_factor(brand), mpg),
+#'             y = mpg)) +
+#'  geom_point() +
+#'  rotate_axis_labels(axis = "x", 
+#'                     angle = 90) 
+#' 
+#' ## with use of ... and setting v_just
+#' mtcars %>% 
+#' mutate(brand = rownames(.)) %>%
+#'   ggplot(aes(x = reorder(as_factor(brand), mpg),
+#'              y = mpg)) +
+#'   geom_point() +
+#'   rotate_axis_labels(axis = "x", 
+#'                      angle = 90, 
+#'                      v_just = 0.1, 
+#'                      colour = "purple",
+#'                      face = "bold) 
+#' 
+#' 
+#' @export
+
+rotate_axis_labels <- function(axis = NULL, 
+                               angle = NULL, 
+                               h_just = 1, 
+                               v_just = 1, ...){
+  
+  if(axis == "x" | axis == "X"){
+    theme <- theme(axis.text.x = element_text(angle = angle, 
+                                              hjust = h_just,
+                                              vjust = v_just,
+                                              ...))
+  }
+  if(axis == "y" | axis == "Y"){
+    theme <- theme(axis.text.y = element_text(angle = angle, 
+                                              hjust = h_just,
+                                              vjust = v_just,
+                                              ...))
+  }
+  return(theme)
+}
+
+
+```
+
+### **EXERCISE 7; Roxygen Documentation** {-}
+
+Follow the steps below:
+
+ 1. Create an empty R-script called "is_integer_present.R"
+ 1. Copy the function definition for the function `is_integer_present()` from exercise 2B into this R script.
+ 1. Create a new folder in your RStudio `Home` called `minions`
+ 1. Save the R-script "is_integer_present.R" in the folder "./minions/R"
+ 1. Set up a new RStudio project from the Existing "./minions" folder
+ 1. Open the new RStudio project called "minions"
+ 1. Open the R-script "is_integer_present.R" inside the "minions" project
+ 1. Annotate the function `is_integer_present()` with appropriate Roxygen comments, use at least the fields: `@title`, `@param`, `@return`, `@example`, `@export`
+ 1. Save the function definition file
+ 1. Return to the edamoi bookdown project/website.
+ 

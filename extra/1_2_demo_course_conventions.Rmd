@@ -1,0 +1,165 @@
+---
+title: "Conventions, Code and Data Management"
+author: "Marc A.T. Teunis"
+date: "`r Sys.time()`"
+output:
+  ioslides_presentation: 
+    highlight: pygments
+    widescreen: yes
+---
+
+```{r setup1, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      fig.width = 5, 
+                      fig.height = 3,
+                      warning = FALSE,
+                      message = FALSE,
+                      error = FALSE)
+```
+
+```{r, root_1, include=FALSE}
+## defines the root of the project for later use
+require("rprojroot") || utils::install.packages("rprojroot")
+library(rprojroot)
+root <- find_root_file(criterion = is_rstudio_project)
+```
+
+## Packages
+```{r}
+library(usethis)
+library(devtools)
+library(gapminder)
+library(nycflights13)
+library(tidyverse)
+```
+
+## Code Style
+
+ * The slides in the course contain a number of style and syntax conventions.
+ * Code styles and syntax can vary
+ * Be consistent
+
+## Capitals vs lower case
+
+ * Everything in lower case
+ * I use `snake_case`
+ * Many people use `camelCase`
+
+```{r}
+gapminder %>% names
+flights %>% names
+```
+
+## Printing a tbl_df
+```{r}
+table <- tibble("a_is_a_variable" = c(1:5), "b_is_another_variable" = rnorm(5))
+table
+```
+
+## Variables
+
+ * All lower case
+ * Don't use capitals and special characters in file names
+
+"`excel_file_of_important_dataset.xlsx`"
+
+DON'T: "`data file + version 12_11_2017%.xlsx`"
+
+## Packages referrals
+
+Names of R packages are indicated as:
+
+ * mostly: `{dplyr}`
+ * sometimes: {dplyr}
+ * not often: "dplyr"
+
+## Explicit functions
+
+When we want to be explicit about a certain function in a package:
+
+`dplyr::filter()`
+
+Refers to the `filter()` function in the package `{dplyr}`
+
+## Loose code in the slides
+Sometimes a few lines of codes are displayed for demo purpose:
+
+`four_numbers <- c(1:4)`
+
+`multiply <- 4*four_numbers`
+
+`sum(multiply^2)`
+
+## Code blocks
+
+Code blocks in slides are indicated as below:
+The result of the code is usually also displayed
+```{r, fig.height=2, fig.width=3}
+set.seed(1234)
+code_that_does_something <- rnorm(1000)
+hist(code_that_does_something, main = "rnorm")
+```
+
+## Hiding code 
+
+Sometimes it makes sense to hide the code and only display the result. 
+This can be done by setting the code chunk options `echo = FALSE`
+
+```{r, echo=FALSE, fig.height=2.5, fig.width=3}
+set.seed(1234)
+code_that_does_something <- rnorm(1000)
+hist(code_that_does_something, main = "rnorm")
+```
+
+## Other important chunk options
+
+ * Like hiding the code, we can hide the result of that code and only display the code by setting `results = "hide"`
+ * Setting `eval = FALSE` means the chunk is not included in the slide show at all
+ * Setting `include = FALSE` means the chunk is run and the results are evaluated, but both the code and the results are not included in the slide-show/document 
+ * Controlling settings for the complete document can be done in the `setup*` chunk that you will find in all Rmarkdown files from the course
+
+```{r, setup2, eval = FALSE}
+ knitr::opts_chunk$set(echo = TRUE,
+                       message = FALSE,
+                       warning = FALSE,
+                       error = TRUE,
+                       fig.width = 5, fig.height = 3)
+```
+ 
+ * There are many chunk options. Some we will see in later lessons
+
+## Replacing old, creating new variables
+```{r, eval=FALSE}
+## replacing lifeExp in years for lifeExp in months
+gapminder$lifeExp <- (gapminder$lifeExp*24)
+
+## instead create a new variable in the dataframe
+gapminder <- gapminder %>%
+  mutate(lifeExp_months = lifeExp * 24)
+```
+
+_Mutate new variables on the basis of old one, do not replace the old variable_
+
+## R packages
+
+ * R packages are self-contained pieces of R code that allow easy sharing of R implementations
+ * They follow a strict structure
+ * They allow for versioning
+ * The can be tested (unit tests)
+ * They can be distributed (CRAN, Bioconductor, Github, Bitbucket, ...)
+ * They can be made to fit multiple Operating Sytems
+ 
+## There are many R packages
+
+```{r, r_packages_graph, echo=FALSE}
+source(here::here("/code/r_packages_graph.R"))
+pkgs_plot <- plot_packages()
+pkgs_plot
+```
+
+
+
+ 
+
+
+

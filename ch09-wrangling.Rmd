@@ -1,0 +1,810 @@
+# Data Wrangling {#wrangling}
+
+## Packages
+```{r, message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+library(dslabs)
+```
+
+## Citations
+To get the citations for the packages used in this chapter.
+```{r, eval=FALSE}
+citation(package = "tidyverse")
+citation(package = "dplyr")
+```
+
+## Case Data
+
+ * Pertussis outbreaks from The World Health Organization
+ * http://data.euro.who.int/cisid/?TabID=463987
+ * http://ecdc.europa.eu/sites/portal/files/documents/Pertussis%20AER.pdf
+ * The data used in this presentation has been constructed from the interactive database tool hosted at: http://data.euro.who.int/cisid/ 
+ * A selection was made for all available countries and all available years, for the number of cases reported to the WHO for Whooping Cough - pertussis infections
+ * The file is avaialble in `./data/CISID_pertussis_10082018.csv`
+ * The values included here in the dataset are the total reported cases, per country per year
+ * At the start of the file there are remarks and metadata indicated by `#`
+ * Missing values are indicated with an empty string
+
+Open the file to inspect. The delimeter is `,` and you should see the comments at the start of the file. 
+
+### Read data {-}
+```{r, read_data}
+pertussis_data <- read_csv(
+  file = here::here( 
+                  "data", 
+                  "CISID_pertussis_10082018.csv"),
+                           comment = "#", 
+                           na = c("", " ")
+  )
+
+```
+
+### Inspect data {-}
+```{r, inspect_data}
+pertussis_data
+names(pertussis_data)
+```
+
+### Prepare the data with `{tidyr}` and `{dplyr}` {-}
+The data will be prepared for Exploratory Data Analysis using two core packages of the tidyverse. `{tidyr}` is for reshaping data, `{dplyr}` is for wrangling data.
+
+### Characteristics of the pertussis dataset {-}
+
+- The first few lines of the file have comments indicated with `#`
+- There are 53 countries in the dataset
+- There is no data for the years 1980-1989 and 2014-2018
+- The data is not in `tidy` format
+- Missing values are indicated with __empty cells__
+- It is not a good idea to have a column name starting with a digit; why?
+
+```{r}
+pertussis_data
+```
+
+**Discuss the output with you neighbour**
+
+Try solving the questions:
+
+ - Are the rows observations?
+ - Are the columns variables?
+ - Is there a single value in each cell?
+
+## Tidy data 
+To tidy the pertussis data we need to `gather` the `year` columns. We create a long formatted dataframe containing all the years in one column, all the `annual_pertussis_cases` in another, and all the countries in a seperate column. Each combination will be repated over the new columns automatically.
+
+```{r, eval=FALSE, error_variable_reference}
+## try the code below, why does it fail?
+pertussis_data_tidy <- pertussis_data %>% 
+  gather(1980:2018, key = "year", value = "annual_pertussis_cases")
+```
+
+To reference names that contain 'digits' or other 'special characters'
+
+``` ` ``` 
+
+```{r, good_variable_reference}
+pertussis_data_tidy <- pertussis_data %>% 
+  gather(`1980`:`2018`, key = "year", 
+                        value = "annual_pertussis_cases") %>%
+  mutate(annual_pertussis_cases = as.numeric(annual_pertussis_cases
+                                             ))
+pertussis_data_tidy
+```
+
+## The pipe or "%>%"
+```{r, fig.align='right', echo=FALSE}
+knitr::include_graphics(path = here::here("images", "pipe.png"), dpi = 50)
+```
+
+### Pipes {-}
+
+ - The pipe, `%>%`, comes from the __magrittr__ package by Stefan Milton Bache
+ - Load it explicitly:
+
+```{r magrittr, message = FALSE}
+library(magrittr)
+```
+
+### Using the pipe (`%>%`) {-}
+
+No pipe:
+
+`variable_new <- do_something(variable_old)`
+
+Pipe:
+
+`variable_new <- variable_old %>% 
+  do_something(.)`
+
+or the same:
+
+`variable_new <- variable_old %>% 
+  do_something()`
+
+The `.` (dot) is a placeholder for the 'old' variable. If you need to explicitely refer to something inside `variable_old` e.g. a column in dataframe you can use `.$colum_name` 
+
+## The `{dplyr}` package in detail
+
+_Subsetting, filtering, selecting, summarizing, sorting data(frames)_
+
+### the {dplyr} package {-}
+The dplyr package makes these steps fast and easy:
+
+* dplyr simplifies how you can think about common data manipulation tasks.
+* Simple "verbs", functions that correspond to the most common data manipulation tasks, to help you translate those thoughts into code.
+* It uses efficient data storage backends, so you spend less time waiting for the computer.
+
+### Data bases can be connected to dplyr {-}
+
+ * Besides in-memory data frames
+ * {dplyr} also connects to out-of-memory, remote databases. 
+ * By translating your R code into the appropriate SQL
+ * Allows you to work with both types of data using the same set of tools.
+
+__dplyr can work with data frames as is, but if you're dealing with large data, it's worthwhile to convert them to a `tbl_df`: this is a wrapper around a data frame that won't accidentally print a lot of data to the screen.__
+
+### Verbs {-}
+
+`{dplyr}` aims to provide a function for each basic verb of data manipulation:
+
+* `select()` (and `rename()`)
+* `left_join()` (`full_join()`, `anti_join()`, `right_join()`)
+* `filter()` (and `slice()`)
+* `arrange()`
+* `distinct()`
+* `mutate()` (and `transmute()`)
+* `summarise()`
+* `sample_n()` (and `sample_frac()`)
+
+
+#### `dplyr::rename()` & `dplyr::select()` {-}
+For Renaming variables (`rename()`)
+```{r}
+names(pertussis_data_tidy)
+## we can `rename()` a variable and `select()` variables
+pertussis_data_tidy <- pertussis_data_tidy %>%
+  dplyr::rename(some_strange_index = X1,
+       country = X2)
+
+pertussis_data_tidy %>% head(2)
+```
+
+Dropping the column "some_strange_index (`select()`)
+```{r} 
+pertussis_data_tidy <- pertussis_data_tidy %>%
+  dplyr::select(country,
+          year,
+          annual_pertussis_cases)
+
+pertussis_data_tidy %>% head(2)
+```
+
+Using `-` to drop specific column(s) will also work
+```{r, eval=FALSE} 
+only_cases <- pertussis_data_tidy %>%
+  dplyr::select(-c(country, year))
+
+pertussis_data_tidy %>% head(2)
+
+
+
+
+
+## When selecting multiple columns, construct a vector with `c()`
+## like select(-c(columns_1, columns_2, column_3))
+
+```
+
+#### -- INTERMEZZO -- Creating a joined table {-}
+Before we start playing with the other `{dplyr}` verbs I would like for  you to have a more complex dataset to practice with. Here we create one joining the `gapminder` and our `pertussis` data.
+
+## Join pertussis with gapminder data
+Here we join the pertussis data with the `gapminder` data though an `inner_join()`. `{dplyr}` has many join function, which we will not go into detail here. For more information and a tutorial see:
+http://stat545.com/bit001_dplyr-cheatsheet.html
+
+```{r}
+data("gapminder", package = "dslabs")
+gapminder <- gapminder %>% as_tibble()
+```
+
+#### Using `inner_join()` from `{dplyr}` {-}
+When joining tables you need at least one shared variable, that has the same name in all tables you want to join. We call this variable (or variables) the (primary) `key`s. Here we use `country` and `year` as key to join only those observations that are fully shared for both `key`s in both datasets (`inner_join`) 
+
+```{r}
+# pertussis_data_tidy
+# gapminder
+gapminder$year <- as.character(gapminder$year)
+
+join <-   dplyr::inner_join (gapminder, pertussis_data_tidy, by = c("country", "year")) %>%
+  na.omit()
+join
+```
+*Now we are ready to start exploring and manipulating this dataset and maybe create some visualizations as we go along!*
+
+#### `dplyr::filter()` {-}
+Subsetting data with `filter()`. Filter all data for the country 'The Netherlands'
+```{r}
+# join$year %>% as_factor %>% levels()
+# join$country %>% as_factor() %>% levels()
+netherlands <- join %>%
+  dplyr::filter(country == "Netherlands")
+netherlands
+```
+
+#### Booleans {-}
+Boolans such as `AND`, `OR` and `NOT` can be used to call multiple filter argument. You need to be explicit if you use them:
+
+Using booleans with `filter()`
+```{r}
+#join$year %>% as_factor %>% levels()
+#join$country %>% as_factor() %>% levels()
+
+booleans_demo <- join %>%
+  dplyr::filter(country == "Netherlands" |
+         country == "Belarus" &
+         year == "1990" |                 ## | is OR in R
+         year == "1995" &                 ## & is AND in R   
+         !annual_pertussis_cases < 100)   ## ! is NOT in R (not smaller                                                             than 100)
+booleans_demo
+```
+
+Conditional filtering. Conditions such as:
+
+ - `>` or `>=` (larger than, or larger or eual to), 
+ - `<` or `<=` (smaller than, or smaller or equal to) 
+ - `==` (equal to) 
+ - `!=` (not qual to)
+
+Can be built into a `filter()` or `select()` call as we have seen above.
+Let's apply this to our dataset in more detail. To match multiple filter statements you can use 
+
+`%in%`
+
+This shorthand is synonym for `match()` and takes a vector of values and a table (variable names in our case). 
+
+Look at `?%in%` for more detail amd help
+
+#### Example for using `%in%` (match) {-}
+```{r}
+numbers <- tribble(
+  ~number_1, ~number_2,
+  1,          2,
+  3,          4,
+  5,          6
+)  
+
+match_vector <- c(1,3)
+
+## 
+numbers %>% dplyr::filter(!number_1 %in% match_vector)
+```
+
+Generalized `%in%` looks like
+```
+values_you_want_to_match_against (variable name) %in% values_to_match (vector)
+```
+
+**Discuss with you neighbour**
+Write a filter statement using the `join` data that:
+
+ - filters only those countries that have more than 3000 annual cases for pertussis infection. 
+ - Use only data between year 1990 and 2010 
+ - The resulting table must only contain the variables `year`, `country` and `annual_pertussis_cases` in that order
+ - Create a plot that shows that your code has worked
+
+
+```{r, using_match, options_exercises}
+## first define the values to match against
+years <- c(1990:2010) %>% as.character()
+## than do the filtering using %in%
+join_filtered <- join %>%
+  dplyr::filter(annual_pertussis_cases > 3000 &
+         year %in% years) %>%
+  dplyr::select(year,
+         country,
+         annual_pertussis_cases)
+
+join_filtered %>%
+  ggplot(aes(x = year,
+             y = annual_pertussis_cases)) +
+  geom_point(aes(colour = country)) +
+  geom_line(aes(group = country, colour = country)) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 1))
+```
+
+#### `dplyr::arrange()` {-}
+Sorting data with `arrange()`
+
+ - Sort(rank) your data ascending or descending  
+ - `{dplyr}` verb to use is `arrange()`, 
+ - In conjunction with the `desc()` function if you want to rank in descending order 
+ - `arrange()` takes one or multiple variable names for which you want to sort
+
+#### Example `arrange()` {-}
+```{r}
+## ascending
+join_filtered %>%
+  arrange(annual_pertussis_cases)
+
+## descending
+join_filtered %>%
+  arrange(desc(annual_pertussis_cases))
+
+```
+Apparently the worst `pertussis` year was 1994 in Switzerland?
+
+#### `dplyr::mutate()` {-}
+Changing variables on the basis of a computation (`mutate()`)
+Sometimes you want to change a variable by mutation e.g.:
+
+ - Change type of the variable
+ - Compute a new variable using two exisiting ones
+ - Do a mathmatical transformation (e.g. `log10()` of `log2()`)
+ - ... something else that mutates a variable
+ 
+You can do two things:
+ 
+ 1) Overwrite an existing variable with the newly mutated one
+ 2) Add a newly mutated variable to the existing data
+ 
+#### Example `mutate()` {-}
+The annual pertussis cases is reported as an absolulte number per year. Using the population size from the `gapminder` dataset, we can calculate the number of pertussis cases per 100.000 people in a country with `mutate()`  
+```{r}
+join_new <- join %>% 
+  dplyr::mutate(incidence = 
+                  (annual_pertussis_cases/population)*100000) %>%
+  dplyr::select(incidence, 
+         annual_pertussis_cases, 
+         country, year) %>%
+  arrange(desc(incidence))
+join_new 
+```
+
+Plotting the cases/100.000
+```{r}
+pop_size_corrected <- join_new %>%
+  dplyr::filter(country == "Netherlands" | country == "Norway") %>%
+  ggplot(aes(x = year, 
+             y = incidence)) +
+  geom_line(aes(group = country, colour = country)) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 1))
+
+```
+
+Let's see the difference between correcting for population size or not
+```{r}
+pop_size_uncorrected <- join %>%
+  dplyr::filter(country == "Netherlands" | country == "Norway") %>%
+  ggplot(aes(x = year, 
+             y = annual_pertussis_cases)) +
+  geom_line(aes(group = country, colour = country)) +
+  theme(axis.text.x = element_text(angle = -90, hjust = 1))
+```
+
+Plotting two graphs in a panel
+```{r, fig.width=10}
+cowplot::plot_grid(pop_size_uncorrected,
+                   pop_size_corrected, labels = c("A", "B"))
+```
+
+**Discuss with you neighbour**
+
+Using `dplyr::mutate()`
+
+ - Calculate the log10 of the population in a new variable called `log10_pop`
+ - Add this new variable to the `join` dataset  
+ - Create a plot using this new `log10_pop` variable
+
+
+```{r, correct_population, options_exercises}
+join %>% 
+  dplyr::mutate(log10_pop = log10(population)) %>%
+  ggplot(aes(x = gdp,
+             y = log10_pop)) +
+  geom_point(aes(colour = continent)) 
+#+
+ # facet_wrap(~year)
+
+```
+ 
+#### Summarize data with `dplyr::summarise()` {-}
+Summarizing data is an important step in Exploratory Data Analysis. Especially if you have high deminsional data, summarizing might lead you to interesting findings. It comes at a price howver, you also discard information, so beware!
+
+#### Example `dplyr::summarise()` {-}
+```{r, fig.width=8, fig.height=8}
+summary_plot <- join %>%
+  group_by(country) %>%
+  summarise(total_pertussis_cases = sum(annual_pertussis_cases)) %>%
+  ggplot(aes(x = reorder(as_factor(country), total_pertussis_cases),
+             y = total_pertussis_cases)) +
+  geom_point() +
+  coord_flip() +
+  ylab("Total pertussis cases from 1990 - 2013") +
+  xlab("Country")
+summary_plot
+```
+
+### Case 1; Which country has the highest total number of pertussis cases, over the years?
+
+Create a code chuk below that:
+ 
+ - Groups the data by `gdp`, `continent` and `year` (use the `gapminder` dataset)
+ - Calculate the total population and the total gdp for each continent and each year
+ - Plot the data in a graph that shows the relationship between year, continent, total gdp per continent and total population per continent.
+ 
+**TIP** You might want to map population-size to the size of the datapoints 
+
+```{r, eval=FALSE}
+## your answer goes here --->
+```
+
+```{r, options_exercises}
+plot <- gapminder %>%
+  group_by(year, continent) %>%
+  summarise(total_population = sum(population),
+            total_gdp = sum(gdp), na.rm = TRUE) %>%
+    ggplot(aes(x = year,
+               y = total_gdp)) +
+  geom_point(aes(colour = continent, size = total_population)) +
+  coord_flip()
+plot
+```
+ 
+### Case 2; Is there a relationship between infant mortality and pertussis cases?  
+
+**Write a code chunk below:**
+ 
+ - Using `{ggplot2}`
+ - Plot `annual_pertussis_cases` againt `infant_mortality`
+ - Filter only for "Belarus" and "Netherlands"
+ - Use all available data for these countries
+ - Do not scroll ahead
+ - What do you think is going on with this relationship?
+ - Try using `colour = year` in your code
+ - Try using `facet`s
+ 
+## **ONE POSSIBLE SOLUTION**
+```{r}
+names(join)
+join %>%
+  dplyr::filter(country == "Netherlands" |
+         country == "Belarus") %>%
+      ggplot(aes(x = annual_pertussis_cases,
+               y = infant_mortality)) +
+      geom_point(aes(colour = year)) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ country, scales = "free")
+```
+
+## Other data sources
+dplyr works with data that is stored in other ways, like data tables, databases and multidimensional arrays.
+
+To see a tutorial: https://db.rstudio.com/dplyr/ 
+
+## EXERCISES {-}
+
+
+```{r, include=FALSE}
+options_exercises <- knitr::opts_chunk$set(echo = FALSE,
+                          warning = FALSE,
+                          error = FALSE,
+                          message = FALSE,
+                          results = 'hide',
+                          fig.show = 'hide')
+```
+
+__Write an Rmd file, containing code chunks (if applicable) and answer all the questions below. Store the file in a folder called: "./answers_exercises" in your course project folder. Give this file the same name as the title of the current Rmd file__
+
+## The exercise data {-}
+
+For this exercise we use the "heights" dataset.
+This dataset contains heights, weights, income and ethnicity information. The information for the variables that are needed for this exercise are in the file "annotations_height.txt".
+
+It was downloaded from:
+
+https://github.com/rstudio/webinars/tree/master/15-RStudio-essentials/4-Projects
+
+Load the data with the following code
+```{r, echo=TRUE}
+library(tidyverse)
+
+heights_file <- here::here("data", "heights.RDS")
+heights <- read_rds(file = heights_file)
+head(heights)
+heights
+heights_tib <- as_tibble(heights)
+
+```
+
+### <mark>**Exercise 1; Data inspection**</mark> {-}
+
+1A) `head()` and `tail()`
+Use the `head` and `tail` functions. The datset contains `r nrow(heights)` observations.   
+
+ - What types of variables are present in the data.
+ - Focus on the variables `id` `income`, `height`, `weight`, `sex` and `race`
+
+```{r, 1a, options_exercises}
+head(heights)
+tail(heights)
+```
+
+1B) Call the function `summary()` on the data. {-}
+What do you notice when you look at the max. and min. value for the `height`. For nicer printing (in an Rmd output file) you can use `pander::pander()` or `knitr::kable()`
+
+```{r, 1b, options_exercises}
+library(pander)
+pander(summary(heights))
+```
+
+1C) Missing values
+Are there any missing values in the data? Determine the number of missing values. Try creating a plots using the `{naniar}` package.
+```{r, 1c, options_exercises}
+sum(is.na(heights))
+naniar::vis_miss(heights)
+naniar::gg_miss_var(heights)
+```
+ 
+### <mark>**Exercise 2; Selecting variables with {dplyr} and missing values**</mark> {-}
+
+Subsetting data with the {dplyr} verbs `select()` and `filter()` is convenient for creating slices of the data that are of interest.
+
+For this exercise we will use the variables: 
+
+`id`, `income`, `height`, `weight`, `sex` and `race`
+
+2A) Subsetting
+Generate a subset of the `heights` dataframe containing only these variables. Call this new dataframe `heights_selected`
+ 
+ - Use `dplyr::select()`
+ - Use `%>%` 
+ - To find NAs, use `sum(is.na(dataframe))`
+
+```{r, answer_2a, options_exercises}
+heights_selected <- heights %>%
+  select(id, income, height, weight, sex, race)
+```
+
+2B) Check the amount of NAs that you have left in the dataset
+```{r, answer_2b, options_exercises}
+sum(is.na(heights_selected))
+```
+
+2C) Complete cases
+To complete the data-inspection and do a bit of cleaning we can look at the records in the `heigths_selected` dataset that are complete. This means, for which we have data points for all 5 variables.
+
+use the function `complete.cases()` from the {stats} package. Look at `?complete.cases()` to see how to use this function. Create a new data frame with complete case that you call `heights_complete`
+
+ - Remember that you can use data.frame[rows, columns] to subset a dataframe with a logical vector
+ 
+```{r, 2c, options_exercises}
+library(stats)
+complete_cases <- complete.cases(heights_selected) 
+heights_complete <- heights_selected[complete_cases,] 
+
+## viz
+naniar::gg_miss_upset(heights_selected)
+
+
+```
+
+2D) NAs in complete cases
+How many NAs are present in the `heights_complete` dataset that you just created under 2C? What did you expect?
+```{r, 2d, options_exercises}
+sum(is.na(heights_complete))
+```
+
+### <mark>**Exercise 3; Filtering**</mark> {-}
+
+For the next assignment you can use the `filter()` command from {dplyr}
+
+3A) Filter all people that have a weight of over 200 lbs {-}
+```{r, 3A,options_exercises}
+heights_complete <- as_tibble(heights_complete)
+names(heights_complete)
+
+over_200 <- heights_complete %>% 
+  dplyr::filter(weight > 200)
+
+over_200 <- dplyr::filter(heights_complete, weight > 200)
+
+```
+
+3B) Who is most overweighted?
+What is the most frequent ethnicity in the group of people that have a weight over 200 lbs   
+
+ - Think about how you can answer this question: you want to have some sort of tabular summary! Discuss with your neighbour. And/or look on the internet. 
+```{r, 3b, options_exercises}
+
+haviest_race <- over_200 %>%
+  group_by(race) %>%
+  summarise(frequency = n()) %>%
+  arrange(desc(frequency))
+haviest_race
+
+summary <- summary(over_200)
+summary
+str(summary)
+table(summary[, 6])
+
+
+# so the answer is "other", which is not surprising
+```
+
+3C) Filter to extract the top 5 tallest hispanic males in the dataset   
+What is their respective weight? 
+What is their average height?
+
+ - This one is already a bit more complicated:
+ - Use `%>%`
+ - Use `filter()`
+ - Use `arrange()` to sort in descending order
+
+```{r, 3c, options_exercises}
+# filter for 'hispanic' 'males'
+tallest_hispanic_men <- heights_complete %>%
+  dplyr::filter(race == "hispanic" & sex == "male") %>%
+# now sort the rows in descending order
+  arrange(desc(height))
+# select only the first five rows
+five_tallest_hispanic_men <- tallest_hispanic_men[c(1:5), ]
+
+# all weights: 
+five_tallest_hispanic_men$weight
+
+# mean height
+  mean(five_tallest_hispanic_men$height)
+
+
+```
+
+3D) Finding individual datapoints
+Find the two tallest women in the data. See if you can find two men that match the weight and heigt of these women.
+```{r, 3d, options_exercises}
+rank_women <- heights_complete %>%
+  dplyr::filter(sex == "female") %>%
+  arrange(desc(height))
+
+(two_tallest_women <- rank_women[c(1,2), ])
+
+
+match_1 <- heights_complete %>%
+  dplyr::filter(sex == "male" & 
+         weight == two_tallest_women$weight[1] & 
+         height == two_tallest_women$height[1])
+
+match_1
+
+match_2 <- heights_complete %>%
+  dplyr::filter(sex == "male" & 
+         weight == two_tallest_women$weight[2] &
+         height == two_tallest_women$height[2])
+match_2
+```
+
+### **<mark>Exercise 4; Creating new variables**</mark> {-}
+
+The units of the data in the `heights` dataset is somewhat difficult to interpret because of the use of non-SI notation (so basically non-scientific units). The weights are in `lbs` or also called pounds and the height is in `inches`.
+
+ * 1 inch = 2.54 cm
+ * 1 lbs = 0.45359237 kg
+
+4A) Convert the `height` and the `weight` variable to SI units (so meters, and kg, respectively)
+ 
+ Add the new variables to the exsting `heigths_complete` dataset. Call the new columns: `height_m` and `weight_kg`
+ 
+  - Use `dplyr::mutate()` to solve this question 
+  - Round the `height_m` and `weight_kg` to decimals that make sense
+ 
+```{r, 4a, options_exercises}
+heights_complete <- heights_complete %>%
+  mutate(height_m = (height*2.54/100),  
+         weight_kg = weight*0.45359237)
+
+heights_complete
+
+
+heights_complete$height_m <- round(heights_complete$height_m, 2)
+heights_complete$weight_kg <- round(heights_complete$weight_kg, 1)
+
+head(heights_complete) 
+```
+
+4B) Body-mass index
+The body-mass index or BMI can be calculated from the weight and the height of a person. 
+ 
+ The formula for determining the BMI is
+ 
+ Bodyweight in kilograms divided by height in meters squared
+ 
+ or in formula form:
+ 
+$BMI=\frac{bodyweight(kg)}{height(meters)^2}$
+ 
+4C) Calculate a new variale called `bmi` for the `heights_complete` dataset
+```{r, 4c, options_exercises}
+heights_complete <- heights_complete %>%
+  mutate(bmi = (weight_kg / height_m^2))
+head(heights_complete)
+ 
+```
+
+### <mark>**Exercise 5; Grouping and summarizing**</mark> {-}
+When we have multiple observations per unit or groups of units, it makes sense to be able to group the data accordingly.
+
+Here we need to take a closer look at `dplyr::group_by` and `dplyr::summarize` to group, summarize and generate new summary variables of the (cleaned) data. 
+
+5A) Summarize the data
+
+ - Group the data by `race`, and `sex`, drop the `id`, variable
+ - Call the new summarized dataframe: `heights_summary`
+ - Make a `summary` dataframe with new summary variables with the `dplyr::summary()`function 
+ - Call the new summary variables `mean_height_in`, `mean_weight_lbs`, `mean_height_m`, `mean_weight_kg`, `mean_bmi` and `mean_income`
+ - Rank (`dplyr::arrange()`) the data according income from high to low (`arrange(desc(variable_for_which_to_rank)`)
+ 
+```{r, 5a, options_exercises} 
+names(heights_complete)
+heights_summary <- heights_complete %>%
+  dplyr::select(income:bmi) %>%
+  group_by(race, sex) %>%
+  summarise(mean_height_in = mean(height),
+            mean_height_m = mean(height_m),
+            mean_weight_lbs = mean(weight),
+            mean_weight_kg = mean(weight_kg),
+            mean_bmi = mean(bmi),
+            mean_income = mean(income)) %>%
+  arrange(desc(mean_income))
+
+
+```
+
+5B) Which race has the highest income?
+
+```{r, 5b, options_exercises} 
+names(heights_complete)
+heights_summary <- heights_complete %>%
+  dplyr::select(income:bmi) %>%
+  group_by(race, sex) %>%
+  summarise(mean_height_in = mean(height),
+            mean_height_m = mean(height_m),
+            mean_weight_lbs = mean(weight),
+            mean_weight_kg = mean(weight_kg),
+            mean_income = mean(income)) %>% 
+  arrange(desc(mean_income)) 
+```
+
+5C) Gender difference in mean income?
+
+Is there a difference between males and females. For which race is this difference the biggest? Also create a plot to confirm this observation.
+
+```{r, 5c, options_exercises}
+males <- heights_summary %>%
+  dplyr::filter(sex == "male") %>% 
+  dplyr::select(mean_income, race) %>%
+  arrange(desc(race))
+
+females <- heights_summary %>%
+  dplyr::filter(sex == "female") %>%
+  dplyr::select(mean_income, race) %>%
+  arrange(desc(race))
+
+difference <- as_tibble(cbind(males, females)) 
+difference
+
+names(difference) <- c("mean_income_m", "race_m", "mean_income_f", "race_f")
+names(difference)
+# str(difference)
+
+difference %>%
+  mutate(delta_income = (mean_income_m - mean_income_f)) #%>%
+  #  arrange(delta_income)
+
+
+## BAR plot
+heights_summary %>%
+  ggplot(aes(x = race,
+         y = mean_income)) +
+  geom_col(aes(fill = sex), position = "dodge")
+
+
+```

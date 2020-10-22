@@ -1,0 +1,54 @@
+# Ubuntu update and server init.
+DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' dist-upgrade
+
+# SSH config
+sudo bash -c 'echo "ClientAliveInterval 120" >> /etc/ssh/sshd_config'
+sudo bash -c 'echo "ClientAliveCountMax 30" >> /etc/ssh/sshd_config'
+sudo sed -i 's/^Port.*22/Port 4433/' /etc/ssh/sshd_config
+sudo sed -i 's/^PasswordAuthentication.*no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^PermitRootLogin.*yes/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo sed -i 's/^PermitRootLogin.*without-password/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo sed -i 's/^PubkeyAuthentication.*yes/PubkeyAuthentication no/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+sudo ufw allow 4433/tcp
+sudo ufw delete allow 22/tcp
+
+# Set default user home folder permission to 0700 to prevent access from other users.
+sudo sed -i 's/^UMASK.*022/UMASK 077/' /etc/login.defs
+
+# Install R and R studio
+sudo apt-get -y install gnupg2 software-properties-common
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+sudo apt-get update && sudo apt-get -y install r-recommended=3.5.1-2bionic r-base=3.5.1-2bionic r-base-dev=3.5.1-2bionic gdebi-core
+wget https://download2.rstudio.org/rstudio-server-1.1.463-amd64.deb -P /tmp
+sudo gdebi --n /tmp/rstudio-server-1.1.463-amd64.deb
+
+# Set the rstudio port to 80 for default accessibility.
+sudo bash -c 'echo "www-port=80" >> /etc/rstudio/rserver.conf'
+sudo ufw allow 80/tcp
+sudo rstudio-server restart
+
+# Install default system packages
+sudo apt-get -y install git ffmpeg openjdk-11-jdk openjdk-11-jre libssl-dev libxml2-dev libcurl4-gnutls-dev
+
+# Install default R packages
+sudo bash -c "R -e \"install.packages('packrat')\""
+sudo bash -c "R -e \"install.packages('tidyverse')\""
+
+# Install miniconda as Python package manager
+wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -P /tmp
+sudo bash /tmp/Miniconda3-3.7.0-Linux-x86_64.sh -b -p /opt/miniconda
+sudo bash -c 'echo -e "PATH=/opt/miniconda/bin:\$PATH" >> /etc/profile.d/miniconda.sh'
+sudo chmod 644 /etc/profile.d/miniconda.sh
+
+# Cleanup
+rm /tmp/rstudio-server-1.1.463-amd64.deb
+rm /tmp/Miniconda3-3.7.0-Linux-x86_64.sh
+sudo apt -y autoremove
+
+# The daily timer service has been disabled within the OS image. Otherwise it would start apt on server initialization.
+# Re-enable the services to make sure the server is save.
+sudo systemctl enable apt-daily.timer
+sudo systemctl start apt-daily.timer
+sudo systemctl daemon-reload

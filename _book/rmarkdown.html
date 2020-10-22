@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Literate Programming with RMarkdown | staRters; An introductory workshop for analysis of data with R</title>
+  <meta name="description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Literate Programming with RMarkdown | staRters; An introductory workshop for analysis of data with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  <meta name="github-repo" content="uashogeschoolutrecht/staRters" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Literate Programming with RMarkdown | staRters; An introductory workshop for analysis of data with R" />
+  
+  <meta name="twitter:description" content="HU Ontwikkelfestival, 2-4 November, 2020" />
+  
+
+<meta name="author" content="Marc A.T. Teunis, PhD" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="introrstudio.html"/>
+<link rel="next" href="intror.html"/>
+<script src="libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.15/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<script src="libs/d3-5.7.0/d3.min.js"></script>
+<script src="libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<link href="libs/ggiraphjs-0.3.0/ggiraphjs.min.css" rel="stylesheet" />
+<script src="libs/ggiraphjs-0.3.0/ggiraphjs.min.js"></script>
+<script src="libs/girafe-binding-0.7.8/girafe.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Analysis with R for staRters</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="chapter" data-level="2" data-path="why-r.html"><a href="why-r.html"><i class="fa fa-check"></i><b>2</b> Why use R?</a></li>
+<li class="chapter" data-level="3" data-path="gettingstarted.html"><a href="gettingstarted.html"><i class="fa fa-check"></i><b>3</b> Getting Started</a></li>
+<li class="chapter" data-level="4" data-path="edacase.html"><a href="edacase.html"><i class="fa fa-check"></i><b>4</b> Case Example</a></li>
+<li class="chapter" data-level="5" data-path="introrstudio.html"><a href="introrstudio.html"><i class="fa fa-check"></i><b>5</b> Introduction to RStudio</a></li>
+<li class="chapter" data-level="6" data-path="rmarkdown.html"><a href="rmarkdown.html"><i class="fa fa-check"></i><b>6</b> Literate Programming with RMarkdown</a></li>
+<li class="chapter" data-level="7" data-path="intror.html"><a href="intror.html"><i class="fa fa-check"></i><b>7</b> Introduction to R</a></li>
+<li class="chapter" data-level="8" data-path="recursivevectors.html"><a href="recursivevectors.html"><i class="fa fa-check"></i><b>8</b> Lists and dataframes</a></li>
+<li class="chapter" data-level="9" data-path="viz.html"><a href="viz.html"><i class="fa fa-check"></i><b>9</b> Visualize &amp; Explore Data</a></li>
+<li class="chapter" data-level="10" data-path="wrangling.html"><a href="wrangling.html"><i class="fa fa-check"></i><b>10</b> Data Wrangling</a></li>
+<li class="chapter" data-level="11" data-path="tidydata.html"><a href="tidydata.html"><i class="fa fa-check"></i><b>11</b> Tidy Data</a></li>
+<li class="chapter" data-level="12" data-path="importingdata.html"><a href="importingdata.html"><i class="fa fa-check"></i><b>12</b> Importing data</a></li>
+<li class="chapter" data-level="13" data-path="assumptions.html"><a href="assumptions.html"><i class="fa fa-check"></i><b>13</b> Assumptions and statistical models</a></li>
+<li class="chapter" data-level="14" data-path="sampling-bootstrapping.html"><a href="sampling-bootstrapping.html"><i class="fa fa-check"></i><b>14</b> Sampling, Probability distributions and bootstrapping</a></li>
+<li class="chapter" data-level="15" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>15</b> Resources</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/uashogeschoolutrecht/staRters" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">staRters; An introductory workshop for analysis of data with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="rmarkdown" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Literate Programming with RMarkdown</h1>
+<p><em>This chapter is best read in the source RMarkdown file</em></p>
+<div id="credits" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Credits:</h2>
+<p><a href="https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/index.html" class="uri">https://nceas.github.io/sasap-training/materials/reproducible_research_in_r_fairbanks/index.html</a></p>
+</div>
+<div id="introduction" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Introduction</h2>
+<p>Plain text is a great way to write information down. Plain text has some major advantages:</p>
+<ul>
+<li>Works regardless of what time you’re trying to read the file, i.e. computers have and will continue to speak plain text</li>
+<li>Works perfectly with version control software like git.</li>
+<li>Easy to read, easy to write</li>
+</ul>
+<p>Markdown is a plain text format that allows for common typesetting features including:</p>
+<ul>
+<li>Text formatting (bold, italic, etc.)</li>
+<li>Links</li>
+<li>Tables</li>
+<li>In-line images</li>
+</ul>
+<p>Without the need for spending time typesetting which is tedious and usually unnecessary. So if we want those kinds of things, we might want to use Markdown.</p>
+<p>RMarkdown allows us to produce an output document (PDF, DOCX, website) based upon a mix of Markdown and R code.
+This lets us write analyses in R as we already do but also write our reports/papers/etc. in R.
+Instead of the usual loop:</p>
+<ul>
+<li>Run analysis</li>
+<li>Edit/update report</li>
+<li>Commit changes to Git-repository</li>
+<li>Push to Github</li>
+</ul>
+<p>The loop becomes:</p>
+<ul>
+<li>Edit RMarkdown doc</li>
+<li>Commit changes to Git-repository</li>
+<li>Push to Github</li>
+</ul>
+<p>This workflow fits in a ‘continuous integration’ workflow</p>
+<p>…</p>
+</div>
+<div id="to-get-an-example-of-paramterized-rmarkdown" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> To get an example of paramterized RMarkdown:</h2>
+<p>Clone this repo and run the examples in the folder ~/work_flows/Rmd/
+<a href="https://github.com/uashogeschoolutrecht/work_flows" class="uri">https://github.com/uashogeschoolutrecht/work_flows</a></p>
+<p>To see an interactive Graph run the example:</p>
+</div>
+<div id="good-resources" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Good resources:</h2>
+<ul>
+<li><a href="http://rmarkdown.rstudio.com/">http://rmarkdown.rstudio.com/</a></li>
+<li><a href="http://kbroman.org/knitr_knutshell/">http://kbroman.org/knitr_knutshell/</a></li>
+</ul>
+</div>
+<div id="learning-outcomes" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Learning Outcomes</h2>
+<ul>
+<li>Gain an awareness of Markdown and RMarkdown</li>
+<li>Author a simple RMarkdown document in RStudio</li>
+</ul>
+</div>
+<div id="rmarkdown-principles" class="section level2" number="6.6">
+<h2><span class="header-section-number">6.6</span> RMarkdown Principles:</h2>
+<div id="chunks" class="section level3" number="6.6.1">
+<h3><span class="header-section-number">6.6.1</span> Chunks</h3>
+<p>Chunks take options, see: <a href="https://yihui.name/knitr/options/" class="uri">https://yihui.name/knitr/options/</a></p>
+<div id="echo-and-include" class="section level4 unnumbered" number="">
+<h4>Echo and Include</h4>
+<p>When writing a report, it’s common to not want the R code to actually show up in the final document.
+Use the <code>echo</code> chunk option to do this:
+<img src="ch05-rmarkdown_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+or if you want the code to run but not show anything, use <code>include</code></p>
+</div>
+<div id="eval" class="section level4 unnumbered" number="">
+<h4>Eval</h4>
+<p>Sometimes you may just want to show some R code with nice syntax highlighting but not evaluate it:</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="rmarkdown.html#cb70-1"></a>will_it_eval &lt;-<span class="st"> &quot;eval?&quot;</span></span></code></pre></div>
+</div>
+<div id="cache" class="section level4 unnumbered" number="">
+<h4>Cache</h4>
+<p>If you know a chunk will not need to change as other parts of the document are knitted, you can cache a chunk that contains a potentially long-running or slow command or commands:</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="rmarkdown.html#cb71-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb71-2"><a href="rmarkdown.html#cb71-2"></a><span class="kw">ggplot</span>(mpg, <span class="kw">aes</span>(displ, hwy, <span class="dt">color =</span> class)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb71-3"><a href="rmarkdown.html#cb71-3"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="co"># Some really slow plot</span></span></code></pre></div>
+<p><img src="ch05-rmarkdown_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+</div>
+<div id="inline-expressions-in-prose" class="section level3" number="6.6.2">
+<h3><span class="header-section-number">6.6.2</span> Inline expressions in prose</h3>
+<p>You can include inline r-code in this way:</p>
+<p>4</p>
+<p>It evaluates to: 2 + 2 = 4</p>
+</div>
+<div id="plots" class="section level3" number="6.6.3">
+<h3><span class="header-section-number">6.6.3</span> Plots</h3>
+<p>Base graphics: Just run <code>plot(1:10)</code>
+ggplot2: Run <code>ggplot(...))</code></p>
+<p>Customize output sizing with chunk options: <code>fig.width</code>, <code>fig.height</code>, <code>dpi</code>, <code>out.width</code></p>
+</div>
+<div id="tables" class="section level3" number="6.6.4">
+<h3><span class="header-section-number">6.6.4</span> Tables</h3>
+<p>If you search around, there are tons of ways to do this. The most basic way and the way I almost always use is with the <code>kable</code> function from the <code>knitr</code> package:</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="rmarkdown.html#cb72-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb72-2"><a href="rmarkdown.html#cb72-2"></a><span class="kw">data</span>(<span class="st">&quot;mpg&quot;</span>)</span>
+<span id="cb72-3"><a href="rmarkdown.html#cb72-3"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(mpg))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">manufacturer</th>
+<th align="left">model</th>
+<th align="right">displ</th>
+<th align="right">year</th>
+<th align="right">cyl</th>
+<th align="left">trans</th>
+<th align="left">drv</th>
+<th align="right">cty</th>
+<th align="right">hwy</th>
+<th align="left">fl</th>
+<th align="left">class</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">1.8</td>
+<td align="right">1999</td>
+<td align="right">4</td>
+<td align="left">auto(l5)</td>
+<td align="left">f</td>
+<td align="right">18</td>
+<td align="right">29</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+<tr class="even">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">1.8</td>
+<td align="right">1999</td>
+<td align="right">4</td>
+<td align="left">manual(m5)</td>
+<td align="left">f</td>
+<td align="right">21</td>
+<td align="right">29</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+<tr class="odd">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">2.0</td>
+<td align="right">2008</td>
+<td align="right">4</td>
+<td align="left">manual(m6)</td>
+<td align="left">f</td>
+<td align="right">20</td>
+<td align="right">31</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+<tr class="even">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">2.0</td>
+<td align="right">2008</td>
+<td align="right">4</td>
+<td align="left">auto(av)</td>
+<td align="left">f</td>
+<td align="right">21</td>
+<td align="right">30</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+<tr class="odd">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">2.8</td>
+<td align="right">1999</td>
+<td align="right">6</td>
+<td align="left">auto(l5)</td>
+<td align="left">f</td>
+<td align="right">16</td>
+<td align="right">26</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+<tr class="even">
+<td align="left">audi</td>
+<td align="left">a4</td>
+<td align="right">2.8</td>
+<td align="right">1999</td>
+<td align="right">6</td>
+<td align="left">manual(m5)</td>
+<td align="left">f</td>
+<td align="right">18</td>
+<td align="right">26</td>
+<td align="left">p</td>
+<td align="left">compact</td>
+</tr>
+</tbody>
+</table>
+<p>or an interactive table</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="rmarkdown.html#cb73-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb73-2"><a href="rmarkdown.html#cb73-2"></a><span class="kw">data</span>(<span class="st">&quot;mpg&quot;</span>)</span>
+<span id="cb73-3"><a href="rmarkdown.html#cb73-3"></a>DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(mpg))</span></code></pre></div>
+<div id="htmlwidget-9a855d59061b9784f022" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9a855d59061b9784f022">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["audi","audi","audi","audi","audi","audi"],["a4","a4","a4","a4","a4","a4"],[1.8,1.8,2,2,2.8,2.8],[1999,1999,2008,2008,1999,1999],[4,4,4,4,6,6],["auto(l5)","manual(m5)","manual(m6)","auto(av)","auto(l5)","manual(m5)"],["f","f","f","f","f","f"],[18,21,20,21,16,18],[29,29,31,30,26,26],["p","p","p","p","p","p"],["compact","compact","compact","compact","compact","compact"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>manufacturer<\/th>\n      <th>model<\/th>\n      <th>displ<\/th>\n      <th>year<\/th>\n      <th>cyl<\/th>\n      <th>trans<\/th>\n      <th>drv<\/th>\n      <th>cty<\/th>\n      <th>hwy<\/th>\n      <th>fl<\/th>\n      <th>class<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,8,9]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p><a href="https://rmarkdown.rstudio.com/lesson-7.html" class="uri">https://rmarkdown.rstudio.com/lesson-7.html</a></p>
+</div>
+</div>
+<div id="output-formats" class="section level2" number="6.7">
+<h2><span class="header-section-number">6.7</span> Output formats</h2>
+<p>RMarkdown documents can be converted into many formats, most often:</p>
+<ul>
+<li>PDF</li>
+<li>HTML</li>
+<li>Microsoft Word</li>
+<li>ioslides</li>
+<li>beamer</li>
+</ul>
+<p>See more info here: <a href="http://rmarkdown.rstudio.com/lesson-9.html" class="uri">http://rmarkdown.rstudio.com/lesson-9.html</a></p>
+<p>You can specifically choose which output format to render to with the RStudio “Knit” button in the toolbar, or with:</p>
+<pre><code>rmarkdown::render(...)</code></pre>
+<p>We can control which output format(s) knitting will produce and even customize the options for each format separately.
+To customize each output format, change the YAML frontmatter:</p>
+<p>e.g. customize HTML and PDF output</p>
+<pre><code>---
+title: &quot;My document&quot;
+output:
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+    fig_caption: false
+---
+</code></pre>
+</div>
+<div id="summary" class="section level2" number="6.8">
+<h2><span class="header-section-number">6.8</span> Summary</h2>
+<ul>
+<li>Markdown is a simple plain text format suitable for authoring rich documents</li>
+<li>RMarkdown is a slight extention of the Markdown syntax that lets us mix code and prose together</li>
+<li>RMarkdown is a key part of the R reproducible science scene</li>
+<li>RStudio is a great way to author RMarkdown documents</li>
+<li>Later on in this workshop, we’ll see how to deal with citations so we can write academic manuscripts</li>
+</ul>
+<div id="exercise-1-create-a-short-report" class="section level3 unnumbered" number="">
+<h3><mark><strong>EXERCISE 1; Create a short report</strong></mark></h3>
+<ol style="list-style-type: decimal">
+<li>Find a relevant dataset that you recently found or are busy with at the moment*</li>
+<li>Write a short Rmd report where you LOAD and VISUALIZE (create at least 3 different graphs) the data in an Rmd report.</li>
+<li>Go over this tutorial: <a href="https://rmarkdown.rstudio.com/developer_parameterized_reports.html%23parameter_types%2F#overview">RStudio Params in Rmd</a></li>
+<li>Define one parameter in your analysis</li>
+<li>Knit two different reports of your parameterized Rmd (with two different values for one paramter defined) and sent them to the teacher</li>
+</ol>
+<p>*If you do nog have a dataset, you can use this one:
+“./data/API_AG.LND.FRST.K2_DS2_en_csv_v2_716262”</p>
+<p><strong>Please send me the your report for feedback by email, or place it on you github account and send me the link.</strong></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="introrstudio.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="intror.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/uashogeschoolutrecht/staRters/edit/master/ch05-rmarkdown.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["exploratory_data_analysis.pdf", "exploratory_data_analysis.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

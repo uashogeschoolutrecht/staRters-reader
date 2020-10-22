@@ -1,0 +1,1620 @@
+# Visualize & Explore Data {#viz}
+
+## Introduction
+Creating plots is essential for EDA and formal inference or any data-analysis activities. There are a number of arbitrary stages in plot-making, not necessarily in any specific order or consecutiveness and also iterative in nature but these stages can help if you are just starting at it.
+Here we talk about EDA and we discuss visualization as a means to generate hypotheses about the data. If information about the data (data-journal) is available, that will help! **So when you generate data: document!** In Chapter \@ref(lab7communicatereproduce) we will talk about this some more.
+
+**The EDA visualization stages:** 
+
+ 1. `Characteristics`; Variable types, number of data points, patterns, grouping information etc. Usually this is done by creating plots showing all data available or a random sample if you have really a lot of data. Creating plots for missing values can be a good first step. A next step is creating scatter plots.
+ 1. `Distributions`; By looking at distributions you can generate hypothesis about the nature of sampling of the data, whether there are outliers, whether distriibutions are skewed or whether a transformation is feasible
+ 1. `Outliers`; No matter what you hear about removing outliers, never do it whitout solid understanding of your data and the reason why an outlier exists. Outliers can be discovered using box-plots, distribution plots or scatter plots (individual points)
+ 1. `Sorting`; There can be a logical hierarchy in the data when variables are sorted according others
+ 1. `Trends`; Trends sometimes require you to subset the data or generate summary data based on grouping variables. This means that part of the data is not visible anymore, but if performed well, it will also reveal new information. Removing data for the sake of summarizing and keeping data for the sake of completeness are in delicate balance. Again this is an interative process 
+ 1. `Models`; Once hypothesis are generated and patterns have been identified it is time to try some models on the data. Visualizing models and their paramters is part of checking model quality and fit to the data 
+ 1. `Formal`; Visualizations are usually included in scientific publications, reports, websites etc. The requirements for these are usually different and more formal, from the ones in the previous stages.
+
+```{r, fig.cap="Visualizing stages for EDA", echo=FALSE}
+dg <- DiagrammeR::grViz("
+digraph rmarkdown {
+  'New DATA' -> 'Characteristics'
+  'Characteristics' -> 'Distributions'
+  'Distributions' -> 'Outliers' 
+  'Outliers' -> 'Sorting'
+  'Sorting' -> 'Trends'
+  'Trends' -> 'Models'
+  'Models' -> 'Formal'
+  'Formal' -> 'Characteristics'
+}
+")
+dg
+
+```
+
+We will demonstrate each stage below
+
+## Prerequisites
+We load the packages, the data and get everything ready for creating visualizations
+
+### Packages {-}
+```{r, message=FALSE, error=FALSE, warning=FALSE}
+library(dslabs)
+library(tidyverse)
+library(reshape)
+library(pastecs)
+library(naniar)
+library(GGally)
+```
+
+### Gapminder {-}
+The gapminder dataset is a rich dataset containing data from the World Health Organization on socio-economic parameters worldwide and over time.
+
+To see an animated interactive graph:
+https://www.gapminder.org/tools/#$state$time$value=2018;;&chart-type=bubbles 
+
+### Citations {-}
+Developers of packages put a lot of effort in their package. If you are using packages for official publications, this is how you cite them in your work.
+```{r, results='hide'}
+citation(package = "ggplot2")
+citation(package = "tidyverse")
+citation(package = "dslabs")
+```
+
+### Data package {-}
+This demo makes extensive use of the the Gapminder data. One of the packages containing this data is the `{dslabs}` package. It contains a number of other datasets which you can view these sets with
+```{r, eval=FALSE}
+data(package="dslabs") %>% print()
+```
+
+### ggplot2 {-}
+For this demo on visualizations we will use the ggplot2 package. It was build with the grammar of graphics in mind. It is a versatile and much-used package. Much documentation can be found online and there are many extensions and other packages that build upon `{ggplot2}`. It is one of three plotting systems in R. The other two which we will hardly use in this course are `base` plotting and `{lattice}`.
+
+The ggplot hexagon:
+```{r, echo=FALSE}
+knitr::include_graphics(path = here::here(
+  "images",                                                                     "hex-ggplot2.png"))
+```
+
+### The grammar of graphics {-}
+This informal language is build on the principle that graphs can be commnicated trough a 'natural' language that describes aspects of a graphs in terms of layers, aestetics, geometric forms and attributes or so-called themes. This language has been translated to specific functions in the `{ggplot2}` package.
+
+I will explain the grammar of graphics through a set of graphs, following the different stages of visualizations for EDA.
+
+### Data wrangling scripts {-}
+With these commands you can get an insight in how the different datasets were created. It is a nice example on how reproducibility can be implemented using R'packaging system.
+```{r}
+list.files(system.file("script", package = "dslabs"))
+```
+
+### Opening one of the scripts {-}
+```{r}
+wrangle_files <- list.files(system.file("script", package = "dslabs"), full.names = TRUE)
+wrangle_files[[25]]
+
+```
+
+### Loading a specific dataset by name {-}
+```{r}
+data("gapminder", package = "dslabs")
+## ?gapminder for more info on the variables in the dataset
+gapminder <- gapminder %>% as_tibble
+```
+
+## The EDA visualization stages
+
+The gapminder dataset contains a number of measurements on health and income outcomes for 184 countries from 1960 to 2016. It also includes two character vectors, OECD and OPEC, with the names of OECD and OPEC countries from 2016. 
+
+### Inspecting the data {-}
+```{r}
+gapminder <- gapminder %>% as_tibble()
+gapminder %>% head(2)
+head(gapminder, 2)
+names(gapminder)
+```
+
+### Missingness {-}
+```{r}
+naniar::vis_miss(gapminder) + 
+  toolboxr::rotate_axis_labels(axis = "x", angle = 90)
+
+ggsave(filename = "missing_gapminder.svg", height = 11, width = 10)
+
+naniar::gg_miss_var(gapminder) 
+
+naniar::gg_miss_case(gapminder)
+```
+
+A special ggplot2 plot showing missing values, left from the zero on the x-axis
+```{r, fig.width=8, fig.height=8}
+gapminder %>%
+  dplyr::filter(year == 1960 | year == 2000) %>%
+  dplyr::filter(continent == "Europe") %>%
+  ggplot(aes(x = country,
+         y = gdp)) +
+  naniar::stat_miss_point() +
+  coord_flip() +
+  facet_wrap(~year)
+
+```
+
+**DISCUSS: What can you can conclude from these plots? What plot would you like to make next to investigate what is going on with the missingness for GDP over time?**
+
+Above we see a typical ggplot2 graph workflow: The data is subsetted for only the years 1960 and 2000 and continent Europe with a call to the `filter()` function from the `{dplyr}` package. Next the aesthetics (`aes()`) are the definitions for which variable should come on which axis of the plot. Then a geometric form (`stat_miss_point()`) is added to the canvas (this is a special geom that also shows missing values left from the zero on the x-axis). Finaly the whole plot is rotated (`coord_flip()`) and panels are created for both years with `facet_wrap(~year)`. You can discover what each element does if you run the code above line-for-line.   
+
+### Looking at all data {-}
+A correlation matrix or a variant thereon can be a good quick way to look at all variables in a dataset. The `{GGaly}` packages has an easy to use function
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE, error=FALSE}
+gapminder %>%
+  dplyr::select(-c(country, region)) %>%
+ggpairs()
+```
+
+This is a busy graph and for this Gapminder dataset not so informative but parts of it can be useful as a next step to zoom in at with additional graphs.
+
+### Looking at two variables with a scatter plots {-}
+```{r}
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point()
+```
+
+This is a very dense plot showing 'overplotting. We can fix this in several ways:
+
+ 1. Reducing the transparency of data points  
+ 1. Mapping colour to a variable (continuous or categorical)
+ 1. Reduce the data in the plot
+ 1. Mapping a shape to a variable
+ 1. Add noise (`"jitter"`) to points
+ 1. Facetting - create panels for 'categorical' or so-called 'factor' variables in R
+ 1. Summarize the data
+ 1. Displaying a model / relationship that represents the data (and not sho the actual data itself) 
+ 1. Or any combination of the above strategies
+ 1. Sometimes choosing a alternative plot-type can also help (for example `geom_tiles()` which can be used for creating heatmaps)
+
+__Basically you map an `aesthetic` (`aes()`) to a variable for instance to map a colour to a categorical variable__
+ 
+Let's go over these solutions to overplotting one by one 
+
+### A. Reducing transparency (`alpha`) of points or lines in the data {-}
+```{r}
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(alpha = 0.05)
+```
+
+#### B. Mapping colour to a variable {-} 
+```{r}
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(aes(colour = continent))
+
+## or combined with transparancy
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(aes(colour = continent), alpha = 0.1) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))
+
+
+```
+
+#### C. Reduce the amount of data {-}
+Only Africa, using `dplyr::filter()`. Here we use a different set of variables from the `gapminder` dataset to illustrate the options. Mind the log10 transformation in the second graph of this code chunk. What is striking about this figure?
+```{r}
+gapminder %>% 
+  dplyr::filter(continent == "Africa") %>%
+  ggplot(aes(x = year, y = population)) + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+## using a colour for continent
+gapminder %>% 
+  dplyr::filter(continent == "Africa") %>%
+  ggplot(aes(x = year, y = log10(population))) + ## why log10?
+  geom_line(aes(group = country, 
+                colour = country), 
+            show.legend = FALSE, size = 1) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+### <mark>**EXERCISE 1; Make a plan**</mark> {-}
+
+A) On the basis of the above picture: Create an EDA plan to investigate whether the population growth rate is different between Africa and Asia in general. How would you approach this? Create a step wise plan, describe the PPDAC cycle
+
+```{r, include=FALSE}
+## PPDAC: problem, plan, data, analysis, conclusion(s)
+## problem: Is the rate in population growth different between Africa and Asia
+## plan: Get data for growth of population over the past 10 years, from most (if not all) countries of the continents Africa and Asia, check the integrety of the data, clean if neccessary, check missing values, check validity of the source of the data, check minimal and maximal values, generate summary statistics
+## data: use Gapminder dataset in the `{dslabs}` or `{gapminder}` R package (any other ideas?).
+## Analysis: see partly under plan for initial steps: Filter data for continents Africa and Asia, summarize data for continents, plot population size to time (years), analyze data with a regression model (linear regression?, exponential?), Determine fit and slope paramters form the models. Perform comparisons of models for best fit. Analyze if slopes are different between continents, how? Maybe two way ANOVA? or repeated measures, multilevel? 
+## Conclusions: draw conclusions about growth rate (slope parameter is proxy for growth rate)
+
+
+
+
+```
+
+B) How would you formally 'prove' that growth rates between Africa and Asia in general are the same or different? What statistical model do you think is appropriate. What are the underlying assumptions for your model(s)?
+```{r, include=FALSE}
+## see answer above (regression, multilevel analysis of variance), normally distributed residuals, homoscedasticity (equal variance)
+```
+
+
+C) How would you, using the same strategy as under 1A) and 1B) subset the data for African countries that have deviating growth rate differences from the overall trend.
+```{r, include=FALSE}
+## look at the fit for linear or exponential regression models (r-squared), countries with population growth curves that display a very poor fit are deviating. 
+```
+
+D) Can you create a plan to create a graph showing the general overall growth rate over the years for all continents in the `gapminder` dataset? What kind of data-wrangling operation is neccessary to create such a graph (what kind of summary of the data do you need and how would you group the data). Make a conceptual data table that shows the endproduct.
+```{r}
+## see above but for every continent, how would you keep all the models built for all countries together?
+```
+
+**Extend the filter to exclude more data** 
+```{r}
+names(gapminder)
+
+africa_high_life_exp <- gapminder %>% 
+ dplyr::filter(continent == "Africa") %>%
+ dplyr::filter(life_expectancy > 60 & fertility < 3) %>%
+ggplot(aes(x = year,
+             y = life_expectancy)) +
+  geom_point(aes(colour = continent)) +
+  guides(colour = guide_legend(
+    override.aes = list(alpha = 1))) +        
+  theme_bw() +
+  facet_wrap(~ country) +
+  theme(legend.position="none") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+africa_high_life_exp
+
+```
+
+### <mark>**EXERCISE 2; Playing around with the aes() and other ggplot options**</mark> {-}
+
+ - Try adjusting some of the arguments in the previous `ggplot2` call. 
+For example, adjust the `alpha = ...` or change the variable in `x = ...`, `y = ...` or `colour = ...`
+ - `names(gapminder)` gives you the variable names that you can change
+ - Show and discuss the resulting plot with your neighbour
+ - What do you think this part does: 
+ 
+ `guides(colour = guide_legend(override.aes = list(alpha = 1)))`
+ 
+ - Try to find out by disabling with `#`
+ - Can you find the country that over time showed a very low life expectancy?
+ - Play around with the `alpha = 1` setting.
+
+Filter for two continents to see the difference
+```{r, echo=FALSE, results='hide', fig.show='hide'}
+
+## pipe symbol 
+reduce_data_plot <- gapminder %>% 
+  dplyr::filter(continent == "Africa"| continent == "Europe") %>%
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(aes(colour = continent), alpha = 0.2) 
+  
+reduce_data_plot
+```
+
+ - What does the `aes()` part of the `geom_point()` do?
+ - Compare the code below with the code above, can you spot the difference, what is the advantage of the code below? Run the code yourself to see it.
+
+### D. Mapping a shape to a variable {-}
+```{r}
+## or e.g. show only two years and map a shape to continent
+shape_plot <- gapminder %>% 
+  dplyr::filter(continent == "Africa" | continent == "Europe",
+         year == "1960" | year == "2010") %>%
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(aes(colour = as_factor(as.character(year)), 
+                 shape = continent), 
+             alpha = 0.7) +
+  theme_bw() +
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))
+shape_plot
+```
+
+### <mark>**EXERCISE 3; Do it youself**</mark> {-}
+
+ - Try removing the `as_factor(as.character(year))` call and replace this by only `year` above and rerun the plot, what happened?
+
+
+### E. Facetting {-}
+
+Create panels for 'categorical' or so-called 'factor' variables in R
+```{r}
+facets_plot <- gapminder %>% 
+  dplyr::filter(continent == "Africa" | continent == "Europe",
+         year == "1960" | year == "2010") %>%
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(aes(colour = continent), alpha = 0.5) +
+  facet_wrap(~ year) + 
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))
+
+facets_plot
+```
+
+### F. Summarize the data {-}
+Plotting `colour` to one variable, and `shape` to another
+```{r}
+library(ggrepel)
+
+years <- c("1960", "1970", "1980", "1990", "2000", "2010")
+
+summarize_plot <- gapminder %>% 
+  dplyr::filter(year %in% years) %>%
+  group_by(continent, year) %>%
+  summarise(mean_life_expectancy = mean(life_expectancy),
+            mean_fertility = mean(fertility)) %>%
+  ggplot(aes(x = mean_fertility,
+             y = mean_life_expectancy)) +
+  geom_point(aes(colour = continent, shape = as_factor(year)), alpha = 0.7) +    guides(colour = guide_legend(override.aes = list(alpha = 1)))
+
+summarize_plot
+```
+
+Adding labels to the points with `{ggrepel}`
+An alternative to using shape for the year.
+```{r}
+library(ggrepel)
+
+years <- c("1960", "1970", "1980", "1990", "2000", "2010")
+
+labels_plot <- gapminder %>% 
+  dplyr::filter(year %in% years) %>%
+  group_by(continent, year) %>%
+  summarise(mean_life_expectancy = mean(life_expectancy),
+            mean_fertility = mean(fertility)) %>%
+  ggplot(aes(x = mean_fertility,
+             y = mean_life_expectancy)) +
+  geom_point(aes(colour = continent), alpha = 0.7) +
+  geom_label_repel(aes(label=year), size = 2.5, box.padding = .5) +              guides(colour = guide_legend(override.aes = list(alpha = 1)))
+  
+labels_plot
+```
+
+#### G. Displaying a model {-}  
+```{r}
+## Model
+lm <- gapminder %>% lm(formula = life_expectancy ~ fertility)
+
+correlation <- cor.test(x = gapminder$fertility, y = gapminder$life_expectancy, method = "pearson")
+
+# save predictions of the model in the new data frame 
+# together with variable you want to plot against
+predicted_df <- data.frame(gapminder_pred = predict(lm, gapminder), 
+                           fertility = gapminder$fertility)
+
+```
+
+Add model to plot
+
+### <mark>**EXERCISE 4; Using a model in practice**</mark> {-}
+Can you think of an application for such models?
+Try to write pseudocode on how you would 
+ 
+ 1. Gather the data
+ 1. Pepare the data for modelling (wrangling)
+ 1. Preprocess the data (hold-out?)
+ 1. Build a model
+ 1. Use the model in practice to ...?
+
+```{r}
+model_plot <- gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(alpha = 0.03) +
+  geom_line(data = predicted_df, aes(x = fertility, 
+                                     y = gapminder_pred),
+            colour = "darkred", size = 1)
+
+model_plot
+```
+
+Plotting statistical parameters to the graph with the `{ggpubr}` package
+```{r, echo=FALSE}
+library(ggpubr)
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(alpha = 0.02) +
+  
+  geom_line(data = predicted_df, 
+            aes(x = fertility, 
+                y = gapminder_pred),
+            colour = "darkred", size = 1) +
+  stat_cor(method = "pearson", label.x = 2, label.y = 30) +
+  theme_bw()
+
+```
+
+Using a smoother `geom_smooth` to display potential relationships
+```{r}
+gapminder %>% 
+  ggplot(aes(x = fertility,
+             y = life_expectancy)) +
+  geom_point(alpha = 0.02) +
+  geom_smooth(method = "lm") +
+  stat_cor(method = "pearson", label.x = 2, label.y = 30) +
+  theme_bw()
+```
+
+### <mark>**EXERCISE 5; recap - Discuss with your neighbour**</mark> {-}
+Which tricks can we use to reduce the dimensionality of the plotted data (prevent overplotting)?
+
+Try listing at least 6 methods:
+
+## A case for history
+Let's look at a relevant question and see of we can again go over the 
+PPDAC cycle. From the gapminder animation we have learned that historic events can have a profound effect on life expectancy and income. Most countries show a gradual increase over time for their life expectancy and their income, but we already noticed strong differences between continent. Let's focus on Africa for the next investigation.
+
+The central `PROBLEM` here:
+Which African countires show strong fluctuations on their life expectancy and income and which show a gradual increase?
+
+To answer this problem we need a `PLAN`. It seems a good idea to isolate the data for africa and somehow plot trends of life expectancy and income over time. Maybe we can reduce the dimensions by calculation of the product of life expectancy and income. Let's call this metric the `WelfareIndex`. We devide by 10000 to normalise and te get numbers that we can work with. 
+
+$WelfareIndex = \frac{(LifeExpectancy * Income)} {1000}$
+
+### <mark>**EXERCISE 6; DISCUSS: Which `DATA` are we going to use and how are we going to get it?**</mark> {-}
+
+Now we are ready to get going:
+
+#### Getting the right subset of the data
+We are focusing on Africa, so it makes sense to subset the data (filter) for those cases that involve Africa. 
+
+```{r}
+africa <- gapminder %>%
+  dplyr::filter(continent == "Africa")
+  
+```
+
+#### Creating a new variable called `welfare_index`
+For each year this index is calculated, we are removing one dimension by catching two variables in one.
+```{r}
+africa <- africa %>%
+  mutate(welfare_index = (life_expectancy*gdp)/1000)
+
+```
+
+#### Let's make a plot to see if this new metric works out
+```{r}
+africa %>%
+  ggplot(aes(x = year, y = welfare_index)) +
+  geom_line(aes(group = country, colour = country), 
+            show.legend = FALSE, size = 1) 
+```
+
+The countries at the bottom are a bit squished up. A transformation of the y-scale could help
+```{r}
+africa %>%
+  ggplot(aes(x = year, y = log10(welfare_index))) +
+  geom_line(aes(group = country, colour = country), 
+            show.legend = FALSE, size = 1) 
+```
+
+This yields an interesting view on the data: Most countries in Africa follow a comparable upwards trend for the `welfare_index` over time. There a a few exceptions. Think about how you would approach the problem of getting the data for those countries that show a deviating trend from the rest, without having to sift through many lines of data in an Excel file. 
+
+## Mapping to continuous variables
+So far we have been mapping colours and shapes to categorical variables. You can also map to continuous variables though.
+```{r}
+continuous <- gapminder %>%
+  dplyr::filter(country == "Netherlands" | 
+                country == "China" |
+                country == "India") %>%
+  dplyr::filter(year %in% years) %>%
+  ggplot(aes(x = year,
+         y = life_expectancy)) +
+  geom_point(aes(size = population, colour = country)) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  geom_line(aes(group = country, colour = country), size = 1) +
+  theme_bw()
+continuous
+```
+
+## Heatmaps
+```{r}
+gapminder$year %>% unique()
+
+gapminder %>%
+  group_by(continent, country, year) %>%
+  summarise(mean_pop = mean(population)) %>%
+  ggplot(aes(x = year, y = country)) +
+  geom_tile(aes(fill = mean_pop)) +
+  toolboxr::rotate_axis_labels(axis = "x", angle = 90) +
+  theme(axis.text.y= element_text(size = 5))
+
+```
+
+### <mark>**EXERCISE 7; Discuss with your neighbor, and write the R code to:**</mark> {-}
+
+Try plotting the `infant_mortality` against the filtered years for the same countries as the code above (Netherlands, India, China), recycling some of the code above. Discuss the resulting graph in the light of the life_expectancy graph, what do you think about the the developments in China? 
+
+Want to know more? see: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4331212/
+Babxiarz, 2016
+
+### <mark>**EXERCISE 8; Analyzing the code, line by line**</mark> {-}
+
+Analyze the following code chunk: try running line by line to see what happens:
+
+ - How many observations are we plotting here?
+ - How many variables are we plotting?
+ - Try adding or removing variables to the `group_by()` statement, what happens if you do?
+
+#### Summarize per continent and sum population {-}
+```{r}
+population_plot <- gapminder %>% 
+  dplyr::group_by(continent, year) %>%
+  dplyr::filter(year %in% years) %>%
+  summarise(sum_population = sum(population, na.rm = TRUE),
+            mean_life_exp = mean(life_expectancy, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, 
+             y = log10(sum_population))) +
+    geom_point(aes(colour = continent, 
+                   size = mean_life_exp),
+                   alpha = 0.5) +
+    geom_line(aes(group = continent,
+                  colour = continent)) +
+    guides(colour = guide_legend(override.aes = list(alpha = 1)))
+  
+population_plot
+```
+
+## Ranking data
+Sometimes it can be helpful to rank data according a numeric variable if you are plotting numeric values to a categorical variable. Here I show you the gapminder countries in Europe, ranked for the log10 of their respective population sizes. Red dots indicate those countries with more than 1*10E6 (so 10 million) inhabitants
+```{r}
+
+over_10_million <- gapminder %>%
+  dplyr::filter(
+  continent == "Europe",
+  year == 2010, 
+  population >= 1e7)
+
+ranking_plot <- gapminder %>%
+  dplyr::filter(continent == "Europe",
+                year == 2010) %>%
+  ggplot(aes(x = reorder(as_factor(country), population),
+             y = log10(population))) +
+  geom_point() +
+  ylab("log10(Population)") +
+  xlab("Country") + 
+  coord_flip() +
+  geom_point(data = over_10_million, colour = "red")
+
+ranking_plot
+```
+
+## Time series
+We filter for "Americas" and "Oceania" and look at `life_expectancy` over the years.
+```{r}
+## without summarizing for countries
+gapminder$continent %>% as_factor() %>% levels()
+gapminder %>% 
+  dplyr::filter(continent == "Americas" | continent == "Oceania") %>%
+  ggplot(aes(x = year,
+             y = life_expectancy)) +
+  geom_line(aes(group = continent,
+                colour = continent))
+```  
+
+### <mark>**EXERCISE 9; Obviously something went wrong here. Please, discuss with (your neighbour) what you think happened or needs to be done to fix this (without looking ahead ;-) )**</mark> {-}
+
+### Grouping
+We can see what happened if we plot individual datapoints
+```{r}
+gapminder %>% 
+  dplyr::filter(continent == "Americas" | continent == "Oceania") %>%
+  ggplot(aes(x = year,
+             y = life_expectancy)) +
+  geom_point(aes(colour = country)) +
+  theme(legend.position="none") +
+  facet_wrap( ~ continent) +
+  theme(legend.position="none") 
+  
+```
+
+### Summarizing time series data {-}
+What happened in 1999/2010? The dat shows a dip.
+```{r}
+gapminder$continent %>% as_factor() %>% levels()
+gapminder %>% 
+  dplyr::filter(continent == "Americas" | continent == "Oceania") %>%
+  group_by(continent, year) %>%
+  summarise(mean_life_expectancy = mean(life_expectancy)) %>%
+  ggplot(aes(x = year,
+             y = mean_life_expectancy)) +
+  geom_line(aes(group = continent,
+                colour = continent), size = 3) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+## One more option: categorical values and "jitter"
+Sometimes you have overlapping plots and adding transparency with `alpha()` or mapping colour to underlying categorical values is not working because there are simple to many points overlapping
+
+Let's look at an example
+```{r}
+gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  group_by(continent) %>%
+  dplyr::filter(year %in% years) %>%
+  ggplot(aes(x = year,
+             y = infant_mortality)) +
+  geom_point(aes(colour = country)) +
+  theme(legend.position="none")
+  
+```
+
+In such cases it can be helpfull to add some noise to the points (`position = "jitter"`) to reduce overlapping. This can be a powerfull approach, especially when combined with setting `alpha()`
+```{r}
+gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  dplyr::filter(year %in% years) %>%
+    group_by(continent) %>%
+  ggplot(aes(x = year,
+             y = infant_mortality)) +
+  geom_point(aes(colour = continent), position = "jitter") 
+  
+```
+
+### {-} Adding summary data to an existing plot
+Now that we have the mean infant mortality for each year for the two continents, let's add that data to the previous dot plot where we used jitter
+```{r}
+mean_inf_mort <- gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  dplyr::filter(year %in% years) %>%
+  group_by(continent, year) %>%
+  summarise(mean_infant_mortality = mean(infant_mortality, na.rm = TRUE))
+
+gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  dplyr::filter(year %in% years) %>%
+    group_by(continent) %>%
+  ggplot(aes(x = year,
+             y = infant_mortality)) +
+  geom_point(aes(colour = continent), position = "jitter") +
+
+## summary data added to previous 
+  geom_line(data = mean_inf_mort, aes(x = year, 
+                                      y = mean_infant_mortality, 
+                                      colour = continent),  size = 2)
+
+
+```
+
+### Interactive visualizations {-}
+In the figure above we can observe a number of countries in 'Americas' continent that have a child mortality that are above the average (over the years) of 'Africa'. Which countries are this?
+
+```{r}
+library(ggiraph)
+
+gapminder$country <- 
+  str_replace_all(string = gapminder$country, 
+                pattern = "'", 
+                replacement = "_")
+
+
+interactive_inf_mort <- gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  dplyr::filter(year %in% years) %>%
+    group_by(region, country) %>%
+  ggplot(aes(x = year,
+             y = infant_mortality)) +
+  
+  geom_point_interactive(aes(tooltip = country, colour = region), position = "jitter") +
+  
+#  geom_point(aes(colour = continent), position = "jitter") +
+
+## summary data added to previous 
+ geom_line(data = mean_inf_mort, aes(x = year, 
+                                      y = mean_infant_mortality, 
+                                      colour = continent, group = continent),  size = 2
+            )
+
+interactive_inf_mort
+
+gapminder$country %>% as_factor() %>% levels()
+ggiraph(ggobj = interactive_inf_mort)
+
+```
+ 
+## Bar charts 
+It would be nice to know what the mean child mortality is for both continents
+```{r}
+gapminder %>% 
+  dplyr::filter(continent == "Americas" |
+                continent == "Africa") %>%
+  dplyr::filter(year %in% years) %>%
+  group_by(continent, year) %>%
+  summarise(mean_infant_mortality = mean(infant_mortality, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year,
+             y = mean_infant_mortality)) +
+  geom_col(aes(fill = continent), position = "dodge") 
+  
+```
+
+## Publication quality graphs
+With ggplot2 you can create a publication quality graph that can be tweaked to finest details.
+```{r}
+## A more complicated example (for showing the capabilities of ggplot2)
+
+west <- c("Western Europe","Northern Europe","Southern Europe",
+          "Northern America","Australia and New Zealand")
+
+pub_plot <- gapminder <- gapminder %>%
+  mutate(group = case_when(
+    region %in% west ~ "The West",
+    region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+    region %in% c("Caribbean", "Central America", "South America") ~ "Latin America",
+    continent == "Africa" & region != "Northern Africa" ~ "Sub-Saharan Africa",
+    TRUE ~ "Others"))
+gapminder <- gapminder %>%
+  mutate(group = factor(group, levels = rev(c("Others", "Latin America", "East Asia","Sub-Saharan Africa", "The West"))))
+
+dplyr::filter(gapminder, year%in%c(1962, 2013) & !is.na(group) &
+         !is.na(fertility) & !is.na(life_expectancy)) %>%
+  mutate(population_in_millions = population/10^6) %>%
+  ggplot( aes(fertility, y=life_expectancy, col = group, size = population_in_millions)) +
+  geom_point(alpha = 0.8) +
+  guides(size=FALSE) +
+  theme(plot.title = element_blank(), legend.title = element_blank()) +
+  coord_cartesian(ylim = c(30, 85)) +
+  xlab("Fertility rate (births per woman)") +
+  ylab("Life Expectancy") +
+  geom_text(aes(x=7, y=82, label=year), cex=7, color="grey") +
+  facet_grid(. ~ year) +
+  theme(strip.background = element_blank(),
+        strip.text.x = element_blank(),
+        strip.text.y = element_blank(),
+   legend.position = "top")
+
+pub_plot
+```
+
+## Data Distributions & Outliers
+
+### Detecting outliers {-}
+For this part we use a different and more simple dataset
+This dataset contains 1192 observations on self-reported:
+
+ - `height` (inch)
+ - `earn` ($)
+ - `sex` (gender)
+ - `ed` (currently un-annotated)
+ - `age` (years)
+ - `race` 
+ 
+```{r}
+heights_data <- read_csv(file = here::here("data",
+                                           "heights_outliers.csv"))
+
+heights_data
+```
+
+### Data characteristics {-}
+We will focus on the variable `height` here
+```{r}
+summary_heights_data <- heights_data %>%
+  group_by(sex, age) %>%
+  summarise(mean_height = mean(height, na.rm = TRUE),
+            min_height = min(height),
+            max_height = max(height)) %>%
+  arrange(desc(mean_height))
+
+summary_heights_data[c(1:4),]
+```
+
+From the above summary we can conclude that there are two outliers (presumably entry errors).
+
+### <mark>**EXERCISE 10; Calculate the height in meters for each outlier in the `Console`**</mark> {-}
+
+1 inch = 0,0254 meters
+
+**Please discuss the solution with your neighbour** 
+
+### Checking the frequency distribution {-}
+```{r}
+
+heights_data %>%
+  ggplot(aes(x = height)) +
+  geom_histogram(aes(stat = "identity"), bins = 200)
+```
+
+This distribution looks odd. 
+When you see a large x-axis with no data plotted on it, it usually means there is an outlier. If you look carefully, you will spot two outliers around 600
+
+### Boxplots to detect outliers {-}
+```{r}
+heights_data %>%
+  ggplot(aes(y = log10(height))) +
+  geom_boxplot()
+```
+
+So apparantly there are two data points that are way off from the rest of the distribution. Let's remove these, using `filter()` from the `{dplyr}` package like we did before on the `gapminder` dataset.
+
+### Identify the outliers {-}
+```{r}
+heights_data %>%
+  dplyr::filter(height > 100)
+```
+
+### Boxplot with outliers removed {-}
+```{r}
+heights_data %>%
+  dplyr::filter(height < 100) %>%
+  ggplot(aes(y = height)) +
+  geom_boxplot()
+```
+
+### By sex {-}
+```{r}
+heights_data %>%
+  dplyr::filter(height < 100) %>%
+  ggplot(aes(y = height, x = sex)) +
+  geom_boxplot()
+
+```
+
+### New frequency distribution
+Now let's plot a new distribution plot, this time we plot density, leaving the outlier out
+```{r}
+heights_data %>%
+  dplyr::filter(height < 100) %>%
+  ggplot(aes(height)) +
+  geom_density(aes(y = ..density..))
+```
+
+## By sex
+```{r}
+heights_data %>%
+  dplyr::filter(height < 100) %>%
+  ggplot(aes(height)) +
+  geom_density(aes(y = ..density.., colour = sex), size = 1.5)
+
+```
+Question: Are the heights of males really different from females?
+
+```{r}
+model <- lm(data = heights_data, height ~ sex)
+anova(model) %>% summary
+
+## are other factors (e.g. race) contributing? 
+model <- lm(data = heights_data, height ~ sex * race)
+anova(model)
+
+## look at a plot
+heights_data %>%
+#  group_by(race, sex) %>%
+#  summarise(mean_height = mean(height)) %>%
+  dplyr::filter(height < 100) %>%
+  ggplot(aes(x = race, y = height)) + 
+  geom_point(aes(colour = race), position = "jitter")
+             
+## The sample size is unbalanced, s this a problem for the ANOVA we just did?
+
+heights_data %>%
+  group_by(race, sex) %>%
+  tally() %>%
+  ggplot(aes(x = race, y = n)) +
+  geom_col(aes(fill = sex), position = "dodge")
+
+
+```
+
+
+
+## CHAPTER EXERCISES {-}
+
+### Packages {-}
+```{r, ex_pkgs}
+## the packages that you minimally need for this exercise
+library(tidyverse)
+library(cowplot)
+library(readr)
+library(readxl)
+## add more if you need them
+```
+
+### `{ggplot2}` {-}
+As shown in the demo, the {ggplot2} package is a very strong tool to make plots. It is somewhat more difficult to master than other plotting systems in R, but it is much stronger and much, much more versatile.
+
+In order to force you to study ggplot syntax, you will have to create plots in this exercise using {ggplot2} syntax only!!
+
+### Introduction {-}
+In most cases, plotting is the main tool by which you get a ‘feel’ for the data. In many cases, the plots require some work on the data first, so we will have to process the data as well. A very important part of your preliminary analysis involves knowing the distribution of the data. That is, what are its typical values, and how do they relate to one another or to another data set. Probably the easiest plotting tool for this is the histogram. This is available as the `geom_histogram()` or `geom_freypoly()` in {ggplot2}. Alternatively you can use `geom_boxplot()` to create boxplots. 
+
+### <mark>**EXERCISE 11. Airquality data**</mark> {-}
+
+In this exercise we will use a build-in dataset from the {datasets} package. The data can be loaded by typing 
+```
+airq <- datasets::airquality
+```
+in your script. Try it now!
+
+You will see a new object called chicks in you Global Environment.
+```{r, load_airq}
+## load dataset airquality
+airq <- datasets::airquality
+```
+
+11A) Inspect the data
+
+ - Are there any missing values, if yes how many? (`sum(is.na()`)
+ - What types of variables do we have? (use the `str()` command)
+ - Convert to a tibble with `as_tibble()`
+ - Are all the variables of the right type?
+ - Which variables are categorical?
+ - Which are numeric?
+ - Change grouping/categorical variables to facors if neccesary
+ 
+```{r, inspect_airq}
+head(airq)
+sum(is.na(airq)) # so no missing values
+str(airq) # you see that all variables have the right type
+```
+
+11B) Change all variable names to lower type case
+
+Write a line of code that changes all `names()` of the variables to lower-case. Also, replace the dot in the variable name `sola.r` for an "_". Look at the help function for the function `str_replace` from the `{stringr}` package to do this.
+
+```{r, adapt_names_airq}
+names(airq) <- tolower(names(airq))
+head(airq)
+names(airq) <- str_replace_all(names(airq), pattern = "\\.", replacement = "_")
+head(airq)
+
+```
+
+1C) Scatter plot of all the data
+
+Create a plot in your Rmd script that shows all the data points. Plot the variable `month` on the x-axis and the variable `wind` on the y-axis.
+
+```{r, all_data_airq}
+names(airq)
+plot_1c <-  airq %>%
+  ggplot(aes(x = month, y = wind)) +
+  geom_point(aes(), alpha = 0.4) 
+
+#  geom_jitter(aes(x = time, y = weight), position = "jitter") 
+  
+plot_1c
+```
+
+11D) Overplotting
+
+You will see that the plot contains many points that are overlaid (how do we know that they are overlaid?). How can you solve this "overplotting" problem? Write a few lines of code that shows your solution.
+
+**TIPs**
+
+ - Look-up overplotting in the "R for Data Science" book  or review Chapter \@ref(lab2viz) of this reader)
+ - What does `alpha()` do?
+ - Maybe use position = "jitter" as an extra layer in your graph
+ (look at `?position = "jitter"`)
+
+```{r, overplotting_airq}
+names(airq)
+plot_1d <-  airq %>%
+  ggplot(aes(x = month, y = wind)) +
+  geom_point(aes(), alpha = 0.4, position = "jitter")
+ 
+plot_1d
+
+```
+
+11E) Plot the relationship between wind and month with a straight line 
+
+```{r, line_wind_month}
+names(airq)
+plot_1e <-  airq %>%
+  ggplot(aes(x = month, y = wind)) +
+  geom_point(aes(), alpha = 0.4, position = "jitter")  +
+  geom_smooth(method = "lm")
+  #
+#+
+ # geom_jitter(position = "jitter") 
+  
+plot_1e
+
+```
+
+11F) Wind Velocity
+summarize the wind velocity per month (call this `mean_month`) in a bar plot. Plot the relationship between `month` and `mean_wind`. Plot error bars on the bars
+Try looking up the solution for the error bars, using Google.
+
+```{r}
+airq %>%
+  group_by(month) %>%
+  summarise(mean_wind = mean(wind, na.rm = TRUE),
+            sd = sd(wind, na.rm = TRUE)) %>%
+  ggplot(aes(x = month, y = mean_wind)) +
+  geom_col() +
+  geom_errorbar(aes(x = month, ymax = mean_wind+sd, 
+                    ymin = mean_wind - sd), size = 1, width = 0.4)
+
+```
+
+
+
+
+### <mark>**EXERCISE 12. Overplotting solved by colours**</mark> {-}
+
+For this exercise we wil use a new dataset "tb_burden":
+
+The file: "/data/messy/TB_data_dictionary_2016-12-08.csv" contains additional info on the variables in the datafile.
+
+12A) Import data
+Read the file "/data/messy/TB_burden_countries_2016-12-08_messy.csv" into R with the following code:
+```{r, echo=TRUE}
+tb_burden <- read.csv(
+  file = here::here(
+    "data",
+    "messy",
+    "TB_burden_countries_2016-12-08_messy.csv"))
+
+
+names(tb_burden)
+```
+
+12B) Selection of relevant variables
+For the subsequent analysis we will use the following variables:
+ 
+ `country`
+ `iso3`
+ `g_whoregion`
+ `year`
+ `e_inc_num`
+ `e_mort_exc_tbhiv_num`
+ `e_pop_num`
+ 
+ Select the above variables from the dataset.
+ 
+```{r}
+names(tb_burden)
+tb_data_selected <- tb_burden %>%
+  dplyr::select(
+    iso3,
+    country,
+    g_whoregion,
+    year,
+    e_inc_num,
+    e_mort_exc_tbhiv_num,
+    e_pop_num,
+  )
+
+```
+ 
+12C) Data dictionary
+Load the data dictionary into R ("/data/messy/TB_data_dictionary_2016-12-08_messy.csv")
+
+Use `dplyr::filter()` together with the `%in%` operator to pull out the descriptions of the variables from the data dictionary. Do all the variables have a discription?
+
+```{r, echo=TRUE}
+dictionary <- read_csv("./data/messy/TB_data_dictionary_2016-12-08.csv")
+
+## filter solution
+dplyr::filter(dictionary, variable_name %in% names(tb_data_selected))
+
+
+```
+
+### <mark>**EXERCISE 13. Exploratory graphs**</mark> {-}
+Use the tuberculosis dataset from exercise 2.
+
+13A) All data {-}
+Plot the total number of Tuberculosis cases (y axis), for each country, for each year (x axis. Think about how to solve the overplotting this creates. How do you display country?
+
+Which country has the highest number of annual TB cases?
+
+```{r, high_burden}
+tb_burden %>%
+  ggplot(aes(x = year, y = log10(e_inc_num))) +
+  geom_point(aes(colour = country), position = "jitter") +
+  theme(legend.position = "none") +
+  ggtitle("Number of total TB cases")
+
+tb_burden %>%
+  ggplot(aes(x = year, y = e_inc_num)) +
+  geom_point(aes(colour = country), position = "jitter") +
+  theme(legend.position = "none") +
+  ggtitle("Number of total TB cases")
+
+tb_burden %>%
+  dplyr::filter(e_inc_num > 2500000) %>%
+  as_tibble() %>%
+  select(country) %>%
+  unique()
+```
+
+13B) Calculate incidence per 1.000
+Calculate the incidence of TB per 1.000 inhabitants, per country, per year. Plot the incendence (y axis) for each country and each year (x axis), for only those countries that have a higer incidence of more than 5 per 1000 inhabitants.
+
+```{r, incidence_tb}
+tb_data_selected %>%
+  as_tibble() %>%
+  mutate(incidence_1e3 = (e_inc_num/e_pop_num)*1000) %>%
+  dplyr::filter(incidence_1e3 > 5) %>%
+  ggplot(aes(x = year,
+             y = incidence_1e3)) +
+  geom_point(aes(colour = country)) +
+  geom_line(aes(group = country, colour = country), show.legend = FALSE) +
+  theme(legend.position = "none") +
+  ggtitle("Number of total TB cases")
+
+```
+
+13C) Filtering from graph
+Which country had the highest incidence of TB in the year 2010?
+```{r, highest_tb_incidence}
+tb_data_selected %>%
+  as_tibble() %>%
+  mutate(incidence_1e3 = (e_inc_num/e_pop_num)*1000) %>%
+  dplyr::filter(incidence_1e3 > 5,
+                year == "2010") %>%
+  arrange(desc(incidence_1e3)) %>%
+  select(country, incidence_1e3)
+```
+
+13D) Average incidence per WHO region
+Show the relationship over years, between the WHO regions and the median TB incidence/1000 per region with a plot.
+
+```{r, average_inc_tb}
+names(tb_data_selected)
+tb_data_selected %>%
+  as_tibble() %>%
+  mutate(incidence_1e3 = (e_inc_num/e_pop_num)*1000) %>%  
+  group_by(g_whoregion, year) %>%
+  summarize(median_incidence_per_region = median(incidence_1e3)) %>%
+  ggplot(aes(x = year, 
+             y = median_incidence_per_region)) +
+    geom_point(aes(colour = g_whoregion)) +
+  geom_line(aes(group = g_whoregion, colour = g_whoregion)) +
+  ggtitle("Mean Incidence of TB per WHO region")
+  
+```
+
+### <mark>**EXERCISE 14; Tubercolosis data**</mark> {-}
+
+14A Calculate the overall TB incidence per 1000 people for each WHO region
+
+Plot the relationship between this overall incidence and the WHO region, over the years. Compare this result with your plot under 3D.  
+To study the relationship between TB incidence and socio-economical and/or geographical characteristics we will use the TB Burden data (selection of the variables) together with the Geographical/Socio-economical dataset of the World (from `{tmap}`, `data("World")`)
+
+14B) Load World data
+Load the World data from the `{tmap}` package (`data("World")`) and combine (left_join the world data to the TB_burden data (with selected variables)). Be sure to indicate the keys for the join (join by ISO3 which is present in both datasets)
+
+```{r, echo=TRUE, eval=FALSE}
+library(tmap)
+data("World") # from the tmap package
+names(World)
+names(tb_burden)
+
+World <- World %>%
+  dplyr::rename(iso3 = iso_a3)
+
+joined_data <- left_join(World, tb_data_selected, by = "iso3")
+names(joined_data)
+
+joined_data <- joined_data %>%
+  mutate(incidence_1e3 = (e_inc_num/e_pop_num)*1000)
+```
+
+14C) Facets for year
+Plot the relationship between the median income per capita (gdp_cap_est) per WHO region and the median TB incidence per WHO region, use facets and `alpha` to handle the years and overplotting.
+
+```{r, 4b, options_exercises, eval=FALSE}
+names(joined_data) 
+joined_data %>%
+  na.omit() %>%
+  ggplot(aes(x = gdp_cap_est,
+             y = incidence_1e3)) +
+  geom_point(alpha = 0.2) +
+  facet_wrap(~ year) +
+  geom_smooth(se = FALSE) -> ## reverse assign
+  plot_gdp_tuberculosis
+  
+plot_gdp_tuberculosis
+```
+
+### <mark>**EXERCISE 15. Histograms**</mark> {-}
+
+15A) Two histograms 
+Create histograms of the following variables of the joined data:
+`incidence_1e3`
+`gdp_cap_est`
+
+Account for `g_whoregion` in your plot. Take all years together in the histograms.
+
+```{r, 5a, eval=FALSE}
+joined_data %>%
+  ggplot(aes(x = incidence_1e3)) +
+  geom_histogram(aes(fill = g_whoregion), bins = 50)
+
+
+joined_data %>%
+  ggplot(aes(x = gdp_cap_est)) +
+  geom_histogram(aes(fill = g_whoregion), bins = 50)
+```
+
+15B) Turn the code of the histgrams into code that plots frequency polynomes
+Maybe do a log transformation on the incidence and/or gdp? Use factes for the years.
+
+**TIPS**
+ 
+ - Investigate the difference between `geom_density()` and `geom_freqpoly()`
+
+```{r, 5b, eval=FALSE}
+joined_data %>%
+  ggplot(aes(x = log10(incidence_1e3))) +
+  geom_freqpoly(aes(colour = g_whoregion), size = 1) +
+  facet_wrap(~year)
+
+joined_data %>%
+  ggplot(aes(x = log10(gdp_cap_est))) +
+  geom_freqpoly(aes(colour = g_whoregion), size = 1) +
+  facet_wrap(~year)
+
+
+joined_data %>%
+  ggplot(aes(x = log10(gdp_cap_est))) +
+  geom_density(aes(colour = g_whoregion, y = ..density..), size = 1) +
+  facet_wrap(~year)
+
+```
+
+### <mark>**EXERCISE 16. Treatment Effect Relations**</mark> {-}
+In this exercise we will use a build-in dataset from the {datasets} package. The data can be loaded by typing 
+```
+chicks <- datasets::ChickWeight
+```
+in your script. Try it now!
+
+You will see a new object called chicks in you Global Environment.
+```{r, echo=TRUE}
+## load dataset ChickWeights
+chicks <- datasets::ChickWeight 
+```
+
+16A) Inspect the data
+
+ - Are there any missing values, if yes how many? (`sum(is.na()`)
+ - What types of variables do we have? (use the `str()` command)
+ - Convert to a tibble with `as_tibble()`
+ - Are all the variables of the right type?
+ - Which variables are categorical?
+ - Which are numeric?
+ - Change grouping/categorical variables to factors if necessary(`chicks$var <- as_factor(chicks$var)`)
+ 
+```{r, 6a}
+head(chicks)
+sum(is.na(chicks)) # so no missing values
+str(chicks) # you see that all variables have the right type
+```
+
+16B) Change all variable names to lower type case
+
+Write a line of code that changes all `names()` of the variables to lower-case. 
+```{r, 6b}
+names(chicks) <- tolower(names(chicks))
+names(chicks) <- c("weight", "time", "chick", "diet")  
+head(chicks)
+```
+
+16C) Scatter plot of all the data
+
+Create a plot in your Rmd script that shows all the data points. Plot the variable `time` on the x-axis and the variable `weight` on the y-axis.
+
+```{r, 6c}
+names(chicks)
+plot_1c <-  ggplot(data = chicks, aes(x = time, y = weight)) +
+  geom_point(aes(colour = diet), alpha = 0.4, position = "jitter") 
+
+#  geom_jitter(aes(x = time, y = weight), position = "jitter") 
+  
+plot_1c
+```
+
+16D) Overplotting
+
+You will see that the plot contains many points that are overlaid. How can you solve this "overplotting" problem?
+
+**TIPs**
+
+ - Look-up overplotting in the "R for Data Science" book
+ - What does `alpha()` do?
+ - Maybe use geom_jitter() as an extra layer in your graph
+ (look at `?geom_jitter`)
+
+```{r, 6d}
+plot_1d_1 <-  ggplot(data = chicks, 
+                   aes(x = time, y = weight)) +
+  geom_point(alpha = 0.6) 
+## setting alpha does not really solve the overplotting 
+plot_1d_1
+
+plot_1d_2 <-  ggplot(data = chicks, 
+                   aes(x = time, y = weight)) +
+  geom_point() + geom_jitter(position = "jitter") 
+## setting "jitter" solves it
+plot_1d_2
+
+## antoher solution
+plot_1d_3 <-  ggplot(data = chicks, 
+                   aes(x = time, y = weight, color = diet)) +
+  geom_point() + geom_jitter(position = "jitter") 
+## setting "color = diet" provides even more insight
+plot_1d_3
+
+```
+
+16E) Overplotting solved by colours
+We could also solve the overplotting problem by using colour for each diet.
+Add, `colour = diet` to the plot in such a way that you can see the diffences between the diets in one plot.
+
+__Can you determine from this plot which diet has the strongest effect on the weight-gain per time on the chicks?__
+
+```{r, 6e}
+plot_1e <-  ggplot(data = chicks,
+                   aes(x = time, y = weight, color = diet)) +
+  geom_point()
+plot_1e
+```
+
+
+16F) Combining "jitter" with group colours
+Combining "jitter" with colours to reduce overplotting even more 
+Combine adding "jitter" to the plot with asigning colours to diet.
+
+**TIPs** 
+
+ - Remember to `set.seed(1234)` to get a reproducible result.
+
+```{r, 6f}
+set.seed(1234)
+plot_1f <-  ggplot(data = chicks,
+                   aes(x = time, y = weight, color = diet)) +
+  geom_point() +
+  geom_jitter(position = "jitter")
+plot_1f
+```
+
+16G) Solving overplotting by reducing data dimensionality: summarizing data
+From the above plot it is still hard to see the trends in the data.
+
+ - Summarize the data for each diet and make a plot on the summarized data. 
+ - Again put `time` on the x-axis and the mean of the chick weight on the y-axis. 
+ - Add appropriate labels to the plot, and a title.
+ - Add regression curves (`geom_smooth(method = "lm"`) to the plot.
+
+__Draw a conclusion: Which diet do you think shows the strongest effect on weight-gain over time in the investigated chicks?__
+
+**TIPs**
+
+ - For this you will need `dplyr::group_by()` and `dplyr::summarize`
+ - call the new summarized dataframe: "chicks_summary"
+ - Use `%>%` to create the "chicks_summary"
+ - For this to work you will have to specify all the `aes()` arguments within the `ggplot()` call.
+ 
+```{r, 6g}
+# summarize the chicks data with {dyplyr}
+chicks_summary <- chicks %>%
+  group_by(diet, time) %>%
+  summarise(mean_weight = mean(weight)) 
+
+# dot plot with a smoother, the method for smoothing is "linear model"
+plot_1g <-  ggplot(data = chicks_summary, 
+  aes(x = time, y = mean_weight, color = diet)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+plot_1g
+
+
+plot(chicks$time ~ chicks$chick) # base plotting R
+
+
+```
+
+### <mark>**EXERCISE 17. Excel files - load and visualize**</mark> {-}
+ 
+17A) Loading an Excel file
+ 
+The data for this exercise can be found in:
+`"./data/Animals.xls"`
+
+It is an Miscrosoft Excel file containing brain and body weight of a number of animals: http://mste.illinois.edu/malcz/DATA/BIOLOGY/Animals.html 
+
+DESCRIPTION:
+Average brain and body weights for 27 species of land animals.
+
+VARIABLES:
+
+ - body: body weight in kg
+ - brain: brain weight in g 
+
+SIZE: 
+
+ - Observations = 27; 
+ - Variables = 2
+
+SOURCE:
+Rousseeuw, P.J. & Leroy, A.M. (1987) Robust Regression and Outlier Detection. Wiley, p. 57.
+
+Write a code chunk that loads the file `"./data/Animals.xls"` into R. 
+You may use any function you like, but you are not allowed to transform the data in any way using e.g. Excel. Name the dataframe `animals` as a datatable/dataframe/tibble in R. 
+
+**TIPs** 
+ 
+ - You can use the `readxl::read_excel()` function to solve this question.
+ - Rember to use `library` to load the required package(s)
+ - The first row that contains data is the "Mountain Beaver" observation
+ - Remember that in some functions you can also set `header = FALSE`
+ - The variables in this dataset need to be `animal`, `body_weigth` and `brain_weigth` and IN THAT ORDER! These are the so-called `names` of the dataframe and can be set or checked using the function `names()`
+ - Remember `dplyr::select`, `dplyr::filter()`, `dplyr::group_by`, `dplyr::summarize()`
+ 
+```{r, 7a}
+# tidyverse solution
+# readxl::readxl solution
+library(readxl)
+path_to_file <- here::here("data", "Animals.xls")
+animals_readxl <- readxl::read_excel(path = path_to_file, sheet = 1,
+                              skip = 1, trim_ws = TRUE)
+
+animals_readxl <- na.omit(animals_readxl)
+
+# ?readxl
+## the names are not correct, change if neccessary, see 2C
+```
+
+```{r, eval=FALSE}
+# Other option: {xlsx}
+# install.packages("xlsx")
+library(xlsx)
+# ?read.xlsx2
+animals_xlsx <- read.xlsx2(file = path_to_file, startRow = 4,
+                           sheetIndex = 1)
+# okay, so the version of Excel originally used to build this datafile is too old...
+``` 
+
+```{r, eval=FALSE}
+# other option: {gdata}
+library(gdata)
+# ?read.xls()
+# ?read.csv
+animals_gdata = read.xls(path_to_file, sheet = 1, header = TRUE,
+skip = 1)
+
+## This needs a Perl installation (see: strawberryperl.com)
+## OKAY, so obviously, there are good reasons, NOT to use Excel files to store data!!
+
+```
+
+17B) Variable names
+The `names` of a dataframe can be found or set with `names(dataframe)`. Try setting the names for the `animal` dataframe to `animal`, `body_weigth` and `brain_weigth` and IN THAT ORDER. 
+
+
+```{r, 7b}
+names(animals_readxl) <- c("animal", "body_weight", "brain_weight")
+
+## other solution:
+colnames(animals_readxl) <- c("animal", "body_weight", "brain_weight")
+
+pander::pander(head(animals_readxl))
+```
+
+17C) Subsetting
+The `animals` data can be subsetted and explored by using the subsetting functions from `dplyr`.
+
+  - Which animal has a body weight of 6654.000 kg and a brain weight of 5712.0 g?
+  - Write a few lines of code that extract this information from the dataframe.
+
+```{r, 7c}
+library(dplyr)
+## dplyr solution:
+animals_readxl %>% 
+  dplyr::filter(body_weight == 6654 & brain_weight == 5712)
+
+## base-R solution 
+#ind <- animals_readxl[,2] == 6654 & animals_readxl[, 3] == 5712 
+#animals_readxl[ind, ]
+```
+
+17D) Filtering
+Which animal has the smallest brain weight? 
+Write code that confirms this finding  
+ 
+ **TIPs**
+ 
+ - Use `dplyr::filter()` and `%>%` to find the answer.
+ - You can also use `min(vector, na.rm = TRUE)` to find the answer. 
+ - Try to write a few lines of code that answer this question with the correct output in the `Console` 
+```{r, 7d}
+## dplyr solution
+head(animals_readxl %>% arrange(brain_weight), 1)
+
+## or
+animals_readxl %>% 
+  dplyr::filter(brain_weight == min(animals_readxl$brain_weight, 
+                             na.rm = TRUE))
+
+```
+
+17E) Plots 
+Create a plot that shows the realtionship between `body_weigth` and `brain_weight`. Create a dot plot, that shows this relationship.
+
+**TIPs**
+ 
+ - Remember `ggplot2` from the "Visualizations" class
+ - Remember `geom_point()`
+ - Remember `geom_smooth()`
+ - Remember using `%>%` in conjunction with `ggplot()` and the `dplyr` verbs
+ 
+```{r, 17e}
+library(ggplot2)
+plot <- animals_readxl %>% 
+  ggplot(aes(x = body_weight, y = brain_weight)) +
+    geom_point() +
+    geom_smooth()
+plot
+```
+
+17F) Removing ouliers 
+On the basis of the plot above, construct a new plot that eliminates the data point for the animal "Brachiosaurus". What can you conclude from the relationship between body weigth and brain weigth, from this new plot? 
+
+```{r, 7f}
+no_brachio <- animals_readxl %>% 
+  dplyr::filter(!animal == "Brachiosaurus") %>%
+  ggplot(aes(x = body_weight, y = brain_weight)) +
+    geom_point() +
+    geom_smooth()
+no_brachio
+```
+
+ From the plot, what can you conclude about the relationship. Are there any outliers?
+
+17G) Data Transformation
+Plot the relationship of the full dataset (including "Brachiosaurus"), between body weight and brain weight.
+Transform the body_weight variable to a log10 scale
+```{r, 7g}
+library(ggplot2)
+plot <- animals_readxl %>% 
+## create a new variable (log10 transformed body_weight)
+    mutate(log10_bw = log10(body_weight)) %>%
+## create a new plot  
+  ggplot(aes(x = log10_bw, y = brain_weight)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+## call the plot
+plot
+```
+
+17H) What can you conclude from the 17G plot {-}
+What happens to the relation between body_weigt and brain_weight if you excluse all dinosaurs ("Brachiosaurus", "Diplodocus" and "Triceratops") from the dataset?
+**Write a short conclusion on this plot.**
+
+```{r, 7h}
+library(ggplot2)
+no_dinos <- animals_readxl %>%
+  dplyr::filter(!animal == "Brachiosaurus" & 
+         !animal == "Diplodocus" &
+         !animal == "Triceratops") %>%
+## create a new variable (log10 transformed body_weight)
+    mutate(log10_bw = log10(body_weight)) %>%
+## create a new plot  
+  ggplot(aes(x = log10_bw, y = brain_weight)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+## call the plot
+no_dinos
+```
+

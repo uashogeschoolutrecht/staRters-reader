@@ -1,0 +1,277 @@
+---
+title: "Data Import; {readxl}"
+author: "Marc A.T. Teunis"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 5, fig.height = 3)
+```
+
+```{r, root_1, include=FALSE}
+## defines the root of the project for later use
+require("rprojroot") || utils::install.packages("rprojroot")
+library(rprojroot)
+root <- find_root_file(criterion = is_rstudio_project)
+```
+
+## Lesson Aim
+```{r, echo=FALSE, fig.align='right'}
+path_to_readxl_sticker <- file.path(root, "images", "readxl_sticker.png")
+ knitr::include_graphics(path = path_to_readxl_sticker, dpi = 250)
+```
+
+* Learn about importing Microsoft Office Excel files
+* Excel is still widely used
+* Most people that do knot know of "tidy" data provide "messy" data
+* Even people that do know "tidy" data do not always provide "tidy" data
+
+## The Excel Enigma
+
+ * Excel is not meant for data wrangling
+ * It is not really meant for visualizations either
+ * It is meant for rectangular data, but nobody does it!
+ 
+## Reading .xls and .xlsx with {readxl}
+ 
+  * There are many R packages that can read Excel files
+  * {readxl} does not need any external dependencies
+  * It applies the {tidyverse} logic
+  
+## Real-life example
+```{r}
+path_to_messy_excel <- file.path(root, "images", "messy_excel.png")
+knitr::include_graphics(path_to_messy_excel, dpi = 110)
+```
+
+## Let's read this messy Excel file into R
+```{r}
+path_to_messy_excel_data <- file.path(
+  root, 
+  "data-raw",
+  "D020",
+  "messy_excel.xlsx")
+messy <- readxl::read_excel(path = path_to_messy_excel_data, sheet = 1 )
+head(messy, 8)
+```
+
+## So that didn't work, now what
+ 
+ * There is stuff at the top that we do not need
+ * There is stuff at the bottom that we do not 
+ * The datset contains different variables, which?
+ 
+## Variables in the dataset:
+ 
+ * Laboratory
+ * EC50
+ * IL-1alpha_2x
+ * EC3
+ * Compound
+ 
+ How do we extract these and make the data tidy?
+ 
+## Splitting the set into two: 
+ 
+`EC50` and `IL-1alpha_2x` are side-by-side 
+
+```{r}
+#?read_excel
+
+library(readxl)
+EC50 <- readxl::read_excel(path = path_to_messy_excel_data, 
+                           sheet = 1,
+                           range = cell_cols("C:F"),
+                           na = c("not tested"),
+                           col_names = c("hu", "disfeb",                                                "vumc", "basf")
+)
+
+head(EC50, 8)
+```
+
+## IL-1 alpha
+
+```{r}
+IL1alpha <- readxl::read_excel(path = path_to_messy_excel_data, 
+                           sheet = 1,
+                           range = cell_cols("I:L"),
+                           na = c("not tested", "not reached"),
+                           col_names = c("hu", "disfeb",                                                "vumc", "basf")
+)
+head(IL1alpha)
+```
+
+## Cleaning up the data further
+You will notice that there are a number of strange records in the data.
+Probably due to merging of cells?
+
+Extract the actual data with indexing
+```{r}
+EC50 <- EC50[c(3:15), ]
+IL1alpha <- IL1alpha[c(3:15), ]
+```
+
+## Adding an extra variable with compound names
+
+```{r}
+chemical_names <- readxl::read_excel(path_to_messy_excel_data,
+                                     range = cell_cols("A"))
+
+chemical_names <- chemical_names[c(4:16), ]
+chemical_names <- chemical_names$`Correlation LLNA-EC3 data` 
+
+
+EC50$chemical_names <- chemical_names
+IL1alpha$chemical_names <- chemical_names
+```
+
+## Adding a new variable on the `read_out` variable
+
+```{r}
+EC50$read_out <- c("ec50")
+IL1alpha$read_out <- c("il_1_alpha")
+```
+
+## Combining the two data
+We can combine the data now. 
+
+```{r}
+library(dplyr)
+tidy <- bind_rows(EC50, IL1alpha)
+```
+
+## Complete Cases
+
+```{r}
+tidy <- tidy[complete.cases(tidy), ]
+
+```
+
+## Gather all the nummeric variables into one
+
+The variables called `hu` to ` basf` are actually no variables
+We can `gather()` these variables into onw called `laboratory` and put the numeric value in `result`
+
+```{r}
+library(tidyr)
+tidy <- tidy %>%
+  gather(hu:basf, key = laboratory, value = result)
+```
+
+## Checking variable class
+```{r}
+str(tidy)
+tidy$chemical_names <- as.factor(tidy$chemical_names)
+tidy$read_out <- as.factor(tidy$read_out)
+tidy$laboratory <- as.factor(tidy$laboratory)
+tidy$result <- as.numeric(tidy$result)
+```
+
+## Rounding digits
+```{r}
+tidy$result <- round(tidy$result, 2)
+```
+
+## Final result
+```{r}
+tidy
+```
+
+## Plotting the result 
+
+We will make two plot to start the Exploratory Data Analysis.
+Which chemical do you think is the most potent?
+
+What do you think of the correlation between the EC3 and the IL1-alpha values?
+
+## EC3 values
+```{r}
+library(ggplot2)
+## read EC3
+EC3 <- readxl::read_excel(path_to_messy_excel_data,
+                       range = cell_cols("A:B"))
+
+EC3 <- EC3[c(4:16), ]
+names(EC3) <- c("chemical_names", "result")
+EC3$result <- as.numeric(EC3$result)
+EC3$chemical_names <- as.factor(EC3$chemical_names)
+```
+
+## Potency
+```{r}
+## plot
+potency <- tidy %>% 
+ggplot(aes(x = reorder(chemical_names, 
+                       result, FUN= mean), 
+           y = result)) +
+  geom_point() + 
+  geom_smooth() +
+  facet_grid(read_out ~ laboratory) + 
+  coord_flip() +
+  ylab("Result (mg/ml") +
+  xlab("Chemical names") +
+  ggtitle("Per lab and per chemical") 
+```
+
+## Plot potency
+```{r}
+potency
+```
+
+Correlation
+```{r}
+names(EC3)[2] <- "ec3"
+combined <- left_join(tidy, EC3, by = "chemical_names")
+
+only_hu <- combined %>% 
+  filter(read_out == "il_1_alpha", laboratory == "hu")
+
+cor <- cor.test(only_hu$result, only_hu$ec3)
+
+correlation <- only_hu %>% 
+ggplot(aes(x = result, 
+           y = ec3)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  xlab("IL-1a") +
+  ylab("EC3") +
+  ggtitle("Relation between EC50 and EC3 for HU") +
+  geom_text(aes(label = chemical_names, hjust = 0.2, vjust = -.4)) +
+  geom_jitter(position = "jitter")
+```
+
+## Plots
+```{r}
+correlation
+
+```
+
+## Write to disk
+```{r}
+readr::write_csv(
+  combined,
+  here::here(
+  "data",
+  "D020",
+  "tidy_excel.csv"
+  )
+)
+
+## md5 sums
+tools::md5sum(files = here::here(
+  "data",
+  "D020",
+  "tidy_excel.csv"
+  )) %>% readr::write_lines(
+  path = 
+    here::here(
+      "data",
+      "D020",
+      paste("tidy_excel.csv.md5", sep = "_")
+      ))
+
+```
+

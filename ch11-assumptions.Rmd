@@ -1,0 +1,784 @@
+# Assumptions and statistical models {#assumptions}
+
+## References
+Input for content of this chapter was derived from [@dsur], [@apm], [@rethinking], [adventr], Applied Predictive Modelling from Max Kuhn and 
+
+https://cran.r-project.org/web/packages/dlookr/vignettes/EDA.html and https://tylerburleigh.com/blog/surviving-the-titanic-with-r-caret/
+
+https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Continous-Random-Variables/The-Standard-Normal-Distribution/The-Standard-Normal-Distribution-An-Example/index.html
+
+http://msenux2.redwoods.edu/MathDept/R/StandardNormal.php
+
+http://www.cookbook-r.com/Manipulating_data/Changing_the_order_of_levels_of_a_factor/
+
+http://rstudio-pubs-static.s3.amazonaws.com/78857_86c2403ca9c146ba8fcdcda79c3f4738.html
+
+## Introduction
+W ith this chapter, I hope to inspire the reader to try and use models (statistical models if you will) to do Exploratory Data Analysis. Although EDA is often said not to depend on statistics, I do not agree. Statistical inference and predictive modeling can learn you a lot about your data and provide valuable inside on where to go next in you analysis. 
+There are many good works on statistics and R. Three books stand out and provide valuable information for this chapter:
+[@dsur], [@apm], [@rethinking]. For a complete overview and solid work on using R for inference: [@adventr], [@moderndive] and [@dsur]
+
+We will also examine some of the official statistical applications of R in lab 6b and 6c
+
+## Packages
+```{r, warning=FALSE, error=FALSE, message=FALSE}
+library(tidyverse)
+library(AppliedPredictiveModeling)
+library(tidyverse)
+library(devtools)
+library(pastecs)
+library(car)
+library(e1071)
+library(pastecs)
+library(caret)
+# install_github("profandyfield/adventr")
+# library(adventr)
+# devtools::install_github("tidymodels/parsnip")
+library(parsnip)
+library(tidymodels)
+library(recipes)
+library(moderndive)
+library(skimr)
+library(gapminder)
+```
+
+## Model assumptions
+Every model has assumptions that are relevant for the applicability of a model. We must assume that a model is exactly what it is: a model and as such it is a representation of something else. In Data Science we use models to describe or even predict things about the world surrounding us. 
+
+In statistical inference and also for EDA, assumptions are important. They are the prerequisites for the applicability of the models we use. Assumptions for statistical inference and models can be requirements for a distribution type, variable type, number of groups to compare, equality of variance. Usually we consider a statistical test invalid if it is performed on data that does not meet one more assumptions. A robust test is relatively uninfluenced by one or more assumptions. In this chapter, I will not extensively address statistical inference and robustness. We will however learn how to assess whether some common assumptions like distribution requirements and equality of variance between groups are met. After which we will explore how to use models to do EDA and learn some statistical methods to do inference.    
+
+## Variable types
+Just as a reminder, there are a number of variable types usually represented in one dataset. We already saw many different types. Basically, if we want to do statistics or modeling using machine learning we have to learn to recognize the different types of variables. A good recap can be foud [here:](https://statistics.laerd.com/statistical-guides/types-of-variable.php) 
+
+In R terminology we can discriminate between these as:
+
+### Categorical: 
+
+ - Character: A variable with a set of discrete outcomes that can be ordered (ordinal) or have an arbitrary order.
+ - A Factor: Usually derived from a categorical variable. Usually conveys something on the grouping structure of the data. Can be ordinal (ordered factor), nominal (unordered factor) or dichotomous (ordered or unordered, two levels). A dichotomous factor is especially of interest when dealing with classification problems. Dichotomous (dependent) variables are usually easier to train a machine learning model for.
+ - A logical variable type is by definition dichotomous in nature and can contain the values TRUE or FALSE (or 1 and 0) only.
+
+### Continuous:
+
+ - A numeric variable can be an integer (ratio) variable or an interval variable. In R we call interval variables 'doubles'. Statistically, there is a strong relationship between  
+
+Depending on the analysis method used and the question at hand we can have one or multiple independent (predictor) variables. Usually we have one dependent variable for a specific analysis question. R has a convenient formula interface that is used in many statistical methods and machine learning implementations. The formula interface of R denotes dependent and independent (or so-called 'predictor' variables) as:
+
+$formula = dependent \sim predictor$ 
+
+or if multiple predictors are used:
+$formula = dependent \sim predictor1 + predictor2 + predictor3$ 
+
+or, if used in comparing the effect of multiple independent variables on the group means, e.g. in an ANOVA. Below we specify the effect of predictor1 on dependent, the effect of predictor2 on dependent and the interaction of predictor1 and predictor2 on dependent:
+$formula = dependent \sim predictor1 * predictor2$
+
+We will see some examples of this in Lab 6b and 6c.
+
+## The normal distribution
+
+In statistics, there is a lot of fuzz around the Normal Distribution:
+Many continuous variables follow a specific distribution called the Normal Distribution. Because many inferential statistical methods rely upon a variable being normally distributed (or at least approach it), we will look in more detail at this type of distribution. 
+
+A distribution of a variable $x$ is said to be normally distributed if the frequency distribution of $x$ can be represented by this formula:
+
+$f(x) = \frac{1}{\sqrt{2\pi\delta^2}} exp(-\frac{1}{2}(x-\mu)^2/\delta)$
+
+The details of this formula are not so important here and we will not do any mathematical derivations. One remarkable thing about this formula stands out however. Are you able to spot what this is?...
+
+Yes, you probably spotted the fact that a normal distribution is marked only by the mean ($\mu$) and the standard deviation ($\delta$) of a variable.
+
+A normal distribution with $\mu = 0$ and $\delta = 1$ is called the `Standard Normal Distribution` 
+
+### <mark>**EXERCISE 1; The Standard Normal Distribution**</mark> {-} 
+
+In R we can easily experiment with the characteristics of the Normal Distribution
+
+A) Rewrite the function of the Normal Frequency Distribution for $\mu = 0$ and $\delta = 1$  
+
+B) The code below simulates the creation of 200 uniformly distributed random values of `x` between -4 and +4). The respective resulting graph is a graphical representation of the Standard Normal Distribution. To generate a sequence of normally distributed random values we can use the `rnorm()` function. This function uses the above-mentioned Normal Frequency Distribution Function under the hood, so we do not have to worry about the mathematics.   
+
+```{r}
+set.seed(1234999)
+normals <- rnorm(n = 100, mean = 0, sd = 1) %>%
+  enframe()
+
+## determine mean and sd of our simulated random normals (should approach 0 and 1 resp.)
+mean(normals$value)
+sd(normals$value)
+
+## 
+hist(normals$value)
+
+## plot
+normals %>%
+ggplot(aes(x=value)) + 
+  stat_function(fun = dnorm, colour = "red", size = 1) +
+  xlim(c(-4, 4)) 
+
+## resampling
+
+sample_1 <- sample_n(normals, 100, replace = TRUE)
+mean(sample_1$value)
+sample_2 <- sample_n(normals, 100, replace = TRUE)
+mean(sample_2$value)  
+
+## homework:
+## create a function that generates 1000 boostrapped samples of the mean form the 'normal$value' sample
+## plot a histogram of the 1000 mean-estimates
+
+
+```
+
+C) Add the `mean` and the `sd` as a vertical (dashed) line to the graph from B)
+
+```{r, include is FALSE}
+normals %>%
+ggplot(aes(x=value)) + 
+  stat_function(fun = dnorm, colour = "red", size = 1) +
+  xlim(c(-4, 4)) +
+  geom_vline(xintercept = mean(normals$value), colour = 'blue', linetype = 'dashed') +
+  geom_vline(xintercept = sd(normals$value), colour = 'darkblue', linetype = 'dashed') +
+  geom_vline(xintercept = -sd(normals$value), colour = 'darkblue', linetype = 'dashed')
+
+```
+
+D) Why are the mean and sd of the simulated data (`value` variable in the `normals` data frame not exactly equal to 0 and 1 respectively?
+
+### ---- EXERCISE END ---- {-} 
+
+## Investigating your own data
+To see if your own data is approaching a normal distribution we can start with plotting the density distribution of your dependent variable. Let's assume (I know it is hard) that we collect data on a number of cars ;-). On the basis of the data for miles per gallon we would like to get a prediction how these data would look if they would follow a normal distribution.
+
+```{r}
+ggplot(mtcars, aes(x = mpg)) +
+stat_function(
+fun = dnorm,
+args = with(mtcars, c(mean = mean(mpg), sd = sd(mpg)))
+) + scale_x_continuous("Miles per gallon")
+```
+
+We can than overlay the actual distribution as a histogram
+
+```{r}
+ggplot(mtcars, aes(x = mpg)) +
+  stat_function(
+    fun = dnorm,
+    args = with(mtcars, c(mean = mean(mpg), sd = sd(mpg)))) + 
+  scale_x_continuous("Miles per gallon") +
+  geom_histogram(aes(y=..density..),      
+                   binwidth = 1,
+                   colour = "red")
+
+## or density
+ggplot(mtcars, aes(x = mpg)) +
+  stat_function(
+    fun = dnorm,
+    args = with(mtcars, c(mean = mean(mpg), sd = sd(mpg)))) + 
+  scale_x_continuous("Miles per gallon") +
+  geom_density(aes(y=..density..),      
+                   binwidth = 1,
+                   colour = "red")
+
+
+
+
+
+
+
+```
+
+Here we can see that the `miles per gallon (mpg)` variable somewhat deviates from the the expected curve. The red curve that is displayed shows some additional observation between 25 and 35 mpg that were not 'predicted' by the normal distribution curve. The actual mean is also somewhat higher than the 'predicted' mean. We call this 'scewing'. Here the observations are skewed to the right. The actual mean lies to the right of the predicted mean. 
+
+As long as the deviation is 'not to big' we can safely assume normality. 
+
+**Preparing data for statistical analysis or predictive modeling always means that you have to study the data distributions. Each modeling or inference technique has assumptions that more or less influence the usefulness of the method (an the validity of the conclusions), if these assumptions are violated.**
+
+We will later see that there are also formal ways of checking normality with a statistical test, but always look at the graphs too!
+
+## Using normal distributions in practice
+The mtcars dataset is all well for examples but not very exciting and we leave it behind now.
+
+Let's look at a real world example where a number of 'features' (you could also call them predictors) were collected from a larger number of students. 
+This dataset was derived from [Hartmann, K., Krois, J., Waske, B. (2018): E-Learning Project SOGA: Statistics and Geospatial Data Analysis. Department of Earth Sciences, Freie Universitaet Berlin.](https://www.geo.fu-berlin.de/en/v/soga/)
+
+### <mark>**EXERCISE 2; Using distributions to do predictions**</mark> {-} 
+
+Assuming a variable follows a normal distribution leaves us with the possibility to assess the probability for which a certain value (or range of values) for x is to be observed, under the assumption of normality. This may sounds a bit cryptic, but I will show you an example. After that we will move on to use the normal distribution to compare if the means of two distributions are the same or different.  
+
+### Example data 
+The students dataset can be found via this url: `https://userpage.fu-berlin.de/soga/200/2010_data_sets/students.csv`  
+
+A) Download the data and load it into a tibble called `data_students`
+```{r, include=FALSE}
+data_students <- read.csv("https://userpage.fu-berlin.de/soga/200/2010_data_sets/students.csv")
+```
+
+B) Explore the variable names and write a short data-journal on which is what (we will need this for later use)
+```{r}
+names(data_students)
+```
+
+C) Explore the `height`, `weight`, `age` and `gender` variables individually and their relationship using at least a scatter plot with color aesthetics and facets if necessary. Especially study the data distributions for height.
+```{r, echo=FALSE}
+## correlation between height and weight
+data_students %>%
+  ggplot(aes(x = height, y = weight)) +
+  geom_point()
+
+## correlation between weight and age
+data_students %>%
+  ggplot(aes(x = weight, y = age)) +
+  geom_point()
+
+## gender over weight and height
+data_students %>%
+  ggplot(aes(x = height, y = weight)) +
+  geom_point(aes(colour = gender))
+
+## data distributions of height
+data_students %>%
+  ggplot(aes(x = height)) +
+  geom_density()
+
+## data distributions of height; split by gender
+data_students %>%
+  ggplot(aes(x = height)) +
+  geom_density(aes(colour = gender))
+
+
+```
+
+D) Generate a histogram of all the values in the `height`variable. Overlay this histogram with a predicted normal distribution.
+```{r}
+
+data_students %>%
+ggplot(aes(x = height)) +
+  stat_function(
+    fun = dnorm,
+    args = with(data_students, c(mean = mean(height), sd = sd(height)))) + 
+  scale_x_continuous("Height") +
+  geom_density(aes(y=..density..),      
+                   binwidth = 1,
+                   colour = "red") +
+  ylab("Density")
+```
+
+**What is your conclusion about the shape of the actual distribution vs the predicted distribution, under assumtion of normality?
+
+E) Generate a histogram of the values in the `height`variable, by `gender` using color aesthetics. Overlay these histograms for their theoretical normal distributions.
+
+**TIP**
+
+ - Create two separate dataframes for the male and the femal data
+ - Adopt the code above where we used the mtcars dataset to plot the actual and predicted (normal) distribution for males and female in a plot. Assign colors to discriminate between the sexes.
+
+```{r}
+
+data_males <- data_students %>%
+  dplyr::filter(gender == "Male")
+
+data_females <- data_students %>%
+  dplyr::filter(gender == "Female")
+
+data_students %>%
+ggplot(aes(x = height)) +
+  stat_function(
+    fun = dnorm,
+    args = with(data_males, c(mean = mean(height), sd = sd(height))),
+    colour = "darkblue") +
+  stat_function(
+    fun = dnorm,
+    args = with(data_females, c(mean = mean(height), sd = sd(height))),
+    colour = "darkred") + 
+  scale_x_continuous("Height") +
+  geom_density(aes(colour = gender))
+```
+
+
+G) What is your conclusion on the total and split by gender distributions for the height variable in the `data_students` dataset in terms of assumptions met for normality?
+
+### ---- EXERCISE END ---- {-}
+
+### Checking the assumption that a distribution is not significantly different from normal in a more formal way
+
+One additional way to check normality is by plotting the actual quantiles vs the theoretical quantiles. This plot is called a QQ or 'quantile-quantile' plot. If the points (actual) lie close to the line (theoretical) this means that the distribution is fairly normal. If the deviation is big, this means that the distribution of your data is probably deviating from normality as well.   
+
+```{r}
+qqnorm(data_females$height, main = 'Q-Q plot for the height of female students')
+qqline(data_females$height, col = 3, lwd = 2)
+```
+
+## Performing a test to check for normality
+We can formally assess whether a distribution adheres to the normality assumption with a statitical test called the 'Shapiro' test. Be aware that this test is only reliable when the amount of datapoints is not to big. Data with a huge number of observations tend to always approach normality.
+
+Let's execute the Shapiro test on our 'students' dataset. Here I use a bit more sofiscation to test all variables in the students dataset for normality, when we split by gender. 
+
+We use the 'split' -> 'nest' -> 'iterate' approach here.
+
+```{r}
+data_students %>%
+  group_by(gender) %>%
+  nest() -> data_nested_students
+
+ind <- map_lgl(data_nested_students$data[[1]], is.numeric) 
+
+## Females  
+map(data_nested_students$data[[1]][, ind], shapiro.test) 
+
+vector <- c(1:10)
+
+shapiro.test(vector)
+
+# H0 = Shapiro = Distributie is normaal verdeeld
+
+# %>%
+#   map(., broom::tidy) %>% dplyr::bind_rows() %>%
+#     mutate(var = names(data_nested_students$data[[1]][ind]),
+#            gender = data_nested_students$gender[1]) -> shapiros_female
+# 
+## Males
+map(data_nested_students$data[[2]][, ind], shapiro.test) %>%
+  map(., broom::tidy) %>% dplyr::bind_rows() %>%
+    mutate(var = names(data_nested_students$data[[2]][ind]),
+           gender = data_nested_students$gender[2]) -> shapiros_male
+
+map(data_nested_students$data[[1]][, ind], shapiro.test) %>%
+  map(., broom::tidy) %>% dplyr::bind_rows() %>%
+    mutate(var = names(data_nested_students$data[[1]][ind]),
+           gender = data_nested_students$gender[1]) -> shapiros_female
+
+
+
+dplyr::bind_rows(shapiros_female, shapiros_male) %>%
+  mutate(p.value = round(p.value, 6)) -> shapiros
+```
+
+Let's examine the results:
+The H0 for the Shapiro is that the data is normally ditributed. If the p value is very low, we can reject this H0 and state that we have reason the believe that the data sampled was not derived from a normal distribution.
+
+Let's plot the results (p.values and variable names) in graph 
+```{r}
+shapiros %>%
+  ggplot(aes(x = var, y = log10(p.value))) +
+  geom_col(position = "dodge") +
+  facet_wrap(~gender) +
+  coord_flip()
+```
+
+We see here that this formal test may warrant a different conclusion than we previously drew from the qq-plot and the visual inspection of the distributions for the height variable. 
+Like most statistical significance tests, if the sample size is sufficiently large this test may detect even trivial departures from the null hypothesis (i.e., although there may be some statistically significant effect, it may be too small to be of any practical significance); thus, additional investigation of the effect size is typically advisable, e.g., a Q–Q plot in this case. A good rule is to give precedence to graphs and visual inspection, above formal (black box) tests. The number of observations here is pretty large (> 4000 per group), so we might conclude that the distribution is normal for the weight variable and that the Shapiro test gives us an overestimation of departure form normality here.
+
+```{r}
+data_students %>%
+  group_by(gender) %>%
+  count()
+```
+
+What is interesting from the Shapiro graph though is that the `salary` variable shows a rather large p.value (for females: 0.564). I did expect a variable such as income to be normaly distributed in this data. 
+
+## EXERCISE xx {-}
+Inspect the salary variable for both gender and show in a number of graphs how the distribution is related to `gender`, `age`, `graduated` and `major`. Look at the actual and theoretical distribution for `salary`, in relation to a major predictor. Can you see a pattern that is worhwhile investigating further?
+
+```{r}
+## distributions
+data_students %>%
+  ggplot(aes(x = salary)) +
+  geom_density(aes(colour = gender))
+
+## actual vs theoretical
+
+
+## Age and salary, vs major
+data_students %>%
+  ggplot(aes(x = age, y = salary)) +
+  facet_grid(gender ~ major) +
+  geom_point()
+
+
+qqnorm(data_females$salary, main = 'Q-Q plot for the salary of female students')
+qqline(data_females$salary, col = 3, lwd = 2)
+```
+
+If we look at the relationship between age, gender and major, can you think of an approach with which to study whether there is a true difference between gender, irrespective of major and whether there is true difference between majors, irrespective of gender. And whether gender and major are interacting factors, and whether age has any bearing on salary (in combination of the other factors, or considered in isolation)?
+
+Write a short summary on how you would go about tackling the above analysis.
+
+This plot might be of assistance:
+```{r}
+data_students %>%
+  group_by(gender, major, age) %>%
+  summarise(mean_salary = mean(salary, na.rm = TRUE)) %>%
+  ggplot(aes(x = age, y = mean_salary)) +
+  geom_point(aes(colour = gender)) +
+  geom_smooth(aes(group = gender, colour = gender), se = FALSE, method = "lm") +
+  facet_wrap(~ major)
+```
+
+
+```{r, solution, include=FALSE}
+library(nlme)
+
+## statistics for inference
+## statistics for prediction
+
+## linear model, anova
+salary_model_1 <- lm(data = data_students, salary ~ gender * major) 
+aov(salary_model_1) %>% summary
+
+## equal variance for all groups
+
+## model inspection
+plot(salary_model_1)
+
+## mixed effects model
+salary_model_2 <- lme(data = data_students %>% na.omit(), 
+                      salary ~ gender * major,
+                        random = ~1 | semester)
+
+anova(salary_model_2)
+plot(salary_model_2)
+```
+
+## Data transformations
+
+We can formally assess whether a distribution is normal.
+Below is a complete worked out example on how to test for the assumption of normality and equality of variance. The example is taken from [@dsur].
+
+### Read in the 'Festival Dataset' from [@dsur]:
+```{r}
+dlf <- read_delim(file = here::here("data", 
+                                   "DownloadFestival.dat"), 
+                                   delim =  "\t", na = c("", " "))
+dlf %>% head(3)
+```
+
+Checking missing values, distributions and detecting outliers
+```{r}
+sum(is.na(dlf))
+x <- summary(dlf)
+min_maxs <- x[c(1, 6), c(3:5)] %>% unlist() %>% print()
+naniar::vis_miss(dlf)
+```
+
+Detecting an outlier with a histogram
+```{r}
+hist.outlier <- ggplot(dlf, aes(day1)) + 
+  geom_histogram(aes(y=..density..), 
+                 colour="black", 
+                 fill="white") + 
+  labs(x="Hygiene score on day 1", y = "Density") +
+  theme(legend.position = "none")
+hist.outlier
+```
+
+`{ggplot2}` works best with long or so-called stacked datasets.
+```{r}
+dlf_long <- dlf %>% 
+  tidyr::gather(day1:day3, key = "days", value = "hygiene_score")
+dlf_long
+```
+
+Boxplots with outlier
+```{r, echo=FALSE}
+hist.boxplot <- dlf_long %>%
+  ggplot(aes(x = days, y = hygiene_score)) + 
+  geom_boxplot(aes(group = days)) +
+  geom_point(data = dplyr::filter(dlf_long, hygiene_score > 19), 
+             colour = "darkred", size = 2.5) +
+  labs(x="Hygiene score on day 1", y = "Hygiene Score") +
+  theme(legend.position = "none") + 
+  facet_wrap(~ gender)
+hist.boxplot
+```
+
+
+### <mark>**EXERCISE 1; Removing outliers and distributions**</mark> {-} 
+
+A) Remove the outlier identified above
+
+```{r, include=FALSE}
+dlf <- dlf %>%
+  dplyr::filter(!day1 > 19)
+
+dlf_long <- dlf_long %>%
+  dplyr::filter(!hygiene_score > 19)
+```
+
+B) Create a new series of boxplots split by `gender` and `day` 
+```{r, include=FALSE}
+## Boxplots without outlier
+hist.boxplot <- dlf %>%
+  tidyr::gather(day1:day3, key = "days", value = "hygiene_score") %>%
+  ggplot(aes(x = days, y = hygiene_score)) + 
+  geom_boxplot(aes(group = days)) + 
+  labs(x="Hygiene score on day 1", y = "Hygiene Score") +
+  theme(legend.position = "none") + 
+  facet_wrap(~ gender)
+hist.boxplot
+```
+
+C) Create a plot showing all the data, except for the one outlier you just removed. Think about whether you need to fix overplotting by some smart trick.   
+```{r,include=FALSE}
+### All data
+### At this point it is wise to look at all the data
+dlf_long %>%
+  ggplot(aes(x = hygiene_score, y = ticknumb)) +
+  geom_point(aes(colour = days)) +
+  facet_wrap(~gender)
+
+dlf_long %>%
+  group_by(gender) %>%
+  count()
+
+
+```
+
+D) Create a plot showing the distributions for `hygiene_score` for each day. Disregard any difference in gender. *Is this a safe assumtion?*
+```{r, include=FALSE}
+### Distributions for hygiene scores on day 1, day 2 and day 3. Here we disregard the gender variable, assuming there is no difference in hygiene score between males and females (which could be a dangerous assumption). We will come back to this later.
+
+dlf_long %>%
+  ggplot(aes(x = hygiene_score)) +
+  geom_density(aes(colour = days)) +
+  facet_wrap(~days)
+```
+
+E) Are these distributions following a Gaussian bell-shaped curve?
+
+### ---- EXERCISE END ---- {-}
+
+
+### How would the distribution look if it were Gaussian?
+We add the simulated normal distributions to the original dataframe and create a new stacked version. We set the seed for reproducibility.
+
+Compare the real distributions to the 'predicted' distributions. Try discribing what you see.
+```{r}
+set.seed(123)
+## add normal distribution to the data (based on observed mean and sd per day)
+dlf_norm <- dlf %>%
+  mutate(
+    norm_day_1 = rnorm(
+      mean = mean(dlf$day1, na.rm = TRUE), 
+      n = nrow(dlf), 
+      sd = sd(dlf$day1, na.rm = TRUE)),
+    norm_day_2 = rnorm(
+      mean = mean(dlf$day2, na.rm = TRUE), 
+      n = nrow(dlf), 
+      sd = sd(dlf$day2, na.rm = TRUE)),
+    norm_day_3 = rnorm(
+      mean = mean(dlf$day3, na.rm = TRUE), 
+      n = nrow(dlf), 
+      sd = sd(dlf$day3, na.rm = TRUE))) %>%
+  dplyr::select(gender, norm_day_1:norm_day_3) %>%
+  tidyr::gather(norm_day_1:norm_day_3, 
+                key = "days", 
+                value = "norm_hygiene_score")
+  
+
+## add to plot
+dlf_long %>%
+  dplyr::filter(!hygiene_score > 19) %>%
+  ggplot(aes(x = hygiene_score)) +
+  geom_density(aes(colour = days)) +
+  geom_density(data = dlf_norm, aes(x = norm_hygiene_score,
+                                    colour = days)) +
+  facet_wrap(~days)
+  
+```
+
+
+### Q-Q Plot
+The quantile-quantile plot shows the realtionship between the true data distribution and the estimated distribution, under the assumption of Gaussian (or normal) distribution.
+
+Q-Q plot for day 1
+```{r}
+## see the file ggqq.R for the function definition
+source(file = here::here("code", "ggqq.R"))
+gg_qq_1 <- gg_qq(dlf$day1)
+gg_qq_1
+```
+
+Q-Q Day 2
+```{r}
+gg_qq_2 <- gg_qq(dlf$day2)
+gg_qq_2
+```
+Clearly not normally distributed
+
+Q-Q Day 3
+```{r}
+gg_qq(dlf$day3)
+```
+Not evenly distributed and not a good fit to the estimated distribution. Not normally distributed
+
+## Skewness and kurtosis
+Skewness and kurtosis are parameters that display the deviation from normality looking at the shape of the distribution polynom. A distribution with an absolute `skew.2SE` > 1 is significantly skewed and not normal. A distribution with an absolute `kurt.2SE` > 1 has significant kurtosis and is not normally distributed. 
+
+`kurt.2SE` and `skew.2SE` are calculated from
+
+ - $kurt.2SE = kurt / 2*(standard.error)$ 
+ - $skew.2SE = skew / 2*(standard.error)$
+ 
+## `Shapiro-Wilk test` 
+To test for normality we can use the `Shapiro-Wilk test`. This test checks whether the deviation from normality is significant (H0) or not (H1), 
+
+ - p-value < 0.05 means that the distribution is significantly different from a normal distribution: assumption "the distribution is not normal"
+ - p-value > 0.05 means that the distribution is not significantly different from normal: assumption "the distribution cannot be proved to deviate from normal"
+ 
+## <mark>**EXERCISE 2; Discriptive statistics** </mark>
+
+Here we use `stat.desc()` function from the `{pastecs}` package, to get descriptive statistics for a dataframe or a variable. 
+
+A) Look at the help function of `stat.desc()`. what do the arguments `basic` and `norm` do?
+
+B) Run the `stat.desc` function on the `dlf` dataframe. Try getting descriptive statitics for each day seperatly 
+
+
+```{r}
+library(pastecs)
+round(stat.desc(dlf[, c("day1", "day2", "day3")], basic = FALSE, norm = TRUE), digits = 3)
+
+## or 
+descriptives <- map(dlf, stat.desc, basic = FALSE, norm = TRUE) 
+
+```
+
+### ---- EXERCISE END ---- {-}
+
+## Levene's Test
+The Levene Test can be used to asses whether the variance for two or more distributions is equal. As always, when using the Levene Test it is important to assess also visually if the outcome of the statitical test makes sense. 
+
+```{r, eval=FALSE}
+leveneTest(dlf$day1, dlf$day2)
+leveneTest(data = dlf_long, hygiene_score ~ days)
+# leveneTest(data = dlf_long, hygiene_score ~ days * gender)
+
+dlf_long %>%
+  ggplot(aes(x = hygiene_score, y = ticknumb)) +
+  geom_point(aes(colour = days)) +
+  facet_wrap(days ~ gender, nrow = 3)
+```
+A significant Levene Test indicates that the H0 = variances are equal does not hold and can be rejected. So if we look at the days as a factor, variance is equal over the days, but if we also take gender into consideration, we see that the variances between all groups are not equal.
+
+## Transforming data
+
+ - To remove skewness or kurtosis
+ - Apply the __*same*__ transformation to __*all variables*__
+ - After transformation and analysis or especially with predictions, sometimes you need to inverse-transform to make sense of the outcome. 
+ - It can be a time comsuming process: 'trial-and-error'
+
+### Log, square root and inverse
+Sometimes skewness can be greatly reduced by applying a log (10, n or 2) transformation to the data.
+
+### Center and scale
+Centering and scaling is the most simple transfromation. 
+When centering a variable, the average value is subtracted from all the values, resulting in a zero mean. To scale the data, each value of the variable is divided by its standard deviation. We will see below in an EXERCISE how to explore whether transformations work.
+
+### <mark>**EXERCISE 3; Exploring data with `{dlookr}`, transformations.**</mark> {-}
+
+A) The `{dlookr}` package can automate a number of exploratory tasks. Have a look at the vignette here: 
+https://cran.r-project.org/web/packages/dlookr/vignettes/EDA.html
+
+B) Look at the `help()` for functions
+`normality()` and 
+`plot_normality()` of the `{dlookr}` package. Try confirming with these functions what we already know about normality of the `hygiene_score` by `day`.
+
+**Remember, the H0 for Shapiro: 'Distribution == Normal', so a significant P rejects the H0 and therefore indicates deviance from normality.**
+
+```{r, include=FALSE}
+library(dlookr)
+
+## using normality() from `{dlookr}`
+dlf %>%
+  select(-ticknumb) %>%
+  normality() %>%
+  dplyr::mutate(p_value = round(p_value, digits = 4)) %>%
+  arrange(desc(p_value))
+
+## using plot_normality from `{dlookr}`
+dlf_long %>%
+  group_by(days) %>%
+  select(-ticknumb) %>%
+  plot_normality()
+
+```
+
+
+C) Does this confirm the previous analysis? Is there a candidate for transformation you could try?
+
+### ---- EXERCISE END ---- {-}
+
+```{r, include=FALSE}
+dlf_long_new <- dlf_long %>%
+  mutate(hygiene_score_sqrt = sqrt(hygiene_score))
+  
+dlf_long_new %>% 
+  select(-ticknumb) %>%
+  group_by(days) %>%
+  normality() %>%
+  dplyr::mutate(p_value = round(p_value, digits = 4)) %>%
+  arrange(desc(p_value))
+
+dlf_long %>%
+  mutate(hygiene_score_sqrt = sqrt(hygiene_score)) %>%
+  select(days, hygiene_score_sqrt, -ticknumb) %>%
+  group_by(days) %>%
+  plot_normality()
+```
+
+## Formal inference of the Festival data
+Let's assume we can make the data fairly normal by doing a $\sqrt{yi}$ transformation on every measured `hygiene_score`. When we do this transformation, the distribution for day 2 and 3 approaches normality much better, but for Day 1 it slightly deteriorates. Let's stick with this for now.
+
+Under the assumption of normality, and the realization that this is not completely met, we can do a two way anova on the data. We include gender and days as predictors to the transformed hygiene score.
+
+```{r}
+lm_festival <- lm(data = dlf_long_new, hygiene_score_sqrt ~ gender + days)
+
+summary(lm_festival)
+anova(lm_festival) 
+```
+
+From this output we see (under the earlier mentioned restrictions, uncertainties and assumptions) that both gender and days have a significant affect on the outcome for the (transformed) hygiene score.
+
+We can include the interaction between these predictors by specifying `gender * days` in the model. There is no significant interaction. Can you formulate in your own words what this could mean?
+
+```{r}
+lm_festival <- lm(data = dlf_long_new, hygiene_score_sqrt ~ gender * days)
+anova(lm_festival)
+```
+
+A post hoc analysis to see where the differences are: I illustrate two different way, using two different packages. Bonferroni corrrection is to compensate for multiple comparisons (in this case we have three comparisons for 'days' and one comparison for 'gender'). I will not go into detail here.
+```{r}
+library(agricolae)
+library(emmeans)
+
+emmeans::emmeans(lm_festival, ~days)
+emmeans::emmeans(lm_festival, ~gender)
+
+agricolae::LSD.test(lm_festival, "days", console = TRUE, p.adj = "bonferroni")
+agricolae::LSD.test(lm_festival, "gender", console = TRUE, p.adj = "bonferroni")
+
+```
+
+There is lot we can bring to the table to discuss this formal inference of this dataset. We know that there is a problem with assuming normally ditributed data. Therefore it always wise to check the models fit. After model checking you can dicide to apply a alternative model. For instance we can use a non-paramteric test or a robuster analysis of variance. How you do this is out of scope for this course.
+What I can illustrate though is one way to check whether this anova model is appropriatly catching all variance in the data. One way to do this is by checking the models residuals.
+
+```{r}
+tibble(resids = lm_festival$residuals,
+          fitted = lm_festival$fitted.values) %>%
+  ggplot(aes(x = fitted,
+             y = resids)) +
+  geom_point(shape = 1, alpha = 0.4) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red", size = 1)
+
+plot(lm_festival)
+
+```
+
+The residuals vs fitted plot shows a even distribution above and below the red line, this is good. It also shows that the variance over the different point-series is equally large. It does show some sytematic pattern, the series of dots being equally lined up, which shows that the model was unable to catch all information in the data.
+
+Calling plot on a model object in R also shows a number of diagnostic plots to assess model fit. Here we see that the Q-Q plot of the residuals: the points should be on the line for the assumption of nromality to be met. 
+
+
+
+

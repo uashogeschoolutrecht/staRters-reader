@@ -1,0 +1,30 @@
+---
+title: "pander"
+output: html_document
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      error = FALSE)
+```
+
+
+
+## Normal print-out of a table
+```{r}
+library(tidyverse)
+df <- tibble(a = c(1:5),
+             b = c("A", "B", "C", "D", "E"),
+             c = c(11:15))
+df             
+```
+
+## Pretty printing with `pander`
+```{r}
+pander::pander(df)
+```
+

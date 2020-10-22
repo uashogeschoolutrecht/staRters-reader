@@ -1,0 +1,100 @@
+---
+title: "Things to forget or ignore"
+author: "Marc A.T. Teunis"
+date: "`r Sys.time()`"
+output:
+  ioslides_presentation: 
+    highlight: pygments
+    widescreen: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+library(tidyverse)
+```
+
+## Demo's and tutorials
+ - Are great resources to learn R
+ - Sometimes they use the best practices
+ - Sometimes they clearly do not
+ 
+## Four things you will have to forget (or ignore)
+During this course, I will provide good alternatives
+
+ 1. Please never use `setwd()`
+ 2. Please do not attach anything with the `attach()` function
+ 3. Please do not use the `=` (equal to) assignment when creating variables
+ 4. Please do not use the `stringsAsFactors = FALSE` `in read.csv()`, use `readr::read_...()` functions instead
+ 
+## Setting the working directory with setwd() 
+The `setwd()` function sets the working dierectory to the current directory. I will show you why not to use this.
+
+Imagine you are working in the Documents folder in Windows
+```{r}
+library(here)
+
+name <- here::here("Users", "Your Name Here", "Documents")
+dir.create(here("Users"))
+dir.create(here("Users", "Your Name Here"))
+dir.create(here("Users", "Your Name Here", "Documents"))
+```
+
+## Let's create a file with some dummy data
+```{r}
+tibble(a = rnorm(100), b = runif(100)) %>%
+        write_csv(path = file.path(name, "dummy.csv"))
+```
+
+## Use setwd
+Use the code below -- Replace your own name at "Your Name Here"
+```{r}
+path <- here("Users", "Your Name Here", "Documents")
+setwd(path)
+read_csv("dummy.csv")
+
+## Look at where we are
+getwd()
+```
+What do you think, will this code run on another computer?
+
+## Alternative to `setwd()`
+
+ - We will learn about some of the alternatives for using `setwd()`
+ - The packages `rprojroot`, and the `here` package, together with the function `file.path()` are good alternatives.
+ - I will explain how to use them in the labs on RMarkdown and importing data
+
+## `attach()`
+In some of the older R code around you will find the frequent use of the `attach()` function. This function puts R objects in the search path.
+This means they are always available for the user. Using `attach()` breaks portability of the code. Be explicit and use relative paths.
+If you forget to attach or attach multiple times, the code breaks. This makes running code with `attach()` in it fragile
+
+## There are several reasons why NOT to use `attach()`
+
+ - You may have multiple object in your session carrying the same name, it is easy to mix things up
+ - When you attach a dataset it attaches the values (in e.g. a dataframe column) as they were when they were attached. Any changes in between are not attached: Let's illustrate this with an example
+ 
+## Assigning variables
+
+To assign a variable in R you can use:
+
+`=` or `<-`
+
+`=` has a special meaning and is reserved for naming an argument in a function. Always use `<-` when you want to assign a value to a variable. 
+
+Remember: `<-` always works for assignment, `=` does not always work for assignment.
+
+## `{readr}` functions
+readr functions never convert to factors, except if explicitly told:
+```{r, eval=TRUE}
+
+example_tibble <- read_delim(
+        here::here("data", "gender.txt"), 
+        delim = "/",
+        col_types = cols(
+          sex = col_factor()
+          )
+)
+
+example_tibble
+## only `sex` is converted to a factor
+```

@@ -1,0 +1,157 @@
+---
+title: "Course Activities"
+author: "Marc A.T. Teunis"
+date: "`r Sys.time()`"
+output:
+  ioslides_presentation: 
+    highlight: pygments
+    widescreen: yes
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, root_1, include=FALSE}
+## defines the root of the project for later use
+require("rprojroot") || utils::install.packages("rprojroot")
+library(rprojroot)
+root <- find_root_file(criterion = is_rstudio_project)
+```
+
+## Course Overview (this document)
+
+ - The course overview provides a summary of the course. It is a document that is fluid throughout the course. It is the current document before you. I will make changes to this as we go along to personalize the course to your needs as much as possible.
+  - The course workflow will be addressed
+  - If applicable the Course Exam will be addressed (Bachelor Course Only)
+  - We will get to know some of the conventions used in the course materials to aid readibility and completion of the exercises
+
+## Labs
+
+ - Each day (lesson) consists of 1 or several labs
+ - Is a combination of direct instruction and introduction to a new topic  
+ - Each topic (lab) is accompanied by exercises. 
+ - Some of the exercise will be addressed during instruction. 
+ - Some exercises will have to be prepared outside of class. 
+ - Each consecutive lesson will follow up on the previous exercises. 
+ - During the follow up solution for the problems that were encountered during the preparation of the exercises will be provided 
+ - **There is always room for questions!**
+
+## Cases
+
+ - During each lesson (not lesson 1 ;-), I will ask for a case from the participants
+ - Some problem you are working on that is relevant for the topics in that day's class
+ - If possible I will prepare a short demo, workflow or provide some tips on how to tackle the case problem
+ - I will ask for your input on the matter
+ 
+## Lab 1a: Introduction to RStudio 
+Chapter \@ref(lab1aintrorstudio)
+
+ 1. Getting the course materials from github.com
+ 1. Creating objects in R
+ 1. RStudio introduction
+
+## Lab 1b: Introduction to R  
+Chapter \@ref(lab1bintror)
+
+ 1. Functional and object oriented programming
+ 1. Functions
+ 1. Object Class; vectors, dataframes, lists
+ 1. Vector types
+ 1. Getting help
+ 1. Plots
+ 1. Data examples
+
+## Lab 1c: Dataframes, lists and matrices  
+Chapter \@ref(lab1crecursivevectors)
+
+ 1. Dataframes
+ 1. Lists
+ 1. Matrices
+
+## Lab 2a: Visualize & Explore Data
+Chapter \@ref(lab2viz)
+
+ 1. Visualizations demo
+ 1. Build in datasets 
+ 1. Using the grammar of graphics with `{ggplot2}`
+ 1. Plot types
+ 1. `geom_...` and `aes()`
+ 1. Adding dimensions to a plot 
+ 1. Solving overplotting
+ 1. Plot annotation and labels
+ 1. Saving plots
+ 1. Examples of `{shiny}` apps
+
+## Lab 2b: RMarkdown
+
+ 1. Literate programming
+ 1. Markdown syntax
+ 1. Code chunks
+ 1. Chunk options
+ 1. Parameters
+
+## Lab 3a: Data Wrangling  
+Chapter \@ref(lab3awrangling)
+
+ 1. Using `{dplyr}` for data wrangling
+ 1. The `{dplyr}` verbs
+ 1. Data wrangling in combination with `{ggplot2}`
+
+## Lab 3b: Functional Programming 
+Chapter \@ref(lab3bfunctions)
+
+ 1. What is a function
+ 1. Writing function
+ 1. Function documentation
+ 1. Loops and `map` family of functions
+ 1. Scripts and the `source` function
+ 1. Why write function
+ 1. Function elements (name/arguments, body, return)
+ 1. Function documentation, Roxygen comments
+ 1. Writing error / warning /  messages
+ 
+## Lab 3c: Tidy data
+Chapter \@ref(lab3ctidydata)
+ 
+## Lab 4a: Importing data 
+Chapter \@ref(lab4aimportingdata)
+
+ 1. Paths
+ 1. Importing data functions
+ 1. Excel and other 'foreign' formats
+ 1. Reading from a zipfile/url
+
+## Lab 4b: Getting Open Data  
+Chapter \@ref(lab4bopendata)
+
+ 1. Open data sources
+ 1. Finding data
+ 1. Importing data into R (.csv, .tsv, .txt, .json, .xml, .xls(x)
+ 1. Using APIs (Twitter, Kaggle, Google, CBS)
+ 1. Accessing databases
+
+## Lab 5: Exploratory Data Analysis _or_ The PPDAC Cycle
+Chapter \@ref(lab5eda)
+
+ 1. The process of EDA
+ 1. Problem-Plan-Data-Analysis-Conclusion (PPDAC) Cycle
+ 1. Missingness
+ 1. Distibutions
+ 1. Finding patterns 
+ 1. Graph types
+ 1. Multidimensional data
+ 1. Principal Components
+ 
+## Lab 6a: Exploring Assumptions & Models  
+
+ 1. Why Assumptions?
+ 1. Distributions (Gaussian)
+ 1. Regression
+ 1. Model output ( `{broom}`)
+ 
+## Lab 6b: Statistics with R (resampling & simple regression) 
+
+## Lab 6c: Statistics with R (multiple regression and ANOVA) 
+

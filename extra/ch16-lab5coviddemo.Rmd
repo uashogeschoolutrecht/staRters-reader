@@ -1,0 +1,149 @@
+---
+title: "`r paste('Covid Cases for', params$month, 'in', params$geo_id)`"
+author: "Marc A.T. Teunis"
+date: "`r Sys.time()`"
+output:
+  html_document: default
+  powerpoint_presentation: default
+  word_document: default
+  pdf_document: default
+params:
+  geo_id: NL BE
+  month: September October
+  year: 2020
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE
+  
+  )
+```
+
+
+```{r}
+## Packages
+library(utils)
+library(tidyverse)
+library(tools)
+```
+
+## Data
+```{r, echo=TRUE}
+## Packages
+library(utils)
+library(tidyverse)
+library(tools)
+library(readxl) 
+library(httr) 
+library(zoo)
+
+## Read data from public url to csv file
+data <- readr::read_csv(
+  "https://opendata.ecdc.europa.eu/covid19/casedistribution/csv/data.csv", 
+  na = c("", " "))
+
+```
+
+
+```{r, include=FALSE}
+
+## Filter for `r params$month` and `r params$geo_id`
+## create a conversion table to go from month name to month integer
+convert_months <- tibble(
+  month_name = c(
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december"),
+  month_number = c(1:12))
+
+  m_names <- str_split(tolower(params$month), pattern = " ") %>% unlist()
+
+
+  month_id <- convert_months %>%
+    dplyr::filter(
+      month_name %in% m_names) %>% 
+    dplyr::select(month_number)
+  
+  id <- month_id$month_number
+
+geo_ids <- str_split(string = params$geo_id, pattern = " ") %>% unlist()
+
+data_filter <- data %>%
+  dplyr::filter(
+    month %in% id,
+     geoId %in% geo_ids
+)
+  
+char_col <- map_lgl(
+  .x = data_filter,
+  .f = is.numeric 
+)
+
+map(
+  .x = data_filter[, !char_col],
+  .f = unique
+)
+
+country_names <- data_filter$countriesAndTerritories %>% unique() %>%
+  paste(collapse = ", ")
+
+Caps <- function(x) {
+s <- strsplit(x, " ")[[1]]
+paste(toupper(substring(s, 1,1)), substring(s, 2),
+sep="", collapse=" ")
+}
+
+cap_cases <- paste("Cases for", params$month, "and", country_names)
+
+```
+
+## Cases
+```{r, fig.cap= cap_cases}
+set.seed(123)
+data_filter <- data_filter %>% 
+  mutate(date_time = lubridate::dmy(dateRep))  %>%  # Moving average
+  mutate(cases_ma = zoo::rollmean(cases, k = 7, fill = NA))
+
+
+#names(data_filter)
+plot_cases <- data_filter %>%
+  ggplot(aes(x = date_time, y = cases_ma)) +
+  geom_point(aes(colour = geoId)) +
+  geom_line(aes(group = geoId, colour = geoId)) 
+
+plot_cases
+
+```
+
+## Deaths
+```{r, fig.cap=paste("Deaths for", params$month, "and" , country_names)}
+set.seed(123)
+
+data_filter <- data_filter %>% 
+  mutate(date_time = lubridate::dmy(dateRep)) %>%  # Moving average
+  mutate(deaths_ma = zoo::rollmean(deaths, k = 7, fill = NA))
+
+#names(data_filter)
+plot_deaths <- data_filter %>%
+  ggplot(aes(x = date_time, y = deaths_ma)) +
+  geom_point(aes(colour = geoId)) +
+  geom_line(aes(group = geoId, colour = geoId))
+
+plot_deaths
+
+```
+
+
