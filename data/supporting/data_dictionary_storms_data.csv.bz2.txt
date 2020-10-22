@@ -1,0 +1,44 @@
+## data dictionary to "./data/storm_data.csv.bz2"
+
+
+This is to provide some idea of the purpose of each of the 37 columns, along with url links for further information.
+
+https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf http://www.ncdc.noaa.gov/stormevents/details.jsp http://www.ncdc.noaa.gov/stormevents/pd01016005curr.pdf
+
+    “STATE__” State number (1 = Alabama)
+    “BGN_DATE” Begin date
+    “BGN_TIME” Begin time
+    “TIME_ZONE” Time zone
+    “COUNTY” County number
+    “COUNTYNAME” County name
+    “STATE” State, 2 letter abbreviation
+    “EVTYPE” Type of event (storm, flood, etc)
+    “BGN_RANGE” Beginning range
+    “BGN_AZI” Beginning azimuth
+    “BGN_LOCATI” Beginning location
+    “END_DATE” End date
+    “END_TIME” End time
+    “COUNTY_END” County where event ended? (name or number?)
+    “COUNTYENDN” County where event ended? (name or number?)
+    “END_RANGE” Ending range
+    “END_AZI” Ending azimuth
+    “END_LOCATI” Ending location
+    “LENGTH” Length of tornado path (in yards?)
+    “WIDTH” Maximum width of tornado's path in yards
+    “F” Fujita tornado intensity scale
+    “MAG” Hail in inches (implied hundreths)
+    “FATALITIES” Number of fatalities
+    “INJURIES” Number of injuries
+    “PROPDMG” Property damage in dollars
+    “PROPDMGEXP” K=thousands, M=millions, B=billions
+    “CROPDMG” Crop damage in dollars
+    “CROPDMGEXP” H=hundreds, K=thousands, M=millions, B=billions
+    “WFO” Weather Forecast Office
+    “STATEOFFIC” State office?
+    “ZONENAMES” Zone names?
+    “LATITUDE” Latitude
+    “LONGITUDE” Longitude
+    “LATITUDE_E” ?
+    “LONGITUDE_” ?
+    “REMARKS” Remarks
+    “REFNUM” Reference number?

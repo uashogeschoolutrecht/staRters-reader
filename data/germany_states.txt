@@ -1,0 +1,16 @@
+ Baden-Württemberg 	Stuttgart 	10,661,320 	35,752 	1952
+ Bavaria (Bayern) 	München (Munich) 	12,387,351 	70,550 	1949
+ Berlin 	Berlin 	3,392,425 	892 	1990
+ Brandenburg 	Potsdam 	2,582,380 	29,476 	1990
+ Bremen 	Bremen 	662,100 	404 	1949
+ Hamburg 	Hamburg 	1,728,800 	755 	1949
+ Hesse (Hessen) 	Wiesbaden 	6,911,620 	21,114 	1949
+ Mecklenburg-West Pomerania (Mecklenburg-Vorpommern) 	Schwerin 	1,744,620 	23,173 	1990
+ Lower Saxony (Niedersachsen) 	Hannover (Hanover) 	7,980,470 	47,616 	1949
+ North Rhine-Westphalia (Nordrhein-Westfalen or NRW) 	Düsseldorf 	18,076,355 	34,082 	1949
+ Rhineland-Palatinate (Rheinland-Pfalz) 	Mainz 	4,057,730 	19,847 	1949
+ Saarland 	Saarbrücken 	1,064,988 	2,568 	1957
+ Saxony (Sachsen) 	Dresden 	4,349,060 	18,413 	1990
+ Saxony-Anhalt (Sachsen-Anhalt) 	Magdeburg 	2,548,911 	20,447 	1990
+ Schleswig-Holstein 	Kiel 	2,816,507 	15,761 	1949
+ Thuringia (Thüringen) 	Erfurt 	2,392,040 	16,172 	1990

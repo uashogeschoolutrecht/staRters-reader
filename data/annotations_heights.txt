@@ -1,0 +1,25 @@
+## README for "heights.csv"
+
+## Variable names
+[1] "id"        "income"    "height"    "weight"    "sex"      
+ [6] "race"      "education" "asvab"     "sat_math"  "bdate"
+ 
+ 
+ ## Variable units
+ 
+  [1] "id"  an integer with an id-number
+  
+  [2] "income" yearly-income in US Dollars
+  
+  [3] "height" in inches
+  
+  [4] "weight" in lbs.
+  
+  [5] "sex" binomial variable m = male, f = female
+  
+  [6] "race" grouping variable indicating ethnicity
+  
+The rest of the variables are not described because they are not relevant for this course exercises.
+
+
+
