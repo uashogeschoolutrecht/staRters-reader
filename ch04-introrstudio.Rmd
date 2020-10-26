@@ -233,12 +233,8 @@ digraph rmarkdown {
 ```
 
 ## DiagrammaR
-The `{DiagrammaR}` package is a great tool for drawing any type of diagram from within R. Drawing a diagram with code is a good idea because you do not have to wory about formatting and alignment and it let's you recycle parts of your diagram. As always, it will require some upfront investment of time to figure things out, but it will pay back in the end and is more fun than fussing over details in a diagram in PowerPoint.
+The `{DiagrammaR}` package is a great tool for drawing any type of diagram from within R. Drawing a diagram with code is a good idea because you do not have to worry about formatting and alignment and it let's you recycle parts of your diagram. As always, it will require some upfront investment of time to figure things out, but it will pay back in the end and is more fun than fussing over details in a diagram in PowerPoint. Learn more here: https://rich-iannone.github.io/DiagrammeR/
 ```{r, eval=FALSE}
-###
-# Perform traversals with conditions
-# based on node `label` regex matches
-###
 
 library(DiagrammeR)
 library(magrittr)
@@ -246,7 +242,7 @@ library(magrittr)
 # Create a graph with fruit, vegetables,
 # and nuts
 df <- data.frame(col1 = c("Cat", "Dog", "Bird"),
-                 col2 = c("Feline", "Canis", "Avis"),
+                 col2 = c("Felis", "Canis", "Aves"),
                  stringsAsFactors = FALSE)
 uniquenodes <- unique(c(df$col1, df$col2))
 

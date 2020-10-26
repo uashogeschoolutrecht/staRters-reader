@@ -1,0 +1,551 @@
+# Lists and dataframes {#recursivevectors}
+
+## Packages
+```{r, message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Atomic vectors vs. recursive vectors
+The R vectors above are so called `atomic vectors`. They are the 'atoms' of R, the building block of which all other objects can be build. The resulting constituated R objects that can be build from the 'atoms' are called `recursive vectors`. The molecules. With these atoms and molecules we can build really complex data objects.
+
+## Recursive vectors
+The recursive vectors are:
+
+ * List
+ * Dataframe: as special kind of list
+ * Tibble: as special kind of dataframe
+
+Below I will explain the difference
+
+## The Dataframe
+The data frame is the most widely used data structure. If you use R for doing analysis of data, this is the data structure that you will use the most, by far!
+
+To understand the data frame we can best look at a named-vector.
+An object in R has a value and can have attributes. One of the most convenient attributes is the name of each element in a vector, which is collectively called the `names` attribute
+
+```{r}
+named_vector_ages <- c("Marc" = 45)
+named_vector_ages
+names(named_vector_ages)
+attributes(named_vector_ages)
+
+attributes(named_vector_ages) <- list(
+  names = c("Marc"),
+  family = "Teunis",
+  hobbies = c("Bouldering", "Climbing", "Bayesian Statistics", "Horse riding")
+)
+attributes(named_vector_ages)
+```
+
+When we call the `attributes` function on our named vector, we get the names each element of the vector. Other attributes can be the class and the dimensions and any user-defined attributes.
+
+## The dataframe
+Now that we understand the named vector we can expand this idea by creating several vectors with elements. These are then glued together as the columns of the data frame. One prerequisite of a `dataframe` is that all columns must have equal `length`. Individual columns of a data frame can have different data types. Remember that a vector can only contain one data type, implying that a column in a data frame is of one data type. 
+```{r}
+## indivual vectors
+age = c(24, 27, 19, 34)
+sex = c("F","F","M", "M")
+weight = c(64, 55, 80, 70)
+given_names = c("Christa", "Suzan", "Matt", "John")
+
+people_df <- data.frame(
+  age,
+  sex,
+  weight,
+  given_names
+)
+
+head(people_df)
+``` 
+
+## Or the 'tidyverse' way
+```{r}
+people_tbl <- tibble::tibble(
+  age,
+  sex,
+  weight,
+  given_names
+)
+people_tbl
+```
+
+## In one go
+Kinda WYSIWYG (What you see is what you get)
+```{r}
+
+people_tbl_tr <- tribble(
+  ~age,   ~sex,   ~weight,  ~given_names,
+  24,     "F",    64,       "Christa",   
+  27,     "F",    55,       "Suzan",
+  19,     "M",    80,       "Matt",
+  34,     "M",    70,       "John"
+)
+people_tbl_tr
+```
+
+## Viewing the contents of a dataframe
+Next to several options in code to explore the details of a dataframe, you can (and you should) also explora the data interactively in RStudio in the Viewer. Just click on the data frame (or list) that you want to view in the Global Environment (R) panel  
+```{r, eval=FALSE}
+summary(people_df)
+table(people_df)
+
+## gives the content of the data frame
+head(people_df) 			
+names(people_df) 
+str(people_df)
+glimpse(people_df)
+
+## gives the content of the variable "age" from the data frame
+people_df$age 
+tibble::glimpse(people_tbl)
+
+## skimr
+skimr::skim(people_df)
+
+``` 
+
+## Using index on dataframes
+Using the index "[]" on a data frame is a bit tricky. The data frame always consists of rows and columns. Indexing a data frame goes like:
+
+`dataframe[<row number(s)>, <column number(s)>]`
+
+Leaving the index blank selects all cases as you can see in the code below. 
+
+```{r, eval=FALSE}
+## first element of this vector
+people_df$age[1] 	
+
+## content of 2nd variable (column) 
+people_df[,2]
+
+## content of the 1st row
+people_df[1,] 	  
+                  # multiple indices
+people_df[2:3, c(1,3)] # remember to use c (2nd and 3rd row, 1st and 3rd column)
+
+```
+
+## Lists
+
+The data frame and the list are the most widely used datastructures when considering experimental data. Where a data frame is constricted to the columns having all equal length, the elements of a list can be of different length and type. This is what makes the list the most flexible and sometimes the most agonizing data structure in R.
+The elements of a list can have names, or not. Below we create a list with named elements.
+
+## Create a List
+```{r}
+lst <- list(
+  first_names = c(male = "Fred",
+                  female = "Mary"),
+  no.children = 3,
+  child_ages = c(4, 7, 16),
+  child_names = c("Suzy",
+                  "Marvin",
+                  "Jane"),
+  address = c("Pandamonium Alley 114, Chaosville"),
+  marital_status = TRUE
+)
+
+lst
+```
+
+## Accessing items in a list
+```{r}
+# number of elements in the list
+length(lst) 
+
+lst[1] %>% class # 1st element of list as a list
+lst[[1]] # 1st element of List
+lst[[3]][2] # second item of third list element
+names(lst) # named elements in this list
+lst$child_names # pull "named" elements from a list using $
+lst$address
+
+
+```
+
+## `str()` also gives you the structure of a list
+```{r}
+str(lst) # display structure of lst
+``` 
+The new RStudio Interface also enables interactive exploration of R-objects (demo)
+
+## Looping over lists
+```{r}
+purrr::map(lst, nchar)
+```
+
+## The matrix
+A matrix is a table with only numeric values. An array consists of multiple matices. Below we create a matrix. The difference between a matrix and a dataframe is that a matrix can only hold one type of data, whereas the columns of a dataframe can be of different types of data.
+
+Here we create a numeric matrix of 100 random normals, with 20 rows and 5 columns.
+```{r}
+matrix_num <- matrix(data = rnorm(n = 100),
+                 nrow = 20,
+                 ncol = 5) %>%
+  print()
+```
+
+You can put any valid R data type in a matrix, but remember, it can only hold one type of data: A matrix with CAPITALS
+```{r}
+matrix_chr <- matrix(data = (c(LETTERS, LETTERS)[1:30]),
+                     nrow = 5,
+                     ncol = 6) %>%
+  print()
+                     
+```
+
+A matrix with logicals
+```{r}
+matrix_lgl <- matrix(data = rep(c(TRUE, FALSE, TRUE), times = 20),
+                     ncol = 5) %>%
+  print()
+```
+
+A matrix is basically a vector, with attributes that contain it's dimensions
+```{r}
+matrix_num[1:10]
+attributes(matrix_num)
+```
+
+## Import data into R
+You can also load data into R via the interactive `File` -> `Import Dataset` -> `From Text (readr)`
+To view a file you can first open it in RStudio as a text file. This is only allowed for files < 5 Mb
+
+```{r}
+library(tidyverse)
+path_to_gender_age_data <- here::here("data", "gender.txt")
+gender_age <- read_delim(path_to_gender_age_data,
+                         delim = "/")
+
+gender_age %>%
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot()
+```
+
+## read_csv
+CSV is a format of a data file that uses commas or semicolons as separators for the columns.
+
+```{r}
+library(readr)
+skin <- read_csv(here::here("data", "skincolumns.csv")) 
+skin %>% head(3)
+```
+
+## Inspecting the skin dataframe
+```{r, eval=FALSE}
+head(skin)	 # content of the data frame
+dim(skin)
+attributes(skin)
+summary(skin)
+## ?read_csv 	 # help on the function
+```
+
+## `skin` dataset contains an NA, some functions do not work with NAs:
+```{r}
+mean(skin$`Genotype A`)
+mean(skin$`Genotype B`)
+
+# to remove the NA, take care: consider leaving NAs in and use arguments like na.rm = TRUE
+skin_noNA <- na.omit(skin)
+mean(skin_noNA$`Genotype B`)
+``` 
+
+## Let's clean up the workspace
+```{r, eval = FALSE }
+rm(list=ls())
+root <- find_root_file(criterion = is_rstudio_project)
+## Note: never use this in code that is meant for others!!!
+```
+
+*_The above is an effective way to clear all the items in the Global Environment, but is is not very friendly to use this in code you share with others: can you think of why?_*
+
+## Scientific notations 
+```{r}
+big_numbers <- rnorm(10, mean = 10000000, sd = 2000000)
+big_numbers %>% formatC(format = "e", digits = 5)
+
+many_digits <- c(2.55858868688584848)
+round(many_digits, digits = 3)
+sqrt(many_digits * 1000 /200 * 2^6)  
+
+```
+
+## Rounding numbers
+```{r}
+small_numbers <- runif(10, min = 0.001, max = 0.1) %>% print()
+small_numbers %>% round(digits = 2)
+```
+
+## <mark>EXERCISES</mark> {-}
+
+1. Load example dataset {-}
+```{r, echo=TRUE}
+library(readr)
+df <- read_csv(here::here(
+"data",
+"simple-IO.csv"
+))
+```
+
+ A.  What are the dimensions of the `df` dataframe?
+ A.  What are the column names of `df`?
+ A.  What are the data types of the different columns of `df?`
+
+```{r, answer_to_1}
+dim(df)
+ncol(df)
+nrow(df)
+```
+
+2. Inspecting a dataframe {-}
+
+ A.  How do we inspect `df`?
+ A.  How many variables does `df` have?
+ A.  How many rows?
+ A.  Call `summary()` on `df`; In which variable do we observe the highest expression ratio?
+
+3. Vector types {-}
+
+ A.  Run the following code 
+ A.  Inspect the class of each vector
+ A.  Combine vector a to zz in a list.
+ A.  Inspect the contents of this list
+ A.  Review the documentation for the `map()` function from the `{purrr}` package
+ A.  Using map, find the length of each element in the list you created in this exercise
+
+```{r, echo=TRUE}
+a <- c("a", "b", "c", NA)
+b <- c(1:4)
+c <- c(6:8, NA)
+d <- c(1.3, 1.6, 6.7)
+e <- as.integer(d)
+f <- as.integer(a)
+g <- as.numeric(a)
+
+(z <- paste(a, b, c))
+(zz <- paste0(a, b, c))
+
+```
+
+## Matrices {-}
+
+4. Creating a basic matrix {-}
+
+During these exercises, we are going to work with a matrix of 8x10 that mostly contains (randomly generated) numerical values, interspersed with some missing values.
+
+We do this in a number of steps.
+
+A. Create a numerical vector named v using the runif() function consisting of 80 values between -10 and 10. Review the help function for the `runif()` function
+
+```{r, include=FALSE, results='hide'}
+set.seed(123)
+v <- runif(n = 80, min = -10, max = 10)  
+```
+
+B. Assign missing values randomly to this vector using the following R code:
+
+```{r}
+set.seed(123)
+v[sample(1:80, sample(10:20, 1))] <- NA
+```
+
+C. How many missing values do you have?
+```{r, include=FALSE, results='hide'}
+sum(is.na(v))
+```
+
+D. Create a matrix named m from numerical vector `v` that has 8 rows. Check to make sure the dimensions are OK!
+
+**TIP: use the function matrix() to create the matrix**
+```{r}
+m <- matrix(v, nrow = 8)
+m
+```
+
+E. Assign row and column names
+
+number the rows row_1:row_8 and the columns column_1:column_10
+use the paste() function, set sep = "_"
+
+```{r}
+rownames(m) <- paste("row", 1:8, sep="_")
+colnames(m) <- paste("column", 1:10, sep="_")
+m
+```
+
+## 5. Select statements {-}
+
+The next couple of exercises will take you through some of the basics of selecting data within a matrix given some criteria. These basics will come back in more real life examples during the remainder of the course. However, we will use the `dplyr` package to do these types of filtering in a more intuitive and readable way. This exercise is meant to learn about the existence of this type of filtering so that you recognize it in code (written by others).
+
+A. From row 4 select all values greater than 3. How many are there?
+
+**TIP:** Subsetting in data frame or matrix also works with
+
+`df[<rows>, <columns>]`
+
+```{r}
+## in two steps
+ind <-  m[4, ] >3
+m[4, ind]
+
+## in one go:
+m[4, m[4, ] >3]
+
+```
+
+B. What is the average of these numbers?
+```{r, include=FALSE}
+## will fail
+mean(m[4, m[4,] >3])
+
+## works
+mean(m[4, m[4,] >3], na.rm = TRUE)
+```
+
+
+Did you account for missing values? What happens when you have missing values within your data? Probably not. These also get selected and also affect the outcome of certain functions.
+
+C. Do the same, but now also exclude missing values. How many values did you select now?
+
+```{r}
+## works
+mean(m[4, m[4,] >3], na.rm = TRUE)
+```
+
+## 6. Storing intermediate products as index {-}
+
+Working with implicit logical vectors easily becomes daunting when the logics are more complicated. It is usually better to then first save this vector and then use this (or in combination with another logical vector).
+This also avoids mistakes during typing and reuses your code (both of which are good design principles). We are going to create a subselection of the data from rows 1, 4 and 8. To do this, first set up a vector for the rows that selects row 1, 4 and 8 and name this row_ind. Do this twice, first using a numerical vector and than using a character vector.
+
+A. Use this vector to create a new matrix that only contains these rows. Make sure you have a good look at the data structure to ensure you have selected the correct values.
+```{r}
+## numerical
+row_ind <- c(1, 4, 8)
+m[row_ind,]
+
+## or via a character
+row_ind <- c("row_1", "row_4", "row_8")
+new_m <- m[row_ind,]
+
+```
+
+B. For the second row in this new matrix, select all values between -2.5 and 4, excluding missing values. How many are there and what is the average?
+```{r}
+x <- new_m[2,] 
+ind_x <- x > -2.5 & x < 4 
+x[ind_x]
+```
+
+## 7. Data frames {-}
+
+A. Make a `data.frame` called `blood` of the table below.  
+
+|subject   |treatment |weight |blood pressure |cholesterol |
+|:---------|:---------|:------|:--------------|:-----------|
+|human1    |control   |80     |80 / 120       |20          |
+|human3 	 |control   |78 	  |78 / 115       |32          |
+|human4 	 |50 ng/mg  |76 	  |90 / 125       |45          |
+|human5 	 |50 ng/mg  |83 	  |92 / 120       |43          |
+|human6 	 |50 ng/mg  |81 	  |87 / 119       |NA          |
+
+B. Convert this `blood` `data.frame` to a tibble.
+
+C. Create a tibble called `combined` from the individual vectors below.
+
+```
+nr <- c(1.8, 4.5, 10.1, 8.3, 7.5)
+prime <- c(seq(1, 7, 2), 11)
+valid <- c(TRUE, FALSE, FALSE, TRUE, FALSE)
+name <- c("abc1", "foo2", "bar3", "app5", "bar1")
+```
+```{r}
+## in one go
+combined <- tibble(
+nr = c(1.8, 4.5, 10.1, 8.3, 7.5),
+prime = c(seq(1, 7, 2), 11),
+valid = c(TRUE, FALSE, FALSE, TRUE, FALSE),
+name = c("abc1", "foo2", "bar3", "app5", "bar1")
+)
+
+```
+
+D) Get the values from the `prime` column. Use at least two different ways (there are three). Calculate the root-square of the sum of these values. Use a pipe operator `%>%`
+```{r}
+## index
+combined[,2]
+## by name
+combined[, "prime"]
+## by $
+x <- combined$prime %>% 
+  sum() %>%
+  sqrt()
+```
+
+The answer is ```r x```
+
+
+D. Select the second value of the `nr` column. Use at least two different ways (there are at least 4).
+```{r}
+combined$nr[2]
+combined[2, "nr"]
+combined$nr[[2]]
+combined[2,1]
+```
+
+
+E. Calculate the sum of the `prime` column.
+```{r}
+combined$nr %>% sum
+```
+
+F. Combine the `nr` and `prime` columns (vectors) into a new vector.
+```{r}
+c(combined$nr, combined$prime)
+```
+
+## 8 Ordering {-}
+The current data.frame has no particular ordering yet. In the next few exercises, we are going to reorder the data.frame based on a particular column. We can order a dataframe by variable by using the order() function
+
+An example to order the mydata dataframe by name
+
+```
+mydata <- mydata[order(mydata$name), ]
+mydata
+```
+
+This statement can be read as "order all variables (columns) of the dataframe by the rows of he variable 'name' in decreasing order". In this case name is a character vector, and order will order the variable according alphabetical order.
+
+You can also order dataframes (or so-called tibbles) with dplyr. We will see how this works with the arrange() function later in the course.
+
+Use this dataframe for the follwing exercises
+
+id| nr   |name    |characters|valid
+--|------|--------|----------|-------
+1 | 1.8  |     1  |abc1      |TRUE
+4 | 8.3  |     7  |app5      |TRUE
+5 | 7.5  |     11 |bar1      |FALSE
+3 | 10.1 |     5  |bar3      |FALSE
+2 | 4.5  |     3  |foo2      |FALSE
+
+A) Order the data.frame based on the `nr` column in increasing order.
+```{r}
+combined[order(combined$nr), ]
+```
+
+B) Order the data.frame alphabetically using the `character` column.
+```{r}
+combined[order(combined$name), ]
+```
+
+C) Order the data.frame based on the `nr` column in decreasing order.
+```{r}
+combined[order(combined$prime, decreasing = TRUE), ]
+```
+
+D) What happens if you use the `valid` column for ordering? Can you explain this?
+```{r}
+combined[order(combined$valid), ]
+## FALSE can also be written as 0, TRUE as 1 in binary notation
+
+```
+
+

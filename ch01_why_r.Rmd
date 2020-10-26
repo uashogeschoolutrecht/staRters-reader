@@ -1,31 +1,10 @@
 # Why use R? {#why_r}
 
-
 ## Packages
 ```{r, warning=FALSE, error=FALSE, message=FALSE}
 library(tidyverse)
 library(nlme)
 ```
-
-## Course contents & materials
-
-<p style="font-size:18px">The complete source code for the webinars and all dependent data, and files can be found on [Github.com/uashogeschoolutrecht/staRters](https://github.com/uashogeschoolutrecht/staRters).
-
- - Day 1: Why R, Case demo, RMarkdown, Intro R syntax
- - Day 2: Visualization, Data Wrangling, Tidy data
- - Day 3: Data import, Statistics (assumptions & regression)
- 
-_Disclaimer: "This is not a course on statistics". If you have a specific statistical challenge and you would like to discuss this after the course with me, feel invited to reach out!_ 
-
-## Introducing Reproducible (Open) Science
-
- 1. When things go wrong 
- 1. Why Reproducible (Open) Science?
- 1. The need for learning programming
- 1. An example of Reproducible (Open) Science
- 
-$Reproducible\ (Open)\ Science =$ 
-$Reproducible\ Research + Open\ Science$
 
 ## Data, methods and logic {.build}
 
@@ -39,9 +18,9 @@ $Reproducible\ Research + Open\ Science$
 
 everything else is a distraction."
 
-## `Gollums` lurking about {.build}
+## When things go wrong {.build}
 
-```{r, dpi = 80}
+```{r, dpi = 80, echo=FALSE}
 knitr::include_graphics(
   here::here(
     "images",
@@ -119,14 +98,17 @@ knitr::include_graphics(here::here("images","rmd_printscr.png"))
 ## Why R?
 
  - R is free
+ - R is Open Source
  - R has a huge user-community
  - R has many packages
  - Many statistical applications (more than SPSS)
- - R connects to other tools 
+ - R connects to many other tools (e.g. databases, web servers, Java Script, $LaTeX$, Stan, Python)
  - R has RStudio as an IDE
  - You can find (almost) every example you want on the internet
  - R has superb plotting possibilities
+ - In R we can document the three things that matter in science: _"data, methods and logic connecting them to the conclusions"_
  ...
+
 
 ## A short example of Reproducible (Open) Science
 
@@ -144,8 +126,6 @@ To analyze this experiment statistically, the model would need to include: the r
 
  - If you have 2 screens, now is the moment to expand the screen
  - Login to your Rstudio Environment
- - Clone the materials of the course to your `Home` folder
- - You can find the steps also in  `_gettingstarted.Rmd`
  - Open the file `_why_r.Rmd`
  - Follow along the demo by running the code
  - Details on using RStudio can be found in `_introrstudio`
@@ -182,14 +162,16 @@ ergoStool %>% as_tibble()
 ```
 
 ## An exploratory graph
+I like the initial plot that I create of a new dataset to contain **ALL** the data. Here, I combine the scatter plot with a boxplot to get a feel for the spread and the group means. Mind the ordering on the x-axis, which is set according the mean value of the `effort` variable. 
 ```{r}
+colours <- c("red","blue", "green", "darkblue", "darkgreen", "purple", "grey", "black", "darkgrey")
 set.seed(123)
 plot_ergo <- ergoStool %>%
   ggplot(aes(x = reorder(Type, effort), y = effort)) + 
   geom_boxplot(colour = "darkgreen", outlier.shape = NA) + 
   geom_jitter(aes(colour = reorder(Subject, -effort)), 
               width = 0.2, size = 3) +
-  scale_colour_manual(values = c("red","blue", "green", "darkblue", "darkgreen", "purple", "grey", "black", "darkgrey")) +
+  scale_colour_manual(values = colours) +
   ylab("Effort (Borg scale score)") +
   xlab("Chair type") + 
   guides(colour=guide_legend(title="Subject id")) +
@@ -209,9 +191,9 @@ plot_ergo
 
 ## The statistical questions
 
- 1. Which chair type takes, on average the biggest effort to arise from? (ANOVA / MEM, fixed effects)
- - Do individual (within subject) differences play a role in appointing a average score to a chair type? (MEM, random effects)
- - Does variability between subjects play a role in determining the 'best' chair type (ANOVA / MEM, confidence intervals)
+ 1. Which chair type takes, on average the biggest effort to arise from?
+ - Do individual (within subject) differences play a role in appointing a average score to a chair type?
+ - Does variability between subjects play a role in determining the 'best' chair type?
 
 ## The statistical model 
 Statistical models (in R) can be specified by a `model formula`. The left side of the formula is the dependent variable, the right side are the 'predictors'. Here we include a `fixed` and a `random` term to the model (as is common for mixed-effects models)
@@ -223,7 +205,7 @@ library(nlme)
 ergo_model <- lme(
   data = ergoStool, # the data to be used for the model
   fixed = effort ~ Type, # the dependent and fixed effects variables
-  random = ~1 | Subject # random intercepts for Subject variable
+  random = ~1 | Subject # observations for effort are assumed to be randomized over Subject
 )
 ```
 
@@ -311,18 +293,46 @@ plot_ergo
 
 ## Coming from SPSS or Excel or the likes
 
- - You have to unlearn what you learned
+ - You have to unlearn what you've learned
  - You already know about performing statistical analysis and maybe also coding (SPSS syntax)
  - IBM (SPSS) is proprietary
  - I will take time to transfer
  - Try a hard-stop: so do not mix tools
- - Programming (in R) is hard and takes
+ - Programming (in R) is hard and takes practice and time
  - I cannot learn you programming, you will have to do it yourself
  - Start with the book: "R for Data Science"
  - **Write code for humans!**
+ - Use Github for version control
 
 ## And the most important part...
 
  -- Coffee break -- 
+ 
+## After the coffee break:
+
+ 1) RStudio demo
+ 2) Introduction to R (syntax & objects)
+
+
+## RStudio demo
+
+ - The RStudio Windows (1-4)
+ - The Global Environment
+ - Global settings -> Rmd output / Theme
+ - Upload / Download files
+ - Installing and searching R packages (Question: "Can anyone share a specific method of analysis in the chat?")
+ - Help on packages and functions (`?` / `help()` / RStudio Help-panel / Vignettes)
+ - Plots
+ - Data import
+ - New files (R / Python etc...)
+ - Reformat Code
+ - RStudio Project
+ - Git clone - get materials
+ - Creating a pull request / Contributing to the material (fixing a **tipo**)
+ - Shiny Apps [CoronaDash](https://datascience.hu.nl/shiny/r-starters/marc.teunis/CoronaDash/) 
+ 
+ 
+ 
+
  
 

@@ -91,7 +91,7 @@ To see what the current working directory (wd) is, you can execute the command
 
 in the Console window. Try it now!
 
-If all went well the latter half of the working directory will state "/exploratory_data"
+If all went well the latter half of the working directory will state "/staRters"
 
 ## Relative paths
 The `getwd()` command gets information on the current wd. Some examples taken 
@@ -99,14 +99,13 @@ from the internet or classical users of R will tell you to use `setwd()` to chan
 you write clear code to achiev this. See for more details: [`{here}`](https://github.com/jennybc/here_here)
 
 ## Creating a new R script
-For most analyses/projects, it is best to start by creating an R script file that will contain all the steps taken to get to a certain result. Initially this might 
-be more like a scrapbook to note down what exactly you did. 
+For most analyses/projects, it is best to start by creating an R script file that will contain all the steps to get to a certain result. Initially this might be more like a scrapbook to note down what you did. 
 
-Later you can then separate this more cleanly in a workflow (steps taken and/or functions executed) and separate files for function definitions, or even package definitions. 
+Later you can separate this more cleanly into a workflow (steps taken and/or functions executed) and separate files for function definitions, or even package definitions. 
 
-During this course, we will create special R scripts called RMarkdown (`.Rmd`) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a workflow and document your steps. 
+During this course, we will create special R scripts called RMarkdown (`.Rmd`) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a workflow and document your steps combined. 
 
-Common R scripts contains all functions that can to be reused between different exercises (for instance a file named "functions.R"). 
+Common R scripts contains all functions that could be reused between different exercises or projects (for instance a file named "functions.R"). 
 
 ## Setting up package repositories
 Default RStudio has only enabled the CRAN repository, but there are other useful repositories that contain nice R packages. 
@@ -116,18 +115,14 @@ setRepositories(graphics=TRUE)
 ```
 
 ## Installing a package from a repository
-As an example package (we will be using this later on), we are going to install the "beanplot" package which allows you to easily create so called beanplots. Details of what you can do with them and how to use them, will be provided later during the course. To install the package, go to the Packages window and click on the "install" icon. This will show a popup window where you can type in the name of the package. Type in beanplot and press the "Ok" button. This will download and install the beanplot package.
-
-## Do everything programmatically
-The alternative and BETTER WAY is to programmatically install packages:
+As an example, we are going to install the "beanplot" package which allows you to easily create so called beanplots. To install the package:
 
 ```{r, eval=FALSE, echo=TRUE}
 install.packages("beanplot")
 ```
 
-To load this library into your workspace, type in library("beanplot") in the Console (or even better, in the R script editor window and then press the "Run" button which will execute the code on that particular line in the R script / or choose `Cntrl` 
-and `Enter` simultaneously).
-You can now use the functions defined within this package, for instance to plot a beanplot of (not so useful) random values
+To load this library into your workspace, type in `library(beanplot)` in the Console (or even better, in the R script editor window and then press the "Run" button which will execute the code on that particular line in the R script / or choose `Cntrl` 
+and `Enter` simultaneously). You can now use the functions defined within this package, for instance to plot a beanplot of (not so useful) random values
 
 ```{r, echo=TRUE, fig.show='asis', results='asis'}
 library(beanplot)

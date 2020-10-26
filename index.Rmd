@@ -1,5 +1,5 @@
 --- 
-title: "staRters; An introductory workshop for analysis of data with R"
+title: "staRters; Data analysis with R for starters"
 author: "Marc A.T. Teunis, PhD"
 date: "`r Sys.time()`"
 site: bookdown::bookdown_site
@@ -23,7 +23,12 @@ knitr::write_bib(c(
 
 ```
 
-# Prerequisites
+```{r, include=FALSE, warning=FALSE, error=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
+# Course intro
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.width = 6, fig.height = 4,
@@ -40,9 +45,32 @@ image_dir <- here::here(
 ## Purpose of this website
 This website is the accompanying website to the Introductory Workshop on using R called 'staRters' during the HU _ontwikkelfestival_, 2-4 November, 2020.
 
-The material consists of introductory and supplemental ("./extra) materials to get acquainted with using R for data - analysis and statistics. The course content and further structure of the course are explained in the table of contents. 
+The materials consist of introductory and supplemental ("./extra) materials to get acquainted with using R for data analysis and statistics. The course content and further structure of the course are explained in the table of contents. 
 
-All methods described in this website and used in the course relate to the Language and Environment for Statistical Computing called [**R**](https://cran.r-project.org/) [@R-base]. To work more efficiently with R we will be using the most commonly used Integrated Development Environment for R: [**RStudio**](https://www.rstudio.com) [@R-rstudio]. Initially, you will be working on a pre-installed version of RStudio on a server for which you will receive login credentials.  
+All methods described in this website and used in the course relate to the Language and Environment for Statistical Computing called [**R**](https://cran.r-project.org/) [@R-base]. To work more efficiently with R we will be using the most commonly used Integrated Development Environment for R: [**RStudio**](https://www.rstudio.com) [@R-rstudio]. Initially, you will be working on a pre-installed version of RStudio on a server for which you will have received login credentials.  
+
+## Course contents & materials
+
+<p style="font-size:18px">The complete source code for the webinars and all dependent data, and files can be found on: 
+```{r, echo=FALSE, results='asis', warning=FALSE, error=FALSE, message=FALSE}
+urls <- readr::read_csv(
+  here::here("urls")
+)
+
+urls[1,1] %>%
+  unlist() %>%
+  as.character() %>%
+  paste()
+
+```
+
+ - Day 1: Why R, Case demo, RMarkdown, Intro R syntax
+ - Day 2: Visualization, Data Wrangling, Tidy data
+ - Day 3: Data import, Statistics (assumptions & regression)
+ 
+_Disclaimer: "This is not a course on statistics". If you have a specific statistical challenge and you would like to discuss this after the course with me, feel invited to reach out!_
+
+_If you want to participate in active discussions on Data Science and Statistics, be sure to follow along in the Peer Support Group Data Science of the HU _ 
 
 ## R Packages
 There are many so-called 'packages' to add on to the base-R installation and for this course we use many of them. The code below retrieves the current amount of packages published on the Comprehensive R Archiving Network, which is a main resource for R-packages. 
@@ -96,11 +124,11 @@ Other important resources than CRAN for R-packages are:
  - [Bitbucket](https://bitbucket.org/)
  - [ROpenSci](https://ropensci.org/packages/)
 
-A full list of packages that are needed for this course is available in file "./DEPENDECIES.txt" 
+A full list of packages that are needed for this course is available in file "~/shared/DEPENDECIES.txt" 
 
 ## Getting the materials
 To compile this website locally, you can clone the website repository from 
-```{r}
+```{r, echo=FALSE}
 urls <- readr::read_csv(
   here::here("urls")
 )
@@ -109,10 +137,10 @@ urls[1,1]
 
 ```
 
-You will need to install the `{bookdown}` package. Run `bookdown::render(".")` from inside the cloned repo. This repository can also be used to access the course materials directly in RStudio during the workshops.
+To compile the book-site locally run `bookdown::render(".")` from inside the cloned repo. This repository can also be used to access the course materials directly in RStudio during the workshops.
 
 ## Getting R and RStudio
-During the course we will be working on a Cloud Computing Environment which provides webaccess to R and RStudio via a Virtual Machine. This machine runs a server edition of RStudio and has the latest R version and all the required packages available. In order to access the server you will need credentials, which you will recieve before the course starts. This is a convenient way to use R in a course and during the course we will only be using this environment. This is to ensure reproducibility and prevents a lot of trouble shooting from your side and the teacher's side.
+During the course we will be working on a Cloud Computing Environment which provides web access to R and RStudio via a Virtual Machine. This machine runs a server edition of RStudio and has the latest R version and all the required packages available. In order to access the server you will need credentials, which you will recieve before the course starts. This is a convenient way to use R in a course and during the course we will only be using this environment. This is to ensure reproducibility and prevents a lot of trouble shooting from your side and the teacher's side.
 
 If you want to use R and RStudio locally on your laptop (the teacher will not support this during the course), this is where you can download the software from:
 
