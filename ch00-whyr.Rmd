@@ -1,0 +1,356 @@
+# Why use R? {#whyr}
+
+## Packages
+```{r, warning=FALSE, error=FALSE, message=FALSE}
+library(tidyverse)
+library(nlme)
+```
+
+## Data, methods and logic {.build}
+
+*[Brown, Kaiser & Allison, PNAS, 2018](https://doi.org/10.1073/pnas.1708279115)*
+
+"...in science, three things matter:
+
+ >1. the data, 
+ >1. the methods used to collect the data [...], and 
+ >1. **the logic connecting the data and methods to conclusions,**
+
+everything else is a distraction."
+
+## When things go wrong {.build}
+
+```{r, dpi = 80, echo=FALSE}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "gollum_climbing.jpg"
+  )
+)
+```
+
+ "In one case, a group accidentally used reverse-coded variables, making their conclusions the opposite of what the data supported."
+
+ "In another case, authors received an incomplete dataset because entire categories of data were missed; when corrected, the qualitative conclusions did not change, but the quantitative conclusions changed by a factor of >7"
+
+ <p style="font-size:14px">[Brown, Kaiser & Allison, 2018; PNAS](https://doi.org/10.1073/pnas.1708279115)</p>
+
+## Why we need Reproducible (Open) Science?
+
+ >- To assess validity of science and methods we need access to data, methods and conclusions
+ >- To learn from choices other researchers made
+ >- To learn from omissions, mistakes or errors
+ >- To prevent publication bias (also negative results will be available in reproducible research)
+ >- To be able to re-use and/or synthesize data (from many and diverse sources)
+ >- To have access to it all!
+ 
+<p style="font-size:14px">[Nature Collection on this topic](https://www.nature.com/collections/prbfkwmwvz)</p>
+ 
+## The _GUI problem_
+
+How would you 'describe' the steps of an analysis or creation of a graph when you use *GUI* based software? 
+
+*_"You can only do this using code, so it is (basically) impossible in a GUI"_*
+
+```{r, dpi = 80}
+knitr::include_graphics(
+  here::here(
+    "images",
+    "messy_steps.jpg"
+  )
+)
+```
+
+<p style="font-size:14px">*[Graphical User Interface (GUI)...is a form of user interface that allows users to interact with electronic devices through graphical icons and audio indicator such as primary notation, instead of text-based user interfaces, typed command labels or text navigation...](https://en.wikipedia.org/wiki/Graphical_user_interface)</p>
+
+## Programming is essential for Reproducible (Open) Science {.build}
+
+ >- Only programming an analysis (or creation of a graph) records every step
+ >- The script(s) function as a (data) analysis journal 
+ >- Code is the logic that connects the data and methods to conclusions 
+ >- Learning to use a programming language takes time but pays of at the long run (for all of science)
+
+## Introducing Literate programming
+
+ - Literate) programming is a way to connect narratives to data, methods and results
+ - All scripts in this course are **R Markdown** scripts
+ - The complete source of the reader is available in Github.com
+
+```{r}
+knitr::include_graphics(here::here("images","rmd_printscr.png"))
+```
+
+## To  replicate a scientific study we need at least:
+
+ > - Scientific context, research questions and state of the art [<mark>P<mark/>]
+ > - (Experimental) model or characteristics of population or matter studied [<mark>P</mark>]
+ > - Data that was generated and corresponding meta data [<mark>D</mark>, _C_]
+ > - **Exact** (experimental) design of the study [<mark>P</mark>, _D_, <mark>C</mark>]
+ > - Exploratory data analysis of the data [_P_, <mark>C</mark>]
+ > - **Exact** methods that were used to conduct any formal inference [_P_, <mark>C</mark>]
+ > - Model diagnostics [_C_]
+ > - Interpretations of the (statistical) model results/model fitting process [_P_, _C_]
+ > - Conclusions and academic scoping of the results [<mark>P</mark>, _C_]
+ > - **Access to all of the above** [<mark>OAcc, OSrc</mark>]
+
+<p style="font-size:14px">$P = Publication$, $D = Data$, $C = Code$, $OAcc = Open\ Access$, $OSrc = Open\ Source$ </p> 
+
+## Why R?
+
+ - R is free
+ - R is Open Source
+ - R has a huge user-community
+ - R has many packages
+ - Many statistical applications (more than SPSS)
+ - R connects to many other tools (e.g. databases, web servers, Java Script, $LaTeX$, Stan, Python, and many more)
+ - R has RStudio as an IDE
+ - You can find (almost) every example you want on the internet
+ - R has superb plotting possibilities
+ - In R we can document the three things that matter in science: _"data, methods and logic connecting them to the conclusions"_
+ ...
+
+## What can you do with R?
+The possibilities and applications are endless: just a few highlights
+
+ - Statistical analysis ([Bayesian](https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/) / [Test-driven](https://www.youtube.com/watch?v=FhoYCsZttGc)) 
+ - Geo-spatial data ([maps](https://shiny.rstudio.com/gallery/covid19-tracker.html)[`{geocompr}`](https://geocompr.robinlovelace.net/intro.html), [time series](https://ubidi.shinyapps.io/covid19world/))
+ - AI; Machine Learning / Deep Learning / [Forecasting](https://ubidi.shinyapps.io/covid19world/) / [NLP](https://www.kaggle.com/mdurazob/cord-19-vaccines-networks-and-bibliometrics)
+ - Visualization; static, [interactive](https://www.gapminder.org/tools/), [dashboards](https://datascience.hu.nl/shiny/r-starters/marc.teunis/corona-dash/)
+ - [Internet of things](https://www.slideshare.net/SeonghakHong/iot-and-big-data-with-r), sensor data
+ - [Econometrics](https://www.econometrics-with-r.org/)
+ - [Text mining](https://www.tidytextmining.com/), network analysis
+ - [Mathematics](https://en.wikibooks.org/wiki/R_Programming/Mathematics#Basics) / [Big data](https://rviews.rstudio.com/2019/07/17/3-big-data-strategies-for-r/) / Algorithm development
+ - [Webscraping](https://www.analyticsvidhya.com/blog/2017/03/beginners-guide-on-web-scraping-in-r-using-rvest-with-hands-on-knowledge/)
+ - [API development](https://www.rplumber.io/)
+ - {And many more...}
+
+## A short example of Reproducible (Open) Science
+
+Assume we have the following question:
+"Which of 4 types of chairs takes the least effort to arise from when seated in?"
+We have the following setup:
+
+ - 4 different types of chairs
+ - 9 different subjects (probably somewhat aged)
+ - Each subject is required to provide a score (from 6 to 20, 6 being very lightly strenuous, 20 being extremely strenuous) when arising from each of the 4 chairs. There is some 'wash-out' time in between the trials. The chair order is randomised.
+
+To analyze this experiment statistically, the model would need to include: the rating score as the **measured (or dependent) variable**, the type of chair as the **experimental factor** and the subject as the **blocking factor**
+
+## Now we move to RStudio
+
+ - If you have 2 screens, now is the moment to expand the screen
+ - Login to your Rstudio Environment
+ - Open the file `_why_r.Rmd`
+ - Follow along the demo by running the code
+ - Details on using RStudio can be found in `_introrstudio`
+
+## Mixed effects models
+
+A typical analysis method for this type of randomized block design is a so-called 'multi-level' or also called 'mixed-effects' or 'hierarchical' models. An analysis method much used in clinical or biological scientific practice. 
+ 
+You could also use one-way ANOVA but I will illustrate why this is not a good idea 
+
+## What do we minimally need, to replicate the science of this experiment? {.build}
+
+I will show:
+
+ >- the data 
+ >- an exploratory graph 
+ >- a statistical model 
+ >- the statistical model results
+ >- a model diagnostic
+ >- some conclusions 
+ 
+In the next few slides, I will hopefully convince you of the power of (literate) programming to communicate such an analysis. 
+
+<p style="font-size:14px">[Example reproduced from: Pinheiro and Bates, 2000, _Mixed-Effects Models in S and S-PLUS_, Springer, New York.](https://cran.r-project.org/web/packages/nlme/index.html)</p>
+ 
+## The data of the experiment
+
+<p style="font-size:14px">[Wretenberg, Arborelius & Lindberg, 1993](https://doi.org/10.1080/00140139308967910)</p>
+
+
+```{r, echo=TRUE}
+library(nlme)
+ergoStool %>% as_tibble()
+```
+
+## An exploratory graph
+I like the initial plot that I create of a new dataset to contain **ALL** the data. Here, I combine the scatter plot with a boxplot to get a feel for the spread and the group means. Mind the ordering on the x-axis, which is set according the mean value of the `effort` variable. 
+```{r}
+colours <- c("red","blue", "green", "darkblue", "darkgreen", "purple", "grey", "black", "darkgrey")
+set.seed(123)
+plot_ergo <- ergoStool %>%
+  ggplot(aes(x = reorder(Type, effort), y = effort)) + 
+  geom_boxplot(colour = "darkgreen", outlier.shape = NA) + 
+  geom_jitter(aes(colour = reorder(Subject, -effort)), 
+              width = 0.2, size = 3) +
+  scale_colour_manual(values = colours) +
+  ylab("Effort (Borg scale score)") +
+  xlab("Chair type") + 
+  guides(colour=guide_legend(title="Subject id")) +
+  theme_bw()
+plot_ergo
+```
+
+## Mind the variability per subject, what do you see?
+
+ - Can you say something about within-subject variability (note 'Minster Blue')?
+ - Can you say something about between-subject variability (note 'Mister Green', vs 'Mister Black')?
+ - Which chair type takes, on average the biggest effort to arise from?
+ 
+```{r, fig.width=5, fig.height=3}
+plot_ergo
+```
+
+## The statistical questions
+
+ 1. Which chair type takes, on average the biggest effort to arise from?
+ - Do individual (within subject) differences play a role in appointing a average score to a chair type?
+ - Does variability between subjects play a role in determining the 'best' chair type?
+
+## The statistical model 
+Statistical models (in R) can be specified by a `model formula`. The left side of the formula is the dependent variable, the right side are the 'predictors'. Here we include a `fixed` and a `random` term to the model (as is common for mixed-effects models)
+
+```{r, echo=TRUE, eval=FALSE}
+library(nlme)
+```
+```{r, echo=TRUE}
+ergo_model <- lme(
+  data = ergoStool, # the data to be used for the model
+  fixed = effort ~ Type, # the dependent and fixed effects variables
+  random = ~1 | Subject # observations for effort are assumed to be randomized over Subject
+)
+```
+
+<p style="font-size:18px">The `lme()` function is part of the [`{nlme}`](https://cran.r-project.org/web/packages/nlme/index.html) package for mixed effects modelling in R</p>
+
+<p style="font-size:18px">Example reproduced from: [Pinheiro and Bates, 2000, _Mixed-Effects Models in S and S-PLUS_, Springer, New York.](https://cran.r-project.org/web/packages/nlme/index.html)</p>
+
+## The statistical results
+```{r}
+result <- ergo_model %>% summary() 
+result$tTable %>% as.data.frame() %>% knitr::kable()
+```
+
+## Model diagnostics {.build}
+
+ >- Diagnostics of a fitted model is the most important step in a statistical analysis
+ >- In most scientific papers the details are lacking 
+ >- Did the authors omit to perform this step? Or did they not report it?
+ >- If you do not want to include it in your paper, put it in an appendix!
+ 
+## Residuals
+
+A residual plot shows the 'residual' error ('unexplained variance') after fitting the model. Under the Normality assumption standardized residuals should:
+ 
+ >1. Be normally distributed around 0
+ >1. Display no obvious 'patters'
+ >1. Should display overall equal 'spread' above and below 0 ('assumption of equal variance')
+ 
+## Residual plot
+```{r, echo=TRUE}
+plot(ergo_model) ## type = 'pearson' (standardized residuals)
+```
+
+## The conclusions in a plot
+```{r}
+# install.packages("ggsignif")
+library(ggsignif)
+p_values <- result$tTable %>% as.data.frame()
+annotation_df <- data.frame(Type=c("T1", "T2"), 
+                            start=c("T1", "T1"), 
+                            end=c("T2", "T3"),
+                            y=c(16, 14),
+                            label=
+                              paste("p-value:",
+                              c(
+                              formatC(
+                                p_values$`p-value`[2], digits = 3),
+                              formatC(
+                                p_values$`p-value`[3], digits = 3)
+                              )
+                            )
+                          )
+                            
+set.seed(123)
+ergoStool %>%
+  ggplot(aes(x = reorder(Type, effort), 
+             y = effort)) + 
+  geom_boxplot(colour = "darkgreen", 
+               outlier.shape = NA) + 
+  geom_jitter(aes(
+    colour = reorder(Subject, -effort)), 
+    width = 0.2, 
+    size = 3) +
+  scale_colour_manual(
+    values = c(
+      "red", "blue","green", 
+      "darkblue", "darkgreen", 
+      "purple", "grey", "black", 
+      "darkgrey")) +
+  ylab("Effort (Borg scale score)") +
+  xlab("Chair type") + 
+  guides(colour=guide_legend(title="Subject id")) +
+  ylim(c(4,20)) +
+  geom_signif(
+    data=annotation_df,
+    aes(xmin=start, 
+    xmax=end, 
+    annotations=label, 
+    y_position=y),
+    textsize = 5, vjust = -0.2,
+    manual=TRUE) +
+  theme_bw() -> plot_ergo
+plot_ergo
+```
+
+## Coming from SPSS or Excel or the likes
+
+ - You have to unlearn what you've learned
+ - You already know about performing statistical analysis and maybe also coding (SPSS syntax)
+ - IBM (SPSS) is proprietary
+ - I will take time to transfer
+ - Try a hard-stop: so do not mix tools
+ - Programming (in R) is hard and takes practice and time
+ - I cannot learn you programming, you will have to do it yourself
+ - Start with the book: "R for Data Science"
+ - **Write code for humans!**
+ - Use Github for version control
+
+## And the most important part...
+
+ -- Coffee break -- 
+ 
+## After the coffee break:
+
+ 1) RStudio demo
+ 2) Introduction to R (syntax & objects)
+
+## Getting R & RStudio in the HU
+
+ - RStudio Server Virtual Machine
+ - Running on SURF infrastructure (Amsterdam data center)
+ - Request a server via the form on [ASK HU](https://askhu.sharepoint.hu.nl/informatie-items/Paginas/Data-analyse-omgeving-aanvragen.aspx)
+ - [User Documentation](https://datascience.hu.nl/)
+ - [Onderzoeksupport Helpdesk](mailto:onderzoeksupport@hu.nl)
+ - [Use cases, themes, learning, discussions - PSG-DS](https://teams.microsoft.com/l/team/19%3ab94468b3341749c0a022a591de8a5e8d%40thread.tacv2/conversations?groupId=d54a13d1-19b8-4922-a8a6-96837e1470f6&tenantId=98932909-9a5a-4d18-ace4-7236b5b5e11d)
+
+## RStudio demo
+
+ - The RStudio Windows (1-4)
+ - The Global Environment
+ - Global settings -> Rmd output / Theme
+ - Upload / Download files
+ - Shared folder
+ - Installing and searching R packages (Question: "Can anyone share a specific method of analysis in the chat?")
+ - Help on packages and functions (`?` / `help()` / RStudio Help-panel / Vignettes)
+ - Plots
+ - Data import
+ - New files (R / Python etc...)
+ - Reformat Code
+ - RStudio Project
+ - Folder structure
+ - Git clone - get `staRters` course materials
+ - Creating a pull request / Contributing to the material (fixing a **tipo**)
+ - Shiny Apps [CoronaDash](https://datascience.hu.nl/shiny/r-starters/marc.teunis/CoronaDash/) 

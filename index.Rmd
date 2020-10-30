@@ -86,20 +86,22 @@ The number of packages has increased enormously over the past 5 years. The graph
 
 The function that creates the graph is loaded with the `source()` function.
 
-```{r, eval=FALSE}
+```{r}
 source(here::here("code", "r_packages_graph.R"))
 ## assigning a plot object 
 pkgs_plot <- plot_packages()
 ## saving plot to disk plot
-ggsave(filename = here::here("images", "rpackages_trend.svg"), 
-       plot = pkgs_plot,
-       width = 5, height = 5)
+#ggsave(filename = here::here("images", "rpackages_trend.svg"), 
+#       plot = pkgs_plot,
+#       width = 4.5, height = 3.5)
 
 ```
 
-```{r}
+```{r, echo=TRUE}
 ## include plot in document
-knitr::include_graphics(path = here::here("images", "rpackages_trend.svg"))
+# knitr::include_graphics(path = here::here("images", "rpckages_trend.svg"))
+
+pkgs_plot
 ```
 
 How many R-packages are available from CRAN on the date that this website was last updated: `r Sys.Date()` 

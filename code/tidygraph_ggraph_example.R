@@ -1,3 +1,7 @@
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+
 tidygraph::play_islands(5, 10, 0.8, 3) %>%
   mutate(community = as.factor(group_infomap())) %>%
   ggraph(layout = 'kk') +

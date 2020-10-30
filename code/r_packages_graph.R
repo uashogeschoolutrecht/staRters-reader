@@ -44,16 +44,16 @@ pkgs_summary <- pkgs %>%
 #  dplyr::filter(Year != "2019")
 
 ## plot
-plot <- pkgs_summary %>%
-  ggplot(aes(x = Year, y = published)) +
-  geom_point(size = 2.5, colour = "darkblue") +
-  geom_line(colour = "steelblue", size = 1.5) +
+plot <- pkgs %>%
+  ggplot(aes(x = Date, y = published)) +
+  geom_point(size = 1.5, colour = "darkblue") +
+  geom_line(colour = "steelblue", size = 1) +
   theme_bw() +
   labs(title = paste("CRAN packages published from",
                      min(pkgs_summary$Year), "to", Sys.Date())) +
   xlab("Year") +
-  ylab("Total packages/year") +
-  scale_x_continuous(breaks=seq(2015, 2019, 2)) +
+  ylab("Total R packages [CRAN]") +
+ # scale_x_continuous(breaks=seq(2015, 2019, 2)) +
   scale_y_continuous(labels = function(x) format(x, scientific = FALSE))
 
 # plot

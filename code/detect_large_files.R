@@ -1,7 +1,7 @@
 ## find large files and add them to .gitignore
 library(tidyverse)
 
-all_files <- list.files(recursive = TRUE, path = "./") %>%
+all_files <- list.files(recursive = TRUE, path = ".") %>%
   enframe() %>%
   mutate(size_Mb = file.size(value)/1000000)
 

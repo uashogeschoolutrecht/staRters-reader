@@ -5,27 +5,38 @@
 library(tidyverse)
 ```
 
+## Reader online
+
+```{r, include=FALSE}
+urls <- read_csv(
+        here::here(
+                "urls"
+        )
+)
+```
+
+**The accompanying Bookdown Web pages to this course can be found at:**
+
+**`r urls[2,1]`**
+
 ## Preface
 
-This is an R-Markdown document. It is an example of literate programming and it illustrates how we can combine code, text and output. It addresses the issue "Write code for humans, not for computers" very nicely.
+This website and R-scripts were created using R Markdown documents and the `{bookdown}` R package. It is an example of literate programming and it illustrates how we can combine code, text and output. It addresses the issue "Write code for humans" very nicely.
 
-Code can be recognized by a code chunck:
+Code can be recognized by a code chunk:
 
 _start code chunk_
 
 ` ```{r} `
 
-`library(tidyverse)`
-
-`average <- rnorm(1000) %>%` 
-
-  `enframe()`
-
-`average %>%`
-
-  `ggplot(aes(x = value)) +`
-
-  `geom_histogram()`
+```
+library(tidyverse)
+average <- rnorm(1000) %>% 
+  enframe()
+  average %>%
+  ggplot(aes(x = value)) +
+    geom_histogram()
+```
 
 ` ``` `
 
@@ -34,11 +45,23 @@ _end code chunk_
 To run the code chunks: set the cursor between the start ` ```{r} ` and the end 
 ` ``` ` of the chunk and press Ctrl, Shift, Enter, or choose "Run" in the top-right lint.
 
-## To start a new script 
-you can look under File -> New File -> RMarkdown or R Script. You will see a lot of other options as well. In this course we will not address these.
+## Cloud server for RStudio
+During the course, we will be using a pre-installed version of the RStudio-IDE (integrated development environment). This IDE version runs on a remote UBUNTU 
+18.04 Linux server and has most of the packages that are needed to follow the 
+course already installed. You can login at the communicated server address and 
+with the credentials supplied at the beginning of the course. The advantage of 
+cloud servers is that you do not need to install the software on your 
+own laptop. 
 
-## R & RStudio
-Throughout this course you will be working with the open source programs R and RStudio. RStudio is an integrated development environment (IDE) that allows you to use R in an interactive (and graphical) way, write your scripts/code and manage your workspace. R and Rstudio are already pre-installed on the course laptops, but for home use can be downloaded for free from http://www.r-project.org and http://www.rstudio.com.
+The address for the server is: 
+
+`r urls[4,1]`
+
+To install the software on a local computer visit:
+
+[R CRAN](http://www.r-project.org) and 
+
+[RStudio](http://www.rstudio.com)
 
 ## Github account and setting github credentials in RStudio
 
@@ -48,10 +71,10 @@ Throughout this course you will be working with the open source programs R and R
 devtools::install_github("uashogeschoolutrecht/gitr") 
 ## use this to set your user name and email (you can make a dummy name, 
 ## you do not need a github account)
-gitr::set_git_user(username = "some_username", email = "some_email_address")
+gitr::set_git_user(username = "<you_username>", email = "<your_email_address>")
 ```
 
-## Getting the materials for the course (R scripts):
+## Getting the materials for the course (scripts):
 ```{r, include=FALSE}
 urls <- read_csv(
         here::here(
@@ -71,20 +94,6 @@ urls[3,1] %>% as.character()
  
 **YOU NOW HAVE THE FILES TO START THE FIRST LESSON** 
 
-The accompanying Bookdown Webpages to this course can be found at:
-
-`r urls[2,1]`
-
-## Cloud server for RStudio
-During the course, we will be using a preinstalled version of the RStudio-IDE (integrated development environment). This IDE version runs on a remote UBUNTU 
-18.04 Linux server and has most of the packages that are needed to follow the 
-course already installed. You can login at the communicated server address and 
-with the credentials supplied at the beginning of the course. The advantage of 
-cloud servers is that you do not need to install the software on their 
-own laptops. 
-
-The address for the server is: `r urls[4,1]`
-
 To see what the current working directory (wd) is, you can execute the command
 
 `getwd()` 
@@ -96,14 +105,16 @@ If all went well the latter half of the working directory will state "/staRters"
 ## Relative paths
 The `getwd()` command gets information on the current wd. Some examples taken 
 from the internet or classical users of R will tell you to use `setwd()` to change the working directory. However, please ignore this advice and always work from an RStudio Project in which you can use relative path. The `{here}` package can help 
-you write clear code to achiev this. See for more details: [`{here}`](https://github.com/jennybc/here_here)
+you write clear code to achieve this. See for more details: [`{here}`](https://github.com/jennybc/here_here)
 
 ## Creating a new R script
+you can look under File -> New File -> RMarkdown or R Script. You will see lots of other options as well. In this course we will not address these (although we can look at a short Python demo if we want).
+
 For most analyses/projects, it is best to start by creating an R script file that will contain all the steps to get to a certain result. Initially this might be more like a scrapbook to note down what you did. 
 
 Later you can separate this more cleanly into a workflow (steps taken and/or functions executed) and separate files for function definitions, or even package definitions. 
 
-During this course, we will create special R scripts called RMarkdown (`.Rmd`) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a workflow and document your steps combined. 
+During this course, we will create special R scripts called RMarkdown (`.Rmd`) for every exercise that contains the steps of that particular exercise. RMarkdown helps you to create a work flow and document your steps combined. 
 
 Common R scripts contains all functions that could be reused between different exercises or projects (for instance a file named "functions.R"). 
 
@@ -134,10 +145,9 @@ Knowing how to get help, might be one of the most important skills when learning
 
 A good start, is the overview documentation provided within R. You can get to this by executing help.start() in the Console window. This will show the help documentation in the Help window within Rstudio. There are a number of good manuals provided within this documentation, particularly useful are the "An Introduction to R" and "The R language definition" manuals. Have a quick look at both.
 
-Besides basic documentation, you also can get package specific documentation. The overview of the different packages and corresponding documentation can be found by clicking on the "Packages" link (You can also get here by going to the Packages window directly). How many packages are user specific?
-Lookup the documentation for the function sqrt(), what does it do?
-Run the examples for the function sqrt(). What does this do?
+Besides basic documentation, you also can get package specific documentation. The overview of the different packages and corresponding documentation can be found by clicking on the "Packages" link (You can also get here by going to the Packages window directly). 
 
 ## A good resource to start
 
 To learn about what resources you can use to learn R and the applications that R can be used for: see chapter \@ref(resources)
+

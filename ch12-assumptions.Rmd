@@ -16,7 +16,7 @@ http://rstudio-pubs-static.s3.amazonaws.com/78857_86c2403ca9c146ba8fcdcda79c3f47
 ## Introduction
 W ith this chapter, I hope to inspire the reader to try and use models (statistical models if you will) to do Exploratory Data Analysis. Although EDA is often said not to depend on statistics, I do not agree. Statistical inference and predictive modeling can learn you a lot about your data and provide valuable inside on where to go next in you analysis. 
 There are many good works on statistics and R. Three books stand out and provide valuable information for this chapter:
-[@dsur], [@apm], [@rethinking]. For a complete overview and solid work on using R for inference: [@adventr], [@moderndive] and [@dsur]
+[@dsur], [@apm], [@rethinking]. For a complete overview and solid work on using R for inference: [@adventr] and [@dsur]
 
 We will also examine some of the official statistical applications of R in lab 6b and 6c
 
