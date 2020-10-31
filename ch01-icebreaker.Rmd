@@ -1,4 +1,4 @@
-# Head breaker
+# Ice breaker
 
  1. Go to a random break out room Teams session
  2. Study the code below for 3 minutes (by yourself)

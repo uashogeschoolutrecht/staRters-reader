@@ -110,7 +110,7 @@ knitr::include_graphics(here::here("images","rmd_printscr.png"))
  - In R we can document the three things that matter in science: _"data, methods and logic connecting them to the conclusions"_
  ...
 
-## What can you do with R?
+## What people do with R?
 The possibilities and applications are endless: just a few highlights
 
  - Statistical analysis ([Bayesian](https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/) / [Test-driven](https://www.youtube.com/watch?v=FhoYCsZttGc)) 
@@ -141,14 +141,15 @@ To analyze this experiment statistically, the model would need to include: the r
 
  - If you have 2 screens, now is the moment to expand the screen
  - Login to your Rstudio Environment
+ - Clone the materials from [Github.com](https://github.com/uashogeschoolutrecht/staRters)
  - Open the file `..._why_r.Rmd`
  - Follow along the demo by running the code
  - Details on using RStudio can be found in `..._introrstudio`
- - A demo for RStudio will follow after the case example
+ - A demo for RStudio details will follow after the case example
 
 ## Mixed effects models
 
-A typical analysis method for this type of randomized block design is a so-called 'multi-level' or also called 'mixed-effects' or 'hierarchical' models. An analysis method much used in clinical or biological scientific practice. 
+A typical analysis method for this type of randomized block design is a so-called 'multi-level' or also called 'mixed-effects' or 'hierarchical'  or 'multilevel' models. An analysis method much used in clinical or biological scientific practice. 
  
 You could also use one-way ANOVA but I will illustrate why this is not a good idea 
 

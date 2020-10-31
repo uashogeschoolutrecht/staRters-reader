@@ -32,4 +32,8 @@ panden-json.json
 ## python
 python
 
+## bookdown
+_book
+_bookdown_files
+starters-book
 
