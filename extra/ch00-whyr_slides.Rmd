@@ -1,7 +1,7 @@
 ---
 title: "Why use R?"
-subtitle: "An introduction to data analysis for StaRters"
-author: "Marc A. T. Teunis, PhD"
+subtitle: "An introduction to data analysis with R for StaRters"
+author: "Marc A.T. Teunis, PhD"
 affiliation: "Lectorate Innovative Testing in Life Sciences & Chemistry"
 date: "`r Sys.time()`"
 output: ioslides_presentation
@@ -14,7 +14,8 @@ widescreen: true
  - I will show you some 'statistical examples'
  - I can not learn you R programming in 3 days
  - R programming is not equal to learning another software tool
- - **I hope you will join the Peer Support Group Data Science after this course, so we can really dive deeply into all the topics you are interested in!**
+ - There are more materials in the course repository than we can cover in three days
+ - **I encourage you to join the Peer Support Group Data Science after this course, so we can really dive deeply into all the topics you are interested in!**
  
 ## Packages
 ```{r, warning=FALSE, error=FALSE, message=FALSE}
@@ -68,7 +69,7 @@ How would you 'describe' the steps of an analysis or creation of a graph when yo
 
 *_"You can only do this using code, so it is (basically) impossible in a GUI"_*
 
-```{r, dpi = 80}
+```{r, dpi = 80, echo=FALSE}
 knitr::include_graphics(
   here::here(
     "images",

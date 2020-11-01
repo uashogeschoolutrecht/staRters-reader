@@ -12,20 +12,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Slides
-
-_"These are the only slides we will see in this course"_
-
-```{r, echo=FALSE}
-knitr::include_graphics(
-  here::here(
-    "images",
-    "rstudio_interface.png"
-  )
-)
-```
-
-
 ## Course aim
 
  - To get to learn the possibilities of R for data analysis

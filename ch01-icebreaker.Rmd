@@ -6,14 +6,14 @@
  4. Discuss in the room what you think that every line is supposed to do: take max. 7 minutes for this. Try linking what you see in the graph to what you see in the code. 
  5. Return to the plenary room Teams session
  
-To run the code -whole code chunk- click the little green arrow in top right corner of the code-chunk below, or -line by line- set the cursor to the first line of the code and press `Cntrl` + `Enter`. Try adding comments (#<comment>) before a line if you think you understand what it does
+To run the code -whole code chunk- click the little green arrow in top right corner of the code-chunk below, or -line by line- set the cursor to the first line of the code and press `Cntrl` + `Enter`. Try adding comments (#<comment>) before a line if you think you understand what it does.
 
 ```{r, warning=FALSE, error=FALSE, message=FALSE, fig.width=10, fig.height=4}
 # load packages
 library(tidyverse)
 library(dslabs)
 
-# <write here what you tqhink the following line does, run the code first>
+# <write here what you think the following line does, run the code first>
 data(package = "dslabs")
 
 # click on the "Environment" panel [top-right RStudio Window] and 
@@ -23,9 +23,9 @@ names(gapminder)
 
 # <comment on the code that follows, can you add a comment on each line?>
 gapminder %>%
-  dplyr::filter(year == "2010" | year == "1960") %>%
+  dplyr::filter(year == "1960" | year == "2010") %>%
   ggplot(aes(x = log10(gdp), y = life_expectancy)) +
-  geom_point(aes(fill =continent,
+  geom_point(aes(fill = continent,
                  size = population), 
              show.legend = TRUE, 
              shape = 21) +
