@@ -68,14 +68,13 @@ knitr::include_graphics(
   - Please raise your hand if you want to speak out
   - Please use the chat for questions
   - If you want to bail out, do so quitely
-  - If you don't agree, please speak up
-  
+  - If you don't agree or want to ask something, please speak up
+  - Please put your mic at mute. 
+
 ## Course flow
 
  - Demo -> Break -> Assignments, repeat (about 1.5 hours per cycle)
- - Assignments, Three rooms: _Quiet_, _Conversation_, _Questions_
- - When working on assignments you can choose a room. I will hop into the questions room 
- - You can hop in and out different rooms, but be quiet in the _Quiet_ room
+ - Assignments, 5 rooms: pick one randomly
  - Please come back in time to the _Plenary Room_ for the plenary demo sessions 
  
 ## Contents
