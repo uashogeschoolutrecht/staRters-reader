@@ -8,15 +8,6 @@ output: ioslides_presentation
 widescreen: true
 ---
 
-## Disclaimer
-
- - This is not a statistics course
- - I will show you some 'statistical examples'
- - I can not learn you R programming in 3 days
- - R programming is not equal to learning another software tool
- - There are more materials in the course repository than we can cover in three days
- - **I encourage you to join the Peer Support Group Data Science after this course, so we can really dive deeply into all the topics you are interested in!**
- 
 ## Packages
 ```{r, warning=FALSE, error=FALSE, message=FALSE}
 library(tidyverse)
@@ -138,7 +129,7 @@ We have the following setup:
 
 To analyze this experiment statistically, the model would need to include: the rating score as the **measured (or dependent) variable**, the type of chair as the **experimental factor** and the subject as the **blocking factor**
 
-## Now we move to RStudio
+**## Now we move to RStudio**
 
  - If you have 2 screens, now is the moment to expand the screen
  - Login to your Rstudio Environment
@@ -308,19 +299,6 @@ ergoStool %>%
   theme_bw() -> plot_ergo
 plot_ergo
 ```
-
-## Coming from SPSS or Excel or the likes
-
- - You have to unlearn what you've learned
- - You already know about performing statistical analysis and maybe also coding (SPSS syntax)
- - IBM (SPSS) is proprietary
- - I will take time to transfer
- - Try a hard-stop: so do not mix tools
- - Programming (in R) is hard and takes practice and time
- - I cannot learn you programming, you will have to do it yourself
- - Start with the book: "R for Data Science"
- - **Write code for humans!**
- - Use Github for version control
 
 ## And Importantly...
 

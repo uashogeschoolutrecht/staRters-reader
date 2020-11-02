@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
  - To get to learn the possibilities of R for data analysis
  - To learn why scripting is essential for reproducible science
  - To get involved in the HU Data Science community
- - To get inspired
+ - To learn where to go next
  
 ```{r}
 knitr::include_graphics(
@@ -37,7 +37,7 @@ knitr::include_graphics(
  - There are more materials that I have included than we will be able to tackle
  - Learning R is about commitment and putting in 'the hours'
  - I can point you in the right direction, the rest is up to you
- - Learning how to program is not the same as learning another software tool
+ - Learning how to program is not the same as learning 'yet another' software tool
  - R is not _another_ software tool
  - If you learn how to program, you (and science) will benefit from it later, so look at it as an investment
  
