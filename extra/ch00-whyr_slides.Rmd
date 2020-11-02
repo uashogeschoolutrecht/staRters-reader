@@ -1,6 +1,6 @@
 ---
 title: "Why use R?"
-subtitle: "An introduction to data analysis with R for StaRters"
+subtitle: "An introduction to R"
 author: "Marc A.T. Teunis, PhD"
 affiliation: "Lectorate Innovative Testing in Life Sciences & Chemistry"
 date: "`r Sys.time()`"
