@@ -43,7 +43,7 @@ image_dir <- here::here(
 ```
 
 ## Purpose of this website
-This website is the accompanying website to the Introductory Workshop on using R called 'staRters' during the HU _ontwikkelfestival_, 2-4 November, 2020.
+This website is the accompanying website to the Introductory Course on using R for Data Analysis, called 'staRters' during the HU _Ontwikkelfestival_, 8, 9 and 11 November, 2021.
 
 The materials consist of introductory and supplemental ("./extra) materials to get acquainted with using R for data analysis and statistics. The course content and further structure of the course are explained in the table of contents. 
 
@@ -108,6 +108,7 @@ How many R-packages are available from CRAN on the date that this website was la
 
 ```{r, fig.width=10, fig.height=10}
 library(rvest)
+library(xml2)
 
 pkgs <- read_html("https://cran.r-project.org/web/packages/available_packages_by_name.html")
 mylines <- pkgs %>% 

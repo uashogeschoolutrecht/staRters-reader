@@ -163,8 +163,8 @@ For Renaming variables (`rename()`)
 names(pertussis_data_tidy)
 ## we can `rename()` a variable and `select()` variables
 pertussis_data_tidy <- pertussis_data_tidy %>%
-  dplyr::rename(some_strange_index = X1,
-       country = X2)
+  dplyr::rename(some_strange_index = ...1,
+       country = ...2)
 
 pertussis_data_tidy %>% head(2)
 ```
