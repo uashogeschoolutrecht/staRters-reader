@@ -127,7 +127,7 @@ Other important resources than CRAN for R-packages are:
  - [Bitbucket](https://bitbucket.org/)
  - [ROpenSci](https://ropensci.org/packages/)
 
-A full list of packages that are needed for this course is available in file "~/shared/DEPENDECIES.txt" 
+A full list of packages that are needed for this course is available in file `DESCRIPTION`, under the 'Imports', 'Remotes' and 'Suggests' headings. 
 
 ## Getting the materials
 To compile this website locally, you can clone the website repository from 
