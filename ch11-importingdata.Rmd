@@ -424,9 +424,10 @@ parse_date("2010-10-01")
   
 ```{r}
 library(hms)
+library(readr)
 parse_time("01:10 am")
 parse_time("20:10:01")
-    ```
+```
     
 ## Build your own time format
 
